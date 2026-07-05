@@ -8,7 +8,7 @@
     </header>
     <section>
       {% include "partials/_form_errors.html" %}
-      <form class="form grid gap-4" x-data="{proto: {{ (target.protocol.value if target else "tcp") | tojson }}}"
+      <form class="form grid gap-4" x-data="{proto: '{{ 'icmp' if target and target.protocol.value == 'icmp' else 'tcp' }}'}"
             {% if target %}hx-patch="/monitors/{{ target.id }}"{% else %}hx-post="/ips/{{ ip.id }}/monitors"{% endif %}
             hx-target="#modal" hx-swap="innerHTML">
         <div class="grid grid-cols-2 gap-4">
@@ -27,7 +27,7 @@
         </div>
         <div class="grid gap-2">
           <label for="monitor-label">{{ _("Label") }}</label>
-          <input id="monitor-label" name="label" placeholder="{{ _("e.g. HTTPS admin UI") }}"
+          <input type="text" id="monitor-label" name="label" placeholder="{{ _("e.g. HTTPS admin UI") }}"
                  value="{{ target.label if target and target.label else "" }}">
         </div>
         <div class="grid grid-cols-2 gap-4 items-end">

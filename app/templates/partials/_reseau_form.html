@@ -9,11 +9,11 @@
       <form class="form grid gap-4" hx-post="/reseau" hx-target="#modal" hx-swap="innerHTML">
         <div class="grid gap-2">
           <label for="reseau-name">{{ _("Name") }} *</label>
-          <input id="reseau-name" name="name" required value="{{ reseau.name }}">
+          <input type="text" id="reseau-name" name="name" required value="{{ reseau.name }}">
         </div>
         <div class="grid gap-2">
           <label for="reseau-description">{{ _("Description") }}</label>
-          <input id="reseau-description" name="description" value="{{ reseau.description or "" }}">
+          <input type="text" id="reseau-description" name="description" value="{{ reseau.description or "" }}">
         </div>
         <div class="grid gap-2">
           <label for="reseau-prefixes">{{ _("Root prefixes (one per line, informative)") }}</label>

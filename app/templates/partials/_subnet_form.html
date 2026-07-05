@@ -12,7 +12,7 @@
         <div class="grid sm:grid-cols-2 gap-4">
           <div class="grid gap-2">
             <label for="subnet-name">{{ _("Name") }} *</label>
-            <input id="subnet-name" name="name" required value="{{ subnet.name if subnet else "" }}">
+            <input type="text" id="subnet-name" name="name" required value="{{ subnet.name if subnet else "" }}">
           </div>
           <div class="grid gap-2">
             <label for="subnet-vlan">{{ _("VLAN tag (1–4094, optional)") }}</label>
@@ -23,18 +23,18 @@
         <div class="grid sm:grid-cols-2 gap-4">
           <div class="grid gap-2">
             <label for="subnet-cidr">{{ _("CIDR") }} *</label>
-            <input id="subnet-cidr" name="cidr" required placeholder="192.168.10.0/24"
+            <input type="text" id="subnet-cidr" name="cidr" required placeholder="192.168.10.0/24"
                    value="{{ subnet.cidr if subnet else "" }}">
           </div>
           <div class="grid gap-2">
             <label for="subnet-gateway">{{ _("Gateway (optional)") }}</label>
-            <input id="subnet-gateway" name="gateway" placeholder="192.168.10.1"
+            <input type="text" id="subnet-gateway" name="gateway" placeholder="192.168.10.1"
                    value="{{ subnet.gateway if subnet and subnet.gateway else "" }}">
           </div>
         </div>
         <div class="grid gap-2">
           <label for="subnet-description">{{ _("Description") }}</label>
-          <input id="subnet-description" name="description" value="{{ subnet.description if subnet and subnet.description else "" }}">
+          <input type="text" id="subnet-description" name="description" value="{{ subnet.description if subnet and subnet.description else "" }}">
         </div>
         <div class="grid gap-2">
           <label for="subnet-notes">{{ _("Notes") }}</label>

@@ -11,7 +11,7 @@
       <form class="form grid gap-4" hx-post="/users" hx-target="#modal" hx-swap="innerHTML">
         <div class="grid gap-2">
           <label for="user-username">{{ _("Username") }} *</label>
-          <input id="user-username" name="username" required autocomplete="off">
+          <input type="text" id="user-username" name="username" required autocomplete="off">
         </div>
         <div class="grid gap-2">
           <label for="user-password">{{ _("Password (8 characters minimum)") }} *</label>
