@@ -1,0 +1,54 @@
+{% set manager = user.role.value == "manager" %}
+<div class="space-y-4">
+  <div class="flex items-start justify-between gap-4">
+    <dl class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm flex-1">
+      <div><dt class="text-muted-foreground">{{ _("Address") }}</dt><dd class="font-mono">{{ ip.address }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Status") }}</dt><dd><span class="{{ ip.status | status_css }}">{{ ip.status | status_label }}</span></dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Hostname") }}</dt><dd>{{ ip.hostname or "—" }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Device") }}</dt><dd>{{ ip.device_label or "—" }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("MAC") }}</dt><dd class="font-mono">{{ ip.mac or "—" }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Created") }}</dt><dd>{{ ip.created_at | dt }}</dd></div>
+    </dl>
+    {% if manager %}
+      <button type="button" class="btn-sm-outline" hx-get="/ips/{{ ip.id }}/edit" hx-target="#modal">{{ _("Edit") }}</button>
+    {% endif %}
+  </div>
+  {% if ip.description %}<p class="text-sm text-muted-foreground whitespace-pre-line">{{ ip.description }}</p>{% endif %}
+
+  <div>
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="font-medium text-sm">{{ _("Monitor targets") }}</h3>
+      {% if manager %}
+        <button type="button" class="btn-sm-outline" hx-get="/ips/{{ ip.id }}/monitors/new" hx-target="#modal">
+          {{ _("Add target") }}
+        </button>
+      {% endif %}
+    </div>
+    {% if ip.monitors %}
+      <table class="table w-full text-sm">
+        <thead>
+          <tr>
+            <th class="w-8"></th>
+            <th>{{ _("Check") }}</th>
+            <th>{{ _("Label") }}</th>
+            <th>{{ _("Interval") }}</th>
+            <th>{{ _("Status") }}</th>
+            <th>{{ _("Last success") }}</th>
+            <th>{{ _("Latency") }}</th>
+            <th>{{ _("Failures") }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for target in ip.monitors %}
+            {% include "partials/_monitor_row.html" %}
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-sm text-muted-foreground">
+        {{ _("No monitor target. Add a TCP port check or an ICMP ping to track this address.") }}
+      </p>
+    {% endif %}
+  </div>
+</div>

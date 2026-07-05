@@ -1,0 +1,15 @@
+<div x-data="{open: false}" class="relative">
+  <button type="button" class="btn-sm-icon-ghost" @click="open = !open" @click.outside="open = false"
+          title="{{ _("Health color legend") }}" aria-label="{{ _("Health color legend") }}">?</button>
+  <div x-show="open" x-cloak x-transition.opacity
+       class="absolute right-0 mt-1 w-72 rounded-md border border-border bg-popover p-3 shadow-md z-50 text-xs space-y-2">
+    <p class="font-medium">{{ _("Health color legend") }}</p>
+    <p class="flex items-center gap-2"><span class="health-dot health-unknown"></span> {{ _("Never checked") }}</p>
+    <p class="flex items-center gap-2"><span class="health-dot health-ok"></span> {{ _("Up, recent success") }}</p>
+    <p class="flex items-center gap-2"><span class="health-dot health-warn"></span> {{ _("Up but aging, or down recently") }}</p>
+    <p class="flex items-center gap-2"><span class="health-dot health-red"></span> {{ _("Down for a while") }}</p>
+    <p class="flex items-center gap-2"><span class="health-dot health-dark-red"></span> {{ _("Down for a long time: dead service or stale entry to clean up") }}</p>
+    <p class="flex items-center gap-2"><span class="health-dot health-none"></span> {{ _("No monitor target") }}</p>
+    <p class="text-muted-foreground">{{ _("An IP shows the worst color of its active targets.") }}</p>
+  </div>
+</div>

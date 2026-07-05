@@ -1,0 +1,50 @@
+<dialog class="dialog w-full max-w-lg">
+  <article>
+    <header>
+      <h2 class="text-lg font-semibold">{{ _("Edit VLAN") if subnet else _("New VLAN") }}</h2>
+      <p class="text-sm text-muted-foreground">{{ _("A VLAN is a named subnet. The 802.1Q tag is optional.") }}</p>
+    </header>
+    <section>
+      {% include "partials/_form_errors.html" %}
+      <form class="form grid gap-4"
+            {% if subnet %}hx-patch="/subnets/{{ subnet.id }}"{% else %}hx-post="/subnets"{% endif %}
+            hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="grid gap-2">
+            <label for="subnet-name">{{ _("Name") }} *</label>
+            <input id="subnet-name" name="name" required value="{{ subnet.name if subnet else "" }}">
+          </div>
+          <div class="grid gap-2">
+            <label for="subnet-vlan">{{ _("VLAN tag (1–4094, optional)") }}</label>
+            <input id="subnet-vlan" name="vlan_id" type="number" min="1" max="4094"
+                   value="{{ subnet.vlan_id if subnet and subnet.vlan_id else "" }}">
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="grid gap-2">
+            <label for="subnet-cidr">{{ _("CIDR") }} *</label>
+            <input id="subnet-cidr" name="cidr" required placeholder="192.168.10.0/24"
+                   value="{{ subnet.cidr if subnet else "" }}">
+          </div>
+          <div class="grid gap-2">
+            <label for="subnet-gateway">{{ _("Gateway (optional)") }}</label>
+            <input id="subnet-gateway" name="gateway" placeholder="192.168.10.1"
+                   value="{{ subnet.gateway if subnet and subnet.gateway else "" }}">
+          </div>
+        </div>
+        <div class="grid gap-2">
+          <label for="subnet-description">{{ _("Description") }}</label>
+          <input id="subnet-description" name="description" value="{{ subnet.description if subnet and subnet.description else "" }}">
+        </div>
+        <div class="grid gap-2">
+          <label for="subnet-notes">{{ _("Notes") }}</label>
+          <textarea id="subnet-notes" name="notes" rows="3">{{ subnet.notes if subnet and subnet.notes else "" }}</textarea>
+        </div>
+        <footer class="flex justify-end gap-2">
+          <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
+          <button type="submit" class="btn-primary">{{ _("Save") }}</button>
+        </footer>
+      </form>
+    </section>
+  </article>
+</dialog>

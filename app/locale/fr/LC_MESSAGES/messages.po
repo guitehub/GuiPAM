@@ -1,0 +1,962 @@
+# French translations for GuiPAM.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the GuiPAM project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GuiPAM 0.1.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-07-05 23:05+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/templates/partials/_import_report.html:5
+#, python-format
+msgid "%(count)d VLAN(s) created"
+msgstr "%(count)d VLAN créé(s)"
+
+#: app/templates/partials/_import_report.html:3
+#, python-format
+msgid "%(count)d created"
+msgstr "%(count)d créée(s)"
+
+#: app/templates/partials/_import_report.html:9
+#, python-format
+msgid "%(count)d error(s)"
+msgstr "%(count)d erreur(s)"
+
+#: app/templates/partials/_import_report.html:7
+#, python-format
+msgid "%(count)d skipped (duplicates)"
+msgstr "%(count)d ignorée(s) (doublons)"
+
+#: app/services/ipam.py:154
+#, python-format
+msgid "%s is the broadcast address and cannot be assigned."
+msgstr "%s est l'adresse de broadcast et ne peut pas être attribuée."
+
+#: app/services/ipam.py:150
+#, python-format
+msgid "%s is the network address and cannot be assigned."
+msgstr "%s est l'adresse réseau et ne peut pas être attribuée."
+
+#: app/routers/monitors.py:52
+msgid "A TCP check requires a port between 1 and 65535."
+msgstr "Un check TCP nécessite un port entre 1 et 65535."
+
+#: app/templates/partials/_monitor_form.html:7
+msgid "A TCP port check, or an ICMP ping if no port is relevant."
+msgstr "Un check de port TCP, ou un ping ICMP si aucun port n'est pertinent."
+
+#: app/templates/partials/_subnet_form.html:5
+msgid "A VLAN is a named subnet. The 802.1Q tag is optional."
+msgstr "Un VLAN est un subnet nommé. Le tag 802.1Q est facultatif."
+
+#: app/templates/login.html:8
+msgid "Access to GuiPAM requires an account. No self-registration."
+msgstr "L'accès à GuiPAM nécessite un compte. Pas d'auto-inscription."
+
+#: app/templates/audit.html:23 app/templates/audit.html:45
+msgid "Action"
+msgstr "Action"
+
+#: app/templates/users.html:25
+msgid "Active"
+msgstr "Actif"
+
+#: app/templates/partials/_user_form.html:43
+msgid "Active account"
+msgstr "Compte actif"
+
+#: app/templates/partials/_ip_detail.html:23
+msgid "Add target"
+msgstr "Ajouter une cible"
+
+#: app/templates/partials/_ip_detail.html:5
+#: app/templates/partials/_ip_form.html:16 app/templates/subnet.html:96
+#: app/templates/subnet_plan.html:35
+msgid "Address"
+msgstr "Adresse"
+
+#: app/services/ipam.py:159
+#, python-format
+msgid "Address %(address)s already exists in VLAN “%(name)s”."
+msgstr "L'adresse %(address)s existe déjà dans le VLAN « %(name)s »."
+
+#: app/services/ipam.py:143
+#, python-format
+msgid "Address %(address)s is outside subnet %(cidr)s."
+msgstr "L'adresse %(address)s est hors du subnet %(cidr)s."
+
+#: app/routers/ips.py:126
+#, python-format
+msgid "Address %s created."
+msgstr "Adresse %s créée."
+
+#: app/routers/ips.py:177
+#, python-format
+msgid "Address %s deleted."
+msgstr "Adresse %s supprimée."
+
+#: app/routers/ips.py:165
+#, python-format
+msgid "Address %s updated."
+msgstr "Adresse %s mise à jour."
+
+#: app/templates/partials/_a_traiter.html:8
+msgid "Addresses whose targets no longer respond, worst first. Fix them or clean up stale entries."
+msgstr "Adresses dont les cibles ne répondent plus, les pires d'abord. Réparez-les ou nettoyez les entrées obsolètes."
+
+#: app/templates/audit.html:25 app/templates/audit.html:32
+#: app/templates/subnet.html:66 app/templates/subnet.html:75
+msgid "All"
+msgstr "Toutes"
+
+#: app/templates/partials/_health_legend.html:13
+msgid "An IP shows the worst color of its active targets."
+msgstr "Une IP affiche la pire couleur de ses cibles actives."
+
+#: app/templates/base.html:91
+msgid "Are you sure?"
+msgstr "Confirmer ?"
+
+#: app/templates/dashboard.html:73
+msgid "Ask a manager to create it."
+msgstr "Demandez à un manager de le créer."
+
+#: app/templates/audit.html:2 app/templates/audit.html:8
+#: app/templates/audit.html:13 app/templates/base.html:41
+msgid "Audit log"
+msgstr "Journal d'audit"
+
+#: app/templates/subnet_plan.html:20
+msgid "Back to VLAN"
+msgstr "Retour au VLAN"
+
+#: app/templates/audit.html:5 app/templates/import_export.html:5
+#: app/templates/subnet.html:5 app/templates/subnet_plan.html:5
+#: app/templates/users.html:5
+msgid "Breadcrumb"
+msgstr "Fil d'Ariane"
+
+#: app/templates/subnet.html:36
+msgid "Broadcast"
+msgstr "Broadcast"
+
+#: app/templates/dashboard.html:50 app/templates/partials/_subnet_form.html:25
+msgid "CIDR"
+msgstr "CIDR"
+
+#: app/services/ipam.py:90
+#, python-format
+msgid "CIDR %(cidr)s overlaps VLAN “%(name)s” (%(other)s)."
+msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
+
+#: app/templates/base.html:95 app/templates/partials/_ip_form.html:49
+#: app/templates/partials/_monitor_form.html:45
+#: app/templates/partials/_reseau_form.html:34
+#: app/templates/partials/_subnet_form.html:44
+#: app/templates/partials/_user_form.html:28
+#: app/templates/partials/_user_form.html:46
+msgid "Cancel"
+msgstr "Annuler"
+
+#: app/routers/subnets.py:150
+#, python-format
+msgid "Cannot change CIDR: %(count)d addresses would fall outside (e.g. %(example)s)."
+msgstr "Impossible de changer le CIDR : %(count)d adresses en sortiraient (ex. %(example)s)."
+
+#: app/routers/users.py:159
+msgid "Cannot delete the last active manager."
+msgstr "Impossible de supprimer le dernier manager actif."
+
+#: app/routers/users.py:113
+msgid "Cannot demote or deactivate the last active manager."
+msgstr "Impossible de rétrograder ou désactiver le dernier manager actif."
+
+#: app/templates/subnet.html:40
+msgid "Capacity"
+msgstr "Capacité"
+
+#: app/templates/audit.html:47
+msgid "Changes"
+msgstr "Modifications"
+
+#: app/templates/partials/_ip_detail.html:32
+#: app/templates/partials/_ip_row.html:19
+#: app/templates/partials/_monitor_row.html:21
+msgid "Check"
+msgstr "Vérifier"
+
+#: app/templates/partials/_ip_row.html:19
+msgid "Check all targets of this IP now"
+msgstr "Vérifier toutes les cibles de cette IP maintenant"
+
+#: app/templates/base.html:96
+msgid "Confirm"
+msgstr "Confirmer"
+
+#: app/templates/partials/_user_form.html:29
+msgid "Create"
+msgstr "Créer"
+
+#: app/templates/partials/_ip_detail.html:10
+msgid "Created"
+msgstr "Créée le"
+
+#: app/templates/audit.html:6 app/templates/base.html:40
+#: app/templates/dashboard.html:2 app/templates/import_export.html:6
+#: app/templates/subnet.html:6 app/templates/subnet_plan.html:6
+#: app/templates/users.html:6
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#: app/templates/partials/_reseau_form.html:27
+msgid "Default language"
+msgstr "Langue par défaut"
+
+#: app/templates/partials/_ip_row.html:26
+#: app/templates/partials/_monitor_row.html:27
+#: app/templates/partials/_subnet_row.html:23
+#: app/templates/partials/_user_row.html:14
+msgid "Delete"
+msgstr "Supprimer"
+
+#: app/templates/partials/_subnet_row.html:22
+#, python-format
+msgid "Delete VLAN “%(name)s” and all its addresses and targets?"
+msgstr "Supprimer le VLAN « %(name)s » et toutes ses adresses et cibles ?"
+
+#: app/templates/partials/_ip_row.html:25
+#, python-format
+msgid "Delete address %(address)s and its monitor targets?"
+msgstr "Supprimer l'adresse %(address)s et ses cibles de suivi ?"
+
+#: app/templates/partials/_monitor_row.html:27
+msgid "Delete this monitor target?"
+msgstr "Supprimer cette cible de suivi ?"
+
+#: app/templates/partials/_user_row.html:13
+#, python-format
+msgid "Delete user “%(name)s”? Their audit entries are kept."
+msgstr "Supprimer l'utilisateur « %(name)s » ? Ses entrées d'audit sont conservées."
+
+#: app/templates/partials/_ip_form.html:45
+#: app/templates/partials/_reseau_form.html:15
+#: app/templates/partials/_subnet_form.html:36
+#: app/templates/subnet_plan.html:39
+msgid "Description"
+msgstr "Description"
+
+#: app/templates/partials/_ip_detail.html:8 app/templates/subnet.html:99
+#: app/templates/subnet_plan.html:38
+msgid "Device"
+msgstr "Appareil"
+
+#: app/templates/partials/_ip_form.html:40
+msgid "Device label"
+msgstr "Libellé d'appareil"
+
+#: app/templates/subnet.html:78
+msgid "Down"
+msgstr "Down"
+
+msgid "Down for a long time (stale?)"
+msgstr "Down depuis longtemps (obsolète ?)"
+
+#: app/templates/partials/_health_legend.html:11
+msgid "Down for a long time: dead service or stale entry to clean up"
+msgstr "Down depuis longtemps : service mort ou entrée obsolète à nettoyer"
+
+#: app/templates/partials/_health_legend.html:10
+msgid "Down for a while"
+msgstr "Down depuis un moment"
+
+#: app/templates/import_export.html:48
+msgid "Download export.csv"
+msgstr "Télécharger export.csv"
+
+#: app/templates/dashboard.html:14 app/templates/partials/_ip_detail.html:13
+#: app/templates/partials/_ip_row.html:22
+#: app/templates/partials/_monitor_row.html:24
+#: app/templates/partials/_subnet_row.html:19
+#: app/templates/partials/_user_row.html:10 app/templates/subnet.html:28
+msgid "Edit"
+msgstr "Modifier"
+
+#: app/templates/partials/_subnet_form.html:4
+msgid "Edit VLAN"
+msgstr "Modifier le VLAN"
+
+#: app/templates/partials/_ip_form.html:5
+#, python-format
+msgid "Edit address %(address)s"
+msgstr "Modifier l'adresse %(address)s"
+
+#: app/templates/partials/_monitor_form.html:5
+msgid "Edit monitor target"
+msgstr "Modifier la cible de suivi"
+
+#: app/templates/partials/_user_form.html:5
+#, python-format
+msgid "Edit user “%(name)s”"
+msgstr "Modifier l'utilisateur « %(name)s »"
+
+#: app/templates/partials/_monitor_form.html:41
+msgid "Enabled"
+msgstr "Activée"
+
+#: app/templates/audit.html:30 app/templates/audit.html:46
+msgid "Entity"
+msgstr "Entité"
+
+#: app/templates/import_export.html:42
+msgid "Export to CSV"
+msgstr "Exporter en CSV"
+
+#: app/templates/partials/_ip_detail.html:38
+msgid "Failures"
+msgstr "Échecs"
+
+#: app/routers/import_export.py:32
+msgid "File is too large (5 MB max)."
+msgstr "Fichier trop volumineux (5 Mo max)."
+
+#: app/templates/subnet.html:38
+msgid "First usable IP"
+msgstr "Première IP utile"
+
+#: app/templates/partials/_ip_form.html:24
+#: app/templates/partials/_stats.html:12 app/templates/subnet.html:68
+msgid "Free"
+msgstr "Libres"
+
+#: app/templates/import_export.html:44
+msgid "Full export of all addresses, in a format that can be re-imported as is (backup or migration)."
+msgstr "Export complet de toutes les adresses, dans un format réimportable tel quel (sauvegarde ou migration)."
+
+#: app/templates/dashboard.html:51 app/templates/subnet.html:37
+msgid "Gateway"
+msgstr "Passerelle"
+
+#: app/services/ipam.py:98
+#, python-format
+msgid "Gateway %(gateway)s is outside subnet %(cidr)s."
+msgstr "La passerelle %(gateway)s est hors du subnet %(cidr)s."
+
+#: app/templates/partials/_subnet_form.html:30
+msgid "Gateway (optional)"
+msgstr "Passerelle (facultative)"
+
+#: app/templates/subnet.html:73
+msgid "Health"
+msgstr "Santé"
+
+#: app/templates/partials/_health_legend.html:3
+#: app/templates/partials/_health_legend.html:6
+msgid "Health color legend"
+msgstr "Légende du code couleur santé"
+
+#: app/templates/partials/_ip_detail.html:7
+#: app/templates/partials/_ip_form.html:31 app/templates/subnet.html:98
+#: app/templates/subnet_plan.html:37
+msgid "Hostname"
+msgstr "Nom d'hôte"
+
+#: app/routers/monitors.py:55
+msgid "ICMP ping is disabled on this instance (GUIPAM_ENABLE_PING=false)."
+msgstr "Le ping ICMP est désactivé sur cette instance (GUIPAM_ENABLE_PING=false)."
+
+#: app/routers/ips.py:27 app/routers/monitors.py:72 app/routers/monitors.py:97
+msgid "IP address not found."
+msgstr "Adresse IP introuvable."
+
+#: app/templates/subnet.html:49
+msgid "IP addresses"
+msgstr "Adresses IP"
+
+#: app/templates/subnet.html:61
+msgid "IP, hostname, label, MAC…"
+msgstr "IP, hôte, libellé, MAC…"
+
+#: app/templates/dashboard.html:53
+msgid "IPs"
+msgstr "IP"
+
+#: app/templates/import_export.html:29
+msgid "Import"
+msgstr "Importer"
+
+#: app/templates/base.html:42 app/templates/import_export.html:2
+#: app/templates/import_export.html:8 app/templates/import_export.html:14
+msgid "Import / Export"
+msgstr "Import / Export"
+
+#: app/templates/import_export.html:19
+msgid "Import a CSV file"
+msgstr "Importer un fichier CSV"
+
+#: app/templates/partials/_ip_detail.html:34
+msgid "Interval"
+msgstr "Intervalle"
+
+#: app/templates/partials/_monitor_form.html:35
+msgid "Interval (seconds)"
+msgstr "Intervalle (secondes)"
+
+#: app/routers/monitors.py:62
+#, python-format
+msgid "Interval must be between %(min)d and %(max)d seconds."
+msgstr "L'intervalle doit être compris entre %(min)d et %(max)d secondes."
+
+#: app/services/ipam.py:40
+#, python-format
+msgid "Invalid CIDR: “%(value)s” has host bits set (network address is %(network)s)."
+msgstr "CIDR invalide : « %(value)s » a des bits d'hôte non nuls (l'adresse réseau est %(network)s)."
+
+#: app/services/ipam.py:37
+#, python-format
+msgid "Invalid CIDR: “%s” is not a valid IPv4 network."
+msgstr "CIDR invalide : « %s » n'est pas un réseau IPv4 valide."
+
+#: app/deps.py:67
+msgid "Invalid or missing CSRF token."
+msgstr "Jeton CSRF invalide ou manquant."
+
+#: app/routers/auth.py:51
+msgid "Invalid username or password."
+msgstr "Identifiant ou mot de passe invalide."
+
+#: app/templates/partials/_ip_detail.html:33
+#: app/templates/partials/_monitor_form.html:29
+msgid "Label"
+msgstr "Libellé"
+
+#: app/templates/base.html:59
+msgid "Language"
+msgstr "Langue"
+
+#: app/templates/subnet_plan.html:25
+#, python-format
+msgid "Large subnet: only the first %(max)d addresses are shown."
+msgstr "Grand subnet : seules les %(max)d premières adresses sont affichées."
+
+#: app/templates/subnet.html:102
+msgid "Last check"
+msgstr "Dernier check"
+
+#: app/templates/users.html:26
+msgid "Last login"
+msgstr "Dernière connexion"
+
+#: app/templates/partials/_ip_detail.html:36
+msgid "Last success"
+msgstr "Dernier succès"
+
+#: app/templates/subnet.html:39
+msgid "Last usable IP"
+msgstr "Dernière IP utile"
+
+#: app/templates/partials/_ip_detail.html:37
+msgid "Latency"
+msgstr "Latence"
+
+#: app/services/csv_io.py:128 app/services/csv_io.py:135
+#: app/services/csv_io.py:149
+#, python-format
+msgid "Line %(line)d: %(error)s"
+msgstr "Ligne %(line)d : %(error)s"
+
+#: app/templates/partials/_ip_rows.html:7
+msgid "Loading…"
+msgstr "Chargement…"
+
+#: app/templates/base.html:67
+msgid "Log out"
+msgstr "Se déconnecter"
+
+#: app/templates/partials/_ip_detail.html:9 app/templates/subnet.html:100
+msgid "MAC"
+msgstr "MAC"
+
+#: app/templates/partials/_ip_form.html:35
+msgid "MAC address"
+msgstr "Adresse MAC"
+
+#: app/routers/monitors.py:118
+#, python-format
+msgid "Monitor target added on %s."
+msgstr "Cible de suivi ajoutée sur %s."
+
+#: app/routers/monitors.py:164
+msgid "Monitor target deleted."
+msgstr "Cible de suivi supprimée."
+
+#: app/routers/monitors.py:25
+msgid "Monitor target not found."
+msgstr "Cible de suivi introuvable."
+
+#: app/routers/monitors.py:153
+msgid "Monitor target updated."
+msgstr "Cible de suivi mise à jour."
+
+#: app/templates/partials/_ip_detail.html:20
+msgid "Monitor targets"
+msgstr "Cibles de suivi"
+
+#: app/templates/dashboard.html:49 app/templates/partials/_reseau_form.html:11
+#: app/templates/partials/_subnet_form.html:14
+msgid "Name"
+msgstr "Nom"
+
+#: app/routers/reseau.py:53 app/routers/subnets.py:63
+msgid "Name is required."
+msgstr "Le nom est requis."
+
+#: app/templates/subnet.html:35
+msgid "Netmask"
+msgstr "Masque"
+
+#: app/templates/subnet.html:34
+msgid "Network"
+msgstr "Réseau"
+
+#: app/templates/partials/_reseau_form.html:4
+msgid "Network settings"
+msgstr "Paramètres du réseau"
+
+#: app/routers/reseau.py:90
+msgid "Network settings saved."
+msgstr "Paramètres du réseau enregistrés."
+
+#: app/templates/partials/_health_legend.html:7 app/templates/subnet.html:80
+msgid "Never checked"
+msgstr "Jamais vérifié"
+
+#: app/templates/subnet.html:51
+msgid "New IP"
+msgstr "Nouvelle IP"
+
+#: app/templates/partials/_ip_form.html:5
+#, python-format
+msgid "New IP in %(name)s"
+msgstr "Nouvelle IP dans %(name)s"
+
+#: app/templates/dashboard.html:37 app/templates/dashboard.html:71
+#: app/templates/partials/_subnet_form.html:4
+msgid "New VLAN"
+msgstr "Nouveau VLAN"
+
+#: app/templates/partials/_monitor_form.html:5
+#, python-format
+msgid "New monitor target on %(address)s"
+msgstr "Nouvelle cible de suivi sur %(address)s"
+
+#: app/templates/partials/_user_form.html:5 app/templates/users.html:15
+msgid "New user"
+msgstr "Nouvel utilisateur"
+
+#: app/templates/audit.html:62
+msgid "Next"
+msgstr "Suivante"
+
+#: app/services/csv_io.py:110
+msgid "No IP address column found in the file."
+msgstr "Aucune colonne d'adresse IP trouvée dans le fichier."
+
+#: app/templates/dashboard.html:69
+msgid "No VLAN yet. Create your first VLAN to start tracking addresses."
+msgstr "Aucun VLAN pour l'instant. Créez votre premier VLAN pour commencer à suivre les adresses."
+
+#: app/templates/partials/_ip_rows.html:15
+msgid "No address matches these filters."
+msgstr "Aucune adresse ne correspond à ces filtres."
+
+#: app/templates/partials/_ip_rows.html:17
+msgid "No address recorded in this VLAN yet."
+msgstr "Aucune adresse enregistrée dans ce VLAN pour l'instant."
+
+#: app/templates/partials/_audit_rows.html:18
+msgid "No audit entries."
+msgstr "Aucune entrée d'audit."
+
+#: app/templates/partials/_health_legend.html:12
+msgid "No monitor target"
+msgstr "Aucune cible de suivi"
+
+#: app/templates/partials/_ip_detail.html:50
+msgid "No monitor target. Add a TCP port check or an ICMP ping to track this address."
+msgstr "Aucune cible de suivi. Ajoutez un check de port TCP ou un ping ICMP pour suivre cette adresse."
+
+#: app/templates/subnet.html:81
+msgid "No target"
+msgstr "Sans cible"
+
+#: app/templates/partials/_reseau_form.html:23
+#: app/templates/partials/_subnet_form.html:40
+msgid "Notes"
+msgstr "Notes"
+
+#: app/templates/subnet.html:76
+msgid "OK"
+msgstr "OK"
+
+#: app/templates/dashboard.html:52 app/templates/subnet.html:41
+msgid "Occupancy"
+msgstr "Occupation"
+
+#: app/services/ipam.py:45 app/services/ipam.py:58
+msgid "Only IPv4 is supported in this version."
+msgstr "Seul IPv4 est pris en charge dans cette version."
+
+#: app/templates/audit.html:60
+#, python-format
+msgid "Page %(page)d"
+msgstr "Page %(page)d"
+
+#: app/templates/login.html:24
+msgid "Password"
+msgstr "Mot de passe"
+
+#: app/templates/partials/_user_form.html:17
+msgid "Password (8 characters minimum)"
+msgstr "Mot de passe (8 caractères minimum)"
+
+#: app/routers/users.py:77 app/routers/users.py:141
+#, python-format
+msgid "Password must be at least %d characters long."
+msgstr "Le mot de passe doit contenir au moins %d caractères."
+
+#: app/routers/users.py:151
+#, python-format
+msgid "Password of “%s” reset."
+msgstr "Mot de passe de « %s » réinitialisé."
+
+#: app/templates/subnet_plan.html:2
+msgid "Plan"
+msgstr "Plan"
+
+#: app/templates/subnet.html:26 app/templates/subnet_plan.html:10
+#: app/templates/subnet_plan.html:17
+msgid "Plan view"
+msgstr "Vue plan"
+
+#: app/templates/partials/_monitor_form.html:23
+msgid "Port"
+msgstr "Port"
+
+#: app/templates/audit.html:58
+msgid "Previous"
+msgstr "Précédente"
+
+#: app/templates/partials/_monitor_form.html:16
+msgid "Protocol"
+msgstr "Protocole"
+
+#: app/templates/base.html:37
+msgid "Read-only"
+msgstr "Lecture seule"
+
+#: app/deps.py:44
+msgid "Read-only account: action not allowed."
+msgstr "Compte en lecture seule : action non autorisée."
+
+#: app/templates/import_export.html:32
+msgid "Read-only account: import is not available."
+msgstr "Compte en lecture seule : l'import n'est pas disponible."
+
+#: app/templates/partials/_ip_form.html:25
+#: app/templates/partials/_stats.html:16 app/templates/subnet.html:69
+msgid "Reserved"
+msgstr "Réservées"
+
+#: app/templates/partials/_user_form.html:57
+msgid "Reset password"
+msgstr "Réinitialiser le mot de passe"
+
+#: app/templates/partials/_user_form.html:53
+msgid "Reset password (8 characters minimum)"
+msgstr "Réinitialiser le mot de passe (8 caractères minimum)"
+
+#: app/templates/partials/_user_form.html:21
+#: app/templates/partials/_user_form.html:35 app/templates/users.html:24
+msgid "Role"
+msgstr "Rôle"
+
+#: app/templates/partials/_reseau_form.html:19
+msgid "Root prefixes (one per line, informative)"
+msgstr "Préfixes racine (un par ligne, informatif)"
+
+#: app/templates/dashboard.html:19
+msgid "Root prefixes:"
+msgstr "Préfixes racine :"
+
+#: app/templates/partials/_ip_form.html:50
+#: app/templates/partials/_monitor_form.html:46
+#: app/templates/partials/_reseau_form.html:35
+#: app/templates/partials/_subnet_form.html:45
+#: app/templates/partials/_user_form.html:47
+msgid "Save"
+msgstr "Enregistrer"
+
+#: app/templates/subnet.html:59
+msgid "Search"
+msgstr "Recherche"
+
+#: app/templates/partials/_ip_row.html:7
+msgid "Show details"
+msgstr "Afficher le détail"
+
+#: app/templates/subnet.html:86
+msgid "Show free IPs"
+msgstr "Afficher les IP libres"
+
+#: app/templates/login.html:2 app/templates/login.html:7
+#: app/templates/login.html:27
+msgid "Sign in"
+msgstr "Se connecter"
+
+#: app/templates/subnet.html:79
+msgid "Stale"
+msgstr "Obsolète"
+
+#: app/templates/partials/_ip_detail.html:6
+#: app/templates/partials/_ip_detail.html:35
+#: app/templates/partials/_ip_form.html:21 app/templates/subnet.html:64
+#: app/templates/subnet.html:97 app/templates/subnet_plan.html:36
+msgid "Status"
+msgstr "Statut"
+
+#: app/services/ipam.py:126
+#, python-format
+msgid "Subnet %(cidr)s is full (%(capacity)d usable addresses)."
+msgstr "Le subnet %(cidr)s est plein (%(capacity)d adresses utilisables)."
+
+#: app/templates/subnet.html:101
+msgid "Targets"
+msgstr "Cibles"
+
+#: app/services/csv_io.py:105
+msgid "The file is empty."
+msgstr "Le fichier est vide."
+
+#: app/templates/partials/_reseau_form.html:5
+msgid "This instance manages a single network. Root prefixes are informative only."
+msgstr "Cette instance gère un seul réseau. Les préfixes racine sont purement informatifs."
+
+#: app/templates/partials/_a_traiter.html:5
+msgid "To review"
+msgstr "À traiter"
+
+#: app/templates/partials/_stats.html:20
+msgid "To review (red)"
+msgstr "À traiter (rouges)"
+
+#: app/templates/base.html:48
+msgid "Toggle light/dark theme"
+msgstr "Basculer le thème clair/sombre"
+
+#: app/templates/import_export.html:21
+msgid "Tolerant import for migrating from an Excel export: common column aliases are recognized (ip, adresse, hostname, nom, mac, statut…), duplicates are skipped, missing VLANs are created from the CIDR column (or a /24 by default)."
+msgstr "Import tolérant pour migrer depuis un export Excel : les alias de colonnes courants sont reconnus (ip, adresse, hostname, nom, mac, statut…), les doublons sont ignorés, les VLAN manquants sont créés depuis la colonne CIDR (ou un /24 par défaut)."
+
+#: app/routers/auth.py:44
+#, python-format
+msgid "Too many attempts. Try again in %d seconds."
+msgstr "Trop de tentatives. Réessayez dans %d secondes."
+
+#: app/templates/partials/_stats.html:4
+msgid "Total IPs"
+msgstr "IP totales"
+
+#: app/templates/partials/_health_legend.html:9
+msgid "Up but aging, or down recently"
+msgstr "Up mais vieillissant, ou down récemment"
+
+#: app/templates/partials/_health_legend.html:8
+msgid "Up, recent success"
+msgstr "Up, succès récent"
+
+#: app/templates/partials/_ip_form.html:23 app/templates/partials/_stats.html:8
+#: app/templates/subnet.html:67
+msgid "Used"
+msgstr "Utilisées"
+
+#: app/templates/audit.html:19
+msgid "User"
+msgstr "Utilisateur"
+
+#: app/routers/users.py:24
+msgid "User not found."
+msgstr "Utilisateur introuvable."
+
+#: app/routers/users.py:91
+#, python-format
+msgid "User “%s” created."
+msgstr "Utilisateur « %s » créé."
+
+#: app/routers/users.py:165
+#, python-format
+msgid "User “%s” deleted."
+msgstr "Utilisateur « %s » supprimé."
+
+#: app/routers/users.py:122
+#, python-format
+msgid "User “%s” updated."
+msgstr "Utilisateur « %s » mis à jour."
+
+#: app/templates/login.html:19 app/templates/partials/_user_form.html:13
+#: app/templates/users.html:23
+msgid "Username"
+msgstr "Identifiant"
+
+#: app/routers/users.py:75
+msgid "Username is required."
+msgstr "L'identifiant est requis."
+
+#: app/routers/users.py:81
+#, python-format
+msgid "Username “%s” is already taken."
+msgstr "L'identifiant « %s » est déjà pris."
+
+#: app/templates/base.html:44 app/templates/users.html:2
+#: app/templates/users.html:8 app/templates/users.html:14
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: app/routers/ips.py:77 app/routers/ips.py:103 app/routers/subnets.py:23
+msgid "VLAN not found."
+msgstr "VLAN introuvable."
+
+#: app/templates/dashboard.html:48
+msgid "VLAN tag"
+msgstr "Tag VLAN"
+
+#: app/templates/partials/_subnet_form.html:18
+msgid "VLAN tag (1–4094, optional)"
+msgstr "Tag VLAN (1–4094, facultatif)"
+
+#: app/routers/subnets.py:45 app/routers/subnets.py:48
+msgid "VLAN tag must be a number between 1 and 4094."
+msgstr "Le tag VLAN doit être un nombre entre 1 et 4094."
+
+#: app/routers/subnets.py:120
+#, python-format
+msgid "VLAN “%s” created."
+msgstr "VLAN « %s » créé."
+
+#: app/routers/subnets.py:181
+#, python-format
+msgid "VLAN “%s” deleted (with its addresses and targets)."
+msgstr "VLAN « %s » supprimé (avec ses adresses et ses cibles)."
+
+#: app/routers/subnets.py:169
+#, python-format
+msgid "VLAN “%s” updated."
+msgstr "VLAN « %s » mis à jour."
+
+#: app/templates/dashboard.html:35
+msgid "VLANs"
+msgstr "VLAN"
+
+#: app/templates/partials/_import_report.html:22
+msgid "View the result on the dashboard"
+msgstr "Voir le résultat sur le tableau de bord"
+
+#: app/templates/subnet.html:77
+msgid "Warning"
+msgstr "Vieillissant"
+
+#: app/templates/audit.html:43
+msgid "When"
+msgstr "Quand"
+
+#: app/templates/audit.html:44
+msgid "Who"
+msgstr "Qui"
+
+#: app/templates/base.html:37
+msgid "Your account cannot modify anything."
+msgstr "Votre compte ne peut rien modifier."
+
+#: app/templates/partials/_monitor_row.html:6
+msgid "disabled"
+msgstr "désactivée"
+
+#: app/templates/partials/_monitor_form.html:30
+msgid "e.g. HTTPS admin UI"
+msgstr "ex. interface d'admin HTTPS"
+
+#: app/templates/partials/_ip_form.html:41
+msgid "e.g. NAS, printer, hypervisor…"
+msgstr "ex. NAS, imprimante, hyperviseur…"
+
+#: app/templates/partials/_audit_rows.html:11
+msgid "field(s)"
+msgstr "champ(s)"
+
+#: app/templates/subnet_plan.html:56
+msgid "free (not recorded)"
+msgstr "libre (non enregistrée)"
+
+#: app/templates/partials/_a_traiter.html:19
+msgid "last success:"
+msgstr "dernier succès :"
+
+#: app/templates/partials/_user_form.html:24
+#: app/templates/partials/_user_form.html:38
+msgid "manager (read/write)"
+msgstr "manager (lecture/écriture)"
+
+#: app/i18n.py:87 app/i18n.py:99
+msgid "never"
+msgstr "jamais"
+
+#: app/templates/subnet_plan.html:18
+msgid "recorded"
+msgstr "enregistrées"
+
+#: app/templates/partials/_monitor_row.html:13
+msgid "unknown"
+msgstr "inconnu"
+
+#: app/templates/subnet_plan.html:18
+msgid "usable addresses"
+msgstr "adresses utilisables"
+
+#: app/templates/partials/_user_form.html:23
+#: app/templates/partials/_user_form.html:37
+msgid "user (read-only)"
+msgstr "user (lecture seule)"
+
+#: app/templates/partials/_user_row.html:2
+msgid "you"
+msgstr "vous"
+
+#: app/services/ipam.py:55
+#, python-format
+msgid "“%s” is not a valid IPv4 address."
+msgstr "« %s » n'est pas une adresse IPv4 valide."
+
+#: app/services/ipam.py:71
+#, python-format
+msgid "“%s” is not a valid MAC address."
+msgstr "« %s » n'est pas une adresse MAC valide."
+
+#: app/routers/reseau.py:29
+#, python-format
+msgid "“%s” is not a valid network prefix."
+msgstr "« %s » n'est pas un préfixe réseau valide."
+
+#: app/templates/users.html:39
+msgid "“manager” = read/write. “user” = read-only. The last active manager can be neither demoted nor deleted."
+msgstr "« manager » = lecture/écriture. « user » = lecture seule. Le dernier manager actif ne peut être ni rétrogradé ni supprimé."
+

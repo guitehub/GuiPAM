@@ -1,0 +1,30 @@
+<tr id="ip-{{ ip.id }}">
+  {% include "partials/_health_cell.html" %}
+  <td class="font-mono">
+    <button type="button" class="underline decoration-dotted"
+            hx-get="/ips/{{ ip.id }}" hx-target="#ip-detail-{{ ip.id }}" hx-trigger="click once"
+            onclick="document.getElementById('ip-detail-tr-{{ ip.id }}').classList.toggle('hidden')"
+            title="{{ _("Show details") }}">{{ ip.address }}</button>
+  </td>
+  <td><span class="{{ ip.status | status_css }}">{{ ip.status | status_label }}</span></td>
+  <td>{{ ip.hostname or "—" }}</td>
+  <td>{{ ip.device_label or "—" }}</td>
+  <td class="font-mono text-xs">{{ ip.mac or "—" }}</td>
+  <td>{{ ip.monitors | selectattr("enabled") | list | length }}</td>
+  <td class="text-xs text-muted-foreground">{{ ip_last_checked(ip) | relative }}</td>
+  <td class="text-right whitespace-nowrap">
+    {% if ip.monitors %}
+      <button type="button" class="btn-sm-ghost"
+              hx-post="/ips/{{ ip.id }}/check" hx-target="#ip-{{ ip.id }}" hx-swap="outerHTML"
+              title="{{ _("Check all targets of this IP now") }}">{{ _("Check") }}</button>
+    {% endif %}
+    {% if user.role.value == "manager" %}
+      <button type="button" class="btn-sm-ghost" hx-get="/ips/{{ ip.id }}/edit" hx-target="#modal">{{ _("Edit") }}</button>
+      <button type="button" class="btn-sm-ghost text-destructive"
+              hx-delete="/ips/{{ ip.id }}"
+              hx-confirm="{{ _("Delete address %(address)s and its monitor targets?", address=ip.address) }}">
+        {{ _("Delete") }}
+      </button>
+    {% endif %}
+  </td>
+</tr>

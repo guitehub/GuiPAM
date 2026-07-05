@@ -1,0 +1,40 @@
+<dialog class="dialog w-full max-w-lg">
+  <article>
+    <header>
+      <h2 class="text-lg font-semibold">{{ _("Network settings") }}</h2>
+      <p class="text-sm text-muted-foreground">{{ _("This instance manages a single network. Root prefixes are informative only.") }}</p>
+    </header>
+    <section>
+      {% include "partials/_form_errors.html" %}
+      <form class="form grid gap-4" hx-post="/reseau" hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid gap-2">
+          <label for="reseau-name">{{ _("Name") }} *</label>
+          <input id="reseau-name" name="name" required value="{{ reseau.name }}">
+        </div>
+        <div class="grid gap-2">
+          <label for="reseau-description">{{ _("Description") }}</label>
+          <input id="reseau-description" name="description" value="{{ reseau.description or "" }}">
+        </div>
+        <div class="grid gap-2">
+          <label for="reseau-prefixes">{{ _("Root prefixes (one per line, informative)") }}</label>
+          <textarea id="reseau-prefixes" name="root_prefixes" rows="3" placeholder="10.0.0.0/8&#10;192.168.0.0/16">{{ (reseau.root_prefixes or []) | join("\n") }}</textarea>
+        </div>
+        <div class="grid gap-2">
+          <label for="reseau-notes">{{ _("Notes") }}</label>
+          <textarea id="reseau-notes" name="notes" rows="3">{{ reseau.notes or "" }}</textarea>
+        </div>
+        <div class="grid gap-2">
+          <label for="reseau-locale">{{ _("Default language") }}</label>
+          <select id="reseau-locale" name="default_locale" class="select">
+            <option value="fr" {{ "selected" if reseau.default_locale == "fr" }}>Français</option>
+            <option value="en" {{ "selected" if reseau.default_locale == "en" }}>English</option>
+          </select>
+        </div>
+        <footer class="flex justify-end gap-2">
+          <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
+          <button type="submit" class="btn-primary">{{ _("Save") }}</button>
+        </footer>
+      </form>
+    </section>
+  </article>
+</dialog>

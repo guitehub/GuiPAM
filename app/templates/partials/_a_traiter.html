@@ -1,0 +1,26 @@
+{% if attention %}
+<div class="card mb-6 border-[var(--health-red)]">
+  <header>
+    <h2 class="font-semibold flex items-center gap-2">
+      <span class="health-dot health-red"></span> {{ _("To review") }}
+      <span class="badge-destructive">{{ attention | length }}</span>
+    </h2>
+    <p class="text-xs text-muted-foreground">{{ _("Addresses whose targets no longer respond, worst first. Fix them or clean up stale entries.") }}</p>
+  </header>
+  <section class="p-0">
+    <table class="table w-full text-sm">
+      <tbody>
+        {% for item in attention %}
+        <tr>
+          <td class="w-8"><span class="health-dot {{ item.health | health_css }}" title="{{ item.health | health_label }}"></span></td>
+          <td><a class="underline font-mono" href="/subnets/{{ item.subnet.id }}#ip-{{ item.ip.id }}">{{ item.ip.address }}</a></td>
+          <td>{{ item.ip.hostname or item.ip.device_label or "—" }}</td>
+          <td class="text-muted-foreground">{{ item.subnet.name }}</td>
+          <td class="text-muted-foreground">{{ _("last success:") }} {{ item.last_ok_at | relative }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endif %}

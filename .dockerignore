@@ -1,0 +1,15 @@
+.git
+.venv
+data
+.env
+*.db
+*.db-wal
+*.db-shm
+__pycache__
+*.pyc
+.pytest_cache
+tests
+scripts
+node_modules
+.claude
+app/static/app.css

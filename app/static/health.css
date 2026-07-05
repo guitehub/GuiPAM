@@ -1,0 +1,60 @@
+/* Couleurs de santé GuiPAM (§7.3) — feuille dédiée, indépendante du build Tailwind. */
+
+:root {
+  --health-unknown: #9ca3af;   /* gris : jamais vérifié */
+  --health-ok: #22c55e;        /* vert : succès récent */
+  --health-warn: #f59e0b;      /* ambre : vieillissant / down récent */
+  --health-red: #ef4444;       /* rouge : down depuis un moment */
+  --health-dark-red: #7f1d1d;  /* rouge foncé : down / stale, à nettoyer */
+  --health-none: transparent;  /* aucune cible */
+}
+
+.dark {
+  --health-unknown: #6b7280;
+  --health-ok: #4ade80;
+  --health-warn: #fbbf24;
+  --health-red: #f87171;
+  --health-dark-red: #991b1b;
+}
+
+.health-dot {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.health-unknown  { background-color: var(--health-unknown); }
+.health-ok       { background-color: var(--health-ok); }
+.health-warn     { background-color: var(--health-warn); }
+.health-red      { background-color: var(--health-red); }
+.health-dark-red { background-color: var(--health-dark-red); }
+.health-none     { background-color: var(--health-none); border: 1px dashed var(--health-unknown); }
+
+/* Pastille animée quand tout va bien récent : discret battement. */
+.health-dot.health-red, .health-dot.health-dark-red {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--health-red) 25%, transparent);
+}
+
+/* Badge texte assorti (légende, détail cible). */
+.health-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid currentColor;
+}
+.health-badge.health-unknown  { color: var(--health-unknown); background: transparent; }
+.health-badge.health-ok       { color: var(--health-ok); background: transparent; }
+.health-badge.health-warn     { color: var(--health-warn); background: transparent; }
+.health-badge.health-red      { color: var(--health-red); background: transparent; }
+.health-badge.health-dark-red { color: var(--health-dark-red); background: transparent; }
+.health-badge.health-none     { color: var(--health-unknown); border-style: dashed; background: transparent; }
+.health-badge .health-dot { width: 0.5rem; height: 0.5rem; }
+
+[x-cloak] { display: none !important; }

@@ -1,0 +1,63 @@
+<dialog class="dialog w-full max-w-md">
+  <article>
+    <header>
+      <h2 class="text-lg font-semibold">
+        {% if target_user %}{{ _("Edit user “%(name)s”", name=target_user.username) }}{% else %}{{ _("New user") }}{% endif %}
+      </h2>
+    </header>
+    <section class="space-y-6">
+      {% include "partials/_form_errors.html" %}
+      {% if not target_user %}
+      <form class="form grid gap-4" hx-post="/users" hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid gap-2">
+          <label for="user-username">{{ _("Username") }} *</label>
+          <input id="user-username" name="username" required autocomplete="off">
+        </div>
+        <div class="grid gap-2">
+          <label for="user-password">{{ _("Password (8 characters minimum)") }} *</label>
+          <input id="user-password" name="password" type="password" required minlength="8" autocomplete="new-password">
+        </div>
+        <div class="grid gap-2">
+          <label for="user-role">{{ _("Role") }}</label>
+          <select id="user-role" name="role" class="select">
+            <option value="user">{{ _("user (read-only)") }}</option>
+            <option value="manager">{{ _("manager (read/write)") }}</option>
+          </select>
+        </div>
+        <footer class="flex justify-end gap-2">
+          <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
+          <button type="submit" class="btn-primary">{{ _("Create") }}</button>
+        </footer>
+      </form>
+      {% else %}
+      <form class="form grid gap-4" hx-patch="/users/{{ target_user.id }}" hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid gap-2">
+          <label for="user-role">{{ _("Role") }}</label>
+          <select id="user-role" name="role" class="select">
+            <option value="user" {{ "selected" if target_user.role.value == "user" }}>{{ _("user (read-only)") }}</option>
+            <option value="manager" {{ "selected" if target_user.role.value == "manager" }}>{{ _("manager (read/write)") }}</option>
+          </select>
+        </div>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" class="checkbox" name="is_active" {{ "checked" if target_user.is_active }}>
+          {{ _("Active account") }}
+        </label>
+        <footer class="flex justify-end gap-2">
+          <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
+          <button type="submit" class="btn-primary">{{ _("Save") }}</button>
+        </footer>
+      </form>
+      <form class="form grid gap-4 border-t border-border pt-4"
+            hx-post="/users/{{ target_user.id }}/password" hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid gap-2">
+          <label for="user-new-password">{{ _("Reset password (8 characters minimum)") }}</label>
+          <input id="user-new-password" name="password" type="password" required minlength="8" autocomplete="new-password">
+        </div>
+        <footer class="flex justify-end">
+          <button type="submit" class="btn-outline">{{ _("Reset password") }}</button>
+        </footer>
+      </form>
+      {% endif %}
+    </section>
+  </article>
+</dialog>

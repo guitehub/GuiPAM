@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Import / Export") }}{% endblock %}
+
+{% block breadcrumb %}
+<nav class="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
+  <a href="/" class="underline">{{ _("Dashboard") }}</a>
+  <span aria-hidden="true"> › </span>
+  <span class="text-foreground">{{ _("Import / Export") }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+{% set manager = user.role.value == "manager" %}
+<h1 class="text-xl font-semibold mb-4">{{ _("Import / Export") }}</h1>
+
+<div class="grid md:grid-cols-2 gap-6">
+  <div class="card">
+    <header>
+      <h2 class="font-semibold">{{ _("Import a CSV file") }}</h2>
+      <p class="text-sm text-muted-foreground">
+        {{ _("Tolerant import for migrating from an Excel export: common column aliases are recognized (ip, adresse, hostname, nom, mac, statut…), duplicates are skipped, missing VLANs are created from the CIDR column (or a /24 by default).") }}
+      </p>
+    </header>
+    <section>
+      {% if manager %}
+      <form hx-post="/import" hx-target="#import-report" hx-swap="innerHTML" hx-encoding="multipart/form-data"
+            class="form grid gap-4">
+        <input type="file" name="file" accept=".csv,text/csv" required class="input">
+        <button type="submit" class="btn-primary justify-self-start">{{ _("Import") }}</button>
+      </form>
+      {% else %}
+      <p class="text-sm text-muted-foreground">{{ _("Read-only account: import is not available.") }}</p>
+      {% endif %}
+      <div id="import-report" class="mt-4">
+        {% if report %}{% include "partials/_import_report.html" %}{% endif %}
+      </div>
+    </section>
+  </div>
+
+  <div class="card">
+    <header>
+      <h2 class="font-semibold">{{ _("Export to CSV") }}</h2>
+      <p class="text-sm text-muted-foreground">
+        {{ _("Full export of all addresses, in a format that can be re-imported as is (backup or migration).") }}
+      </p>
+    </header>
+    <section>
+      <a href="/export.csv" class="btn-outline">{{ _("Download export.csv") }}</a>
+    </section>
+  </div>
+</div>
+{% endblock %}

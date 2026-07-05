@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}GuiPAM{% endblock %} — {{ reseau.name if reseau else "GuiPAM" }}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+  <script>
+    // Anti-FOUC : applique le thème avant le premier rendu.
+    (function () {
+      const stored = localStorage.getItem("guipam-theme");
+      if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/health.css">
+  <script src="/static/vendor/htmx.min.js"></script>
+  <script defer src="/static/vendor/basecoat.all.min.js"></script>
+  <script defer src="/static/vendor/alpine.min.js"></script>
+  <script defer src="/static/app.js"></script>
+</head>
+<body class="min-h-screen bg-background text-foreground"
+      hx-headers='{"X-CSRF-Token": "{{ csrf_token }}"}'>
+
+  <header class="border-b border-border bg-card">
+    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4 flex-wrap">
+      <a href="/" class="flex items-center gap-2 font-semibold text-lg">
+        <span aria-hidden="true">🌐</span> GuiPAM
+      </a>
+      {% if reseau %}
+        <span class="text-muted-foreground text-sm truncate">{{ reseau.name }}</span>
+      {% endif %}
+      {% if user %}
+        {% if user.role.value == "user" %}
+          <span class="badge-secondary" title="{{ _("Your account cannot modify anything.") }}">{{ _("Read-only") }}</span>
+        {% endif %}
+        <nav class="flex items-center gap-1 ml-auto text-sm">
+          <a href="/" class="btn-sm-ghost">{{ _("Dashboard") }}</a>
+          <a href="/audit" class="btn-sm-ghost">{{ _("Audit log") }}</a>
+          <a href="/import" class="btn-sm-ghost">{{ _("Import / Export") }}</a>
+          {% if user.role.value == "manager" %}
+            <a href="/users" class="btn-sm-ghost">{{ _("Users") }}</a>
+          {% endif %}
+          {% include "partials/_health_legend.html" %}
+          <button type="button" class="btn-sm-icon-ghost" data-theme-toggle
+                  title="{{ _("Toggle light/dark theme") }}" aria-label="{{ _("Toggle light/dark theme") }}">
+            <span class="dark:hidden" aria-hidden="true">🌙</span><span class="hidden dark:inline" aria-hidden="true">☀️</span>
+          </button>
+          <div x-data="{open: false}" class="relative">
+            <button type="button" class="btn-sm-ghost" @click="open = !open" @click.outside="open = false">
+              👤 {{ user.username }}
+            </button>
+            <div x-show="open" x-cloak x-transition.opacity
+                 class="absolute right-0 mt-1 w-56 rounded-md border border-border bg-popover p-2 shadow-md z-50 space-y-2">
+              <form method="post" action="/locale" class="flex items-center gap-2">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <label class="label text-xs" for="locale-select">{{ _("Language") }}</label>
+                <select id="locale-select" name="locale" class="select flex-1 h-8 text-xs" onchange="this.form.submit()">
+                  <option value="fr" {{ "selected" if locale == "fr" }}>Français</option>
+                  <option value="en" {{ "selected" if locale == "en" }}>English</option>
+                </select>
+              </form>
+              <form method="post" action="/logout">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="btn-sm-outline w-full">{{ _("Log out") }}</button>
+              </form>
+            </div>
+          </div>
+        </nav>
+      {% endif %}
+    </div>
+  </header>
+
+  {% block breadcrumb %}{% endblock %}
+
+  <main class="mx-auto max-w-6xl px-4 py-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="mx-auto max-w-6xl px-4 py-6 text-xs text-muted-foreground">
+    GuiPAM v{{ app_version }} — <a class="underline" href="https://opensource.org/license/mit" rel="noopener">MIT</a>
+  </footer>
+
+  <div id="modal"></div>
+
+  <dialog id="confirm-dialog" class="dialog w-full max-w-sm">
+    <article>
+      <header>
+        <h2 class="text-lg font-semibold">{{ _("Are you sure?") }}</h2>
+        <p id="confirm-message" class="text-sm text-muted-foreground"></p>
+      </header>
+      <footer class="flex justify-end gap-2">
+        <button type="button" class="btn-outline" data-confirm-cancel>{{ _("Cancel") }}</button>
+        <button type="button" class="btn-destructive" data-confirm-ok>{{ _("Confirm") }}</button>
+      </footer>
+    </article>
+  </dialog>
+
+  <div id="toaster" class="toaster" data-align="end"></div>
+
+  {% set flashes = request.session.pop("flash", []) %}
+  {% if flashes %}
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      {% for f in flashes %}
+      document.dispatchEvent(new CustomEvent("basecoat:toast", {
+        detail: { config: { category: {{ f.category | tojson }}, title: {{ f.message | tojson }}, duration: 5000 } }
+      }));
+      {% endfor %}
+    });
+  </script>
+  {% endif %}
+</body>
+</html>

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Dashboard") }}{% endblock %}
+{% block content %}
+{% set manager = user.role.value == "manager" %}
+
+{# ---- Panneau infos réseau ---- #}
+<div class="card mb-6" id="reseau-panel">
+  <header class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-xl font-semibold">{{ reseau.name }}</h1>
+      {% if reseau.description %}<p class="text-sm text-muted-foreground">{{ reseau.description }}</p>{% endif %}
+    </div>
+    {% if manager %}
+      <button type="button" class="btn-sm-outline" hx-get="/reseau/edit" hx-target="#modal">{{ _("Edit") }}</button>
+    {% endif %}
+  </header>
+  <section class="text-sm space-y-1">
+    {% if reseau.root_prefixes %}
+      <p><span class="text-muted-foreground">{{ _("Root prefixes:") }}</span>
+        {% for prefix in reseau.root_prefixes %}<code class="badge-outline mr-1">{{ prefix }}</code>{% endfor %}
+      </p>
+    {% endif %}
+    {% if reseau.notes %}<p class="whitespace-pre-line text-muted-foreground">{{ reseau.notes }}</p>{% endif %}
+  </section>
+</div>
+
+{# ---- Stats + à traiter (rafraîchis par polling) ---- #}
+<div id="stats-block"
+     hx-get="/dashboard/stats" hx-trigger="every {{ settings.health_poll_seconds }}s" hx-swap="innerHTML">
+  {% include "partials/_stats_block.html" %}
+</div>
+
+{# ---- Liste des VLAN ---- #}
+<div class="flex items-center justify-between mt-8 mb-3">
+  <h2 class="text-lg font-semibold">{{ _("VLANs") }}</h2>
+  {% if manager %}
+    <button type="button" class="btn" hx-get="/subnets/new" hx-target="#modal">{{ _("New VLAN") }}</button>
+  {% endif %}
+</div>
+
+{% if summaries %}
+<div class="card overflow-x-auto">
+  <section class="p-0">
+    <table class="table w-full">
+      <thead>
+        <tr>
+          <th></th>
+          <th>{{ _("VLAN tag") }}</th>
+          <th>{{ _("Name") }}</th>
+          <th>{{ _("CIDR") }}</th>
+          <th>{{ _("Gateway") }}</th>
+          <th>{{ _("Occupancy") }}</th>
+          <th>{{ _("IPs") }}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for summary in summaries %}
+          {% include "partials/_subnet_row.html" %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% else %}
+<div class="card">
+  <section class="text-center py-10 text-muted-foreground">
+    <p class="text-3xl mb-2" aria-hidden="true">🗂️</p>
+    <p>{{ _("No VLAN yet. Create your first VLAN to start tracking addresses.") }}</p>
+    {% if manager %}
+      <button type="button" class="btn mt-4" hx-get="/subnets/new" hx-target="#modal">{{ _("New VLAN") }}</button>
+    {% else %}
+      <p class="text-xs mt-2">{{ _("Ask a manager to create it.") }}</p>
+    {% endif %}
+  </section>
+</div>
+{% endif %}
+{% endblock %}

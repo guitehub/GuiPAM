@@ -1,0 +1,17 @@
+<tr>
+  <td class="font-medium">{{ target_user.username }}{% if target_user.id == user.id %} <span class="badge-outline">{{ _("you") }}</span>{% endif %}</td>
+  <td>
+    {% if target_user.role.value == "manager" %}<span class="badge-primary">manager</span>
+    {% else %}<span class="badge-secondary">user</span>{% endif %}
+  </td>
+  <td>{% if target_user.is_active %}✓{% else %}<span class="text-muted-foreground">✗</span>{% endif %}</td>
+  <td class="text-sm text-muted-foreground">{{ target_user.last_login_at | relative }}</td>
+  <td class="text-right whitespace-nowrap">
+    <button type="button" class="btn-sm-ghost" hx-get="/users/{{ target_user.id }}/edit" hx-target="#modal">{{ _("Edit") }}</button>
+    <button type="button" class="btn-sm-ghost text-destructive"
+            hx-delete="/users/{{ target_user.id }}"
+            hx-confirm="{{ _("Delete user “%(name)s”? Their audit entries are kept.", name=target_user.username) }}">
+      {{ _("Delete") }}
+    </button>
+  </td>
+</tr>

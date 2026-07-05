@@ -1,0 +1,7 @@
+/* Source Tailwind v4 : compilé en app/static/app.css par le binaire standalone
+   (build Docker ou `make css`). Ne pas éditer app.css à la main. */
+@import "tailwindcss";
+@import "../vendor/basecoat.css";
+
+@source "../../templates";
+@source "../app.js";

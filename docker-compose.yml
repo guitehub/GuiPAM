@@ -1,0 +1,20 @@
+services:
+  guipam:
+    build: .
+    container_name: guipam
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # Tout l'état de GuiPAM vit ici : sauvegardez ce dossier comme vous voulez.
+      - ./data:/data
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      GUIPAM_DB_PATH: /data/guipam.db
+      # GUIPAM_SECRET_KEY et GUIPAM_ADMIN_PASSWORD sont requis : voir .env.example
+    cap_add:
+      # Requis pour le ping ICMP. Supprimez cette section et mettez
+      # GUIPAM_ENABLE_PING=false pour un fonctionnement TCP-only.
+      - NET_RAW

@@ -1,0 +1,24 @@
+<div class="space-y-2 text-sm" role="status">
+  <div class="flex gap-2 flex-wrap">
+    <span class="badge-primary">{{ _("%(count)d created", count=report.created) }}</span>
+    {% if report.subnets_created %}
+      <span class="badge-secondary">{{ _("%(count)d VLAN(s) created", count=report.subnets_created) }}</span>
+    {% endif %}
+    <span class="badge-outline">{{ _("%(count)d skipped (duplicates)", count=report.skipped) }}</span>
+    {% if report.errors %}
+      <span class="badge-destructive">{{ _("%(count)d error(s)", count=report.errors | length) }}</span>
+    {% endif %}
+  </div>
+  {% if report.errors %}
+    <div class="alert-destructive" role="alert">
+      <section>
+        <ul class="list-disc pl-4 space-y-1 max-h-48 overflow-y-auto">
+          {% for error in report.errors %}<li>{{ error }}</li>{% endfor %}
+        </ul>
+      </section>
+    </div>
+  {% endif %}
+  {% if report.created %}
+    <p><a class="underline" href="/">{{ _("View the result on the dashboard") }}</a></p>
+  {% endif %}
+</div>

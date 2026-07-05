@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Plan") }} — {{ subnet.name }}{% endblock %}
+
+{% block breadcrumb %}
+<nav class="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
+  <a href="/" class="underline">{{ _("Dashboard") }}</a>
+  <span aria-hidden="true"> › </span>
+  <a href="/subnets/{{ subnet.id }}" class="underline">{{ subnet.name }}</a>
+  <span aria-hidden="true"> › </span>
+  <span class="text-foreground">{{ _("Plan view") }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <div>
+    <h1 class="text-xl font-semibold">{{ _("Plan view") }} — {{ subnet.name }}</h1>
+    <p class="text-sm text-muted-foreground font-mono">{{ subnet.cidr }} · {{ stats.capacity }} {{ _("usable addresses") }} · {{ stats.used }} {{ _("recorded") }}</p>
+  </div>
+  <a href="/subnets/{{ subnet.id }}" class="btn-sm-outline">{{ _("Back to VLAN") }}</a>
+</div>
+
+{% if truncated %}
+<div class="alert mb-4" role="status">
+  <section>{{ _("Large subnet: only the first %(max)d addresses are shown.", max=plan_max) }}</section>
+</div>
+{% endif %}
+
+<div class="card overflow-x-auto">
+  <section class="p-0">
+    <table class="table w-full text-sm">
+      <thead>
+        <tr>
+          <th class="w-8"></th>
+          <th>{{ _("Address") }}</th>
+          <th>{{ _("Status") }}</th>
+          <th>{{ _("Hostname") }}</th>
+          <th>{{ _("Device") }}</th>
+          <th>{{ _("Description") }}</th>
+        </tr>
+      </thead>
+      <tbody class="[&_td]:py-1">
+        {% for entry in entries %}
+        <tr {% if not entry.ip %}class="opacity-60"{% endif %}>
+          {% if entry.ip %}
+            {% set h = ip_health(entry.ip.monitors) %}
+            <td class="w-8"><span class="health-dot {{ h | health_css }}" title="{{ h | health_label }}"></span></td>
+            <td class="font-mono">{{ entry.address }}</td>
+            <td><span class="{{ entry.ip.status | status_css }}">{{ entry.ip.status | status_label }}</span></td>
+            <td>{{ entry.ip.hostname or "—" }}</td>
+            <td>{{ entry.ip.device_label or "—" }}</td>
+            <td class="text-muted-foreground truncate max-w-64">{{ entry.ip.description or "" }}</td>
+          {% else %}
+            <td class="w-8"><span class="health-dot health-none"></span></td>
+            <td class="font-mono text-muted-foreground">{{ entry.address }}</td>
+            <td class="text-muted-foreground text-xs" colspan="4">{{ _("free (not recorded)") }}</td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

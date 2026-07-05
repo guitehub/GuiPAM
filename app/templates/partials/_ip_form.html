@@ -1,0 +1,55 @@
+<dialog class="dialog w-full max-w-lg">
+  <article>
+    <header>
+      <h2 class="text-lg font-semibold">
+        {% if ip %}{{ _("Edit address %(address)s", address=ip.address) }}{% else %}{{ _("New IP in %(name)s", name=subnet.name) }}{% endif %}
+      </h2>
+      <p class="text-sm text-muted-foreground font-mono">{{ subnet.cidr }}</p>
+    </header>
+    <section>
+      {% include "partials/_form_errors.html" %}
+      <form class="form grid gap-4"
+            {% if ip %}hx-patch="/ips/{{ ip.id }}"{% else %}hx-post="/subnets/{{ subnet.id }}/ips"{% endif %}
+            hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="grid gap-2">
+            <label for="ip-address">{{ _("Address") }} *</label>
+            <input id="ip-address" name="address" required placeholder="192.168.10.5"
+                   value="{{ ip.address if ip else "" }}">
+          </div>
+          <div class="grid gap-2">
+            <label for="ip-status">{{ _("Status") }}</label>
+            <select id="ip-status" name="status" class="select">
+              <option value="utilisee" {{ "selected" if ip and ip.status.value == "utilisee" }}>{{ _("Used") }}</option>
+              <option value="libre" {{ "selected" if ip and ip.status.value == "libre" }}>{{ _("Free") }}</option>
+              <option value="reservee" {{ "selected" if ip and ip.status.value == "reservee" }}>{{ _("Reserved") }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="grid gap-2">
+            <label for="ip-hostname">{{ _("Hostname") }}</label>
+            <input id="ip-hostname" name="hostname" value="{{ ip.hostname if ip and ip.hostname else "" }}">
+          </div>
+          <div class="grid gap-2">
+            <label for="ip-mac">{{ _("MAC address") }}</label>
+            <input id="ip-mac" name="mac" placeholder="aa:bb:cc:dd:ee:ff" value="{{ ip.mac if ip and ip.mac else "" }}">
+          </div>
+        </div>
+        <div class="grid gap-2">
+          <label for="ip-device">{{ _("Device label") }}</label>
+          <input id="ip-device" name="device_label" placeholder="{{ _("e.g. NAS, printer, hypervisor…") }}"
+                 value="{{ ip.device_label if ip and ip.device_label else "" }}">
+        </div>
+        <div class="grid gap-2">
+          <label for="ip-description">{{ _("Description") }}</label>
+          <textarea id="ip-description" name="description" rows="2">{{ ip.description if ip and ip.description else "" }}</textarea>
+        </div>
+        <footer class="flex justify-end gap-2">
+          <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
+          <button type="submit" class="btn-primary">{{ _("Save") }}</button>
+        </footer>
+      </form>
+    </section>
+  </article>
+</dialog>

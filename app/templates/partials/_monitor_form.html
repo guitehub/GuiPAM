@@ -1,0 +1,51 @@
+<dialog class="dialog w-full max-w-md">
+  <article>
+    <header>
+      <h2 class="text-lg font-semibold">
+        {% if target %}{{ _("Edit monitor target") }}{% else %}{{ _("New monitor target on %(address)s", address=ip.address) }}{% endif %}
+      </h2>
+      <p class="text-sm text-muted-foreground">{{ _("A TCP port check, or an ICMP ping if no port is relevant.") }}</p>
+    </header>
+    <section>
+      {% include "partials/_form_errors.html" %}
+      <form class="form grid gap-4" x-data="{proto: {{ (target.protocol.value if target else "tcp") | tojson }}}"
+            {% if target %}hx-patch="/monitors/{{ target.id }}"{% else %}hx-post="/ips/{{ ip.id }}/monitors"{% endif %}
+            hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="grid gap-2">
+            <label for="monitor-protocol">{{ _("Protocol") }}</label>
+            <select id="monitor-protocol" name="protocol" class="select" x-model="proto">
+              <option value="tcp">TCP</option>
+              <option value="icmp">ICMP (ping)</option>
+            </select>
+          </div>
+          <div class="grid gap-2" x-show="proto === 'tcp'">
+            <label for="monitor-port">{{ _("Port") }}</label>
+            <input id="monitor-port" name="port" type="number" min="1" max="65535" placeholder="8443"
+                   value="{{ target.port if target and target.port else "" }}">
+          </div>
+        </div>
+        <div class="grid gap-2">
+          <label for="monitor-label">{{ _("Label") }}</label>
+          <input id="monitor-label" name="label" placeholder="{{ _("e.g. HTTPS admin UI") }}"
+                 value="{{ target.label if target and target.label else "" }}">
+        </div>
+        <div class="grid grid-cols-2 gap-4 items-end">
+          <div class="grid gap-2">
+            <label for="monitor-interval">{{ _("Interval (seconds)") }}</label>
+            <input id="monitor-interval" name="interval_seconds" type="number" min="5" max="86400"
+                   value="{{ target.interval_seconds if target else settings.default_check_interval }}">
+          </div>
+          <label class="flex items-center gap-2 text-sm pb-2">
+            <input type="checkbox" class="checkbox" name="enabled" {{ "checked" if not target or target.enabled }}>
+            {{ _("Enabled") }}
+          </label>
+        </div>
+        <footer class="flex justify-end gap-2">
+          <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
+          <button type="submit" class="btn-primary">{{ _("Save") }}</button>
+        </footer>
+      </form>
+    </section>
+  </article>
+</dialog>

@@ -1,0 +1,22 @@
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+  <div class="card"><section class="py-3">
+    <p class="text-2xl font-semibold">{{ data.total }}</p>
+    <p class="text-xs text-muted-foreground">{{ _("Total IPs") }}</p>
+  </section></div>
+  <div class="card"><section class="py-3">
+    <p class="text-2xl font-semibold">{{ data.used }}</p>
+    <p class="text-xs text-muted-foreground">{{ _("Used") }}</p>
+  </section></div>
+  <div class="card"><section class="py-3">
+    <p class="text-2xl font-semibold">{{ data.free }}</p>
+    <p class="text-xs text-muted-foreground">{{ _("Free") }}</p>
+  </section></div>
+  <div class="card"><section class="py-3">
+    <p class="text-2xl font-semibold">{{ data.reserved }}</p>
+    <p class="text-xs text-muted-foreground">{{ _("Reserved") }}</p>
+  </section></div>
+  <div class="card {% if data.red_count %}border-[var(--health-red)]{% endif %}"><section class="py-3">
+    <p class="text-2xl font-semibold {% if data.red_count %}text-[var(--health-red)]{% endif %}">{{ data.red_count }}</p>
+    <p class="text-xs text-muted-foreground">{{ _("To review (red)") }}</p>
+  </section></div>
+</div>

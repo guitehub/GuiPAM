@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Users") }}{% endblock %}
+
+{% block breadcrumb %}
+<nav class="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
+  <a href="/" class="underline">{{ _("Dashboard") }}</a>
+  <span aria-hidden="true"> › </span>
+  <span class="text-foreground">{{ _("Users") }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-semibold">{{ _("Users") }}</h1>
+  <button type="button" class="btn" hx-get="/users/new" hx-target="#modal">{{ _("New user") }}</button>
+</div>
+
+<div class="card overflow-x-auto">
+  <section class="p-0">
+    <table class="table w-full">
+      <thead>
+        <tr>
+          <th>{{ _("Username") }}</th>
+          <th>{{ _("Role") }}</th>
+          <th>{{ _("Active") }}</th>
+          <th>{{ _("Last login") }}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for target_user in users %}
+          {% include "partials/_user_row.html" %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+<p class="text-xs text-muted-foreground mt-3">
+  {{ _("“manager” = read/write. “user” = read-only. The last active manager can be neither demoted nor deleted.") }}
+</p>
+{% endblock %}

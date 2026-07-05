@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Sign in") }}{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-sm mt-16">
+  <div class="card">
+    <header>
+      <h1 class="text-xl font-semibold">{{ _("Sign in") }}</h1>
+      <p class="text-sm text-muted-foreground">{{ _("Access to GuiPAM requires an account. No self-registration.") }}</p>
+    </header>
+    <section>
+      {% if error %}
+        <div class="alert-destructive mb-4" role="alert">
+          <section>{{ error }}</section>
+        </div>
+      {% endif %}
+      <form method="post" action="/login" class="form grid gap-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <div class="grid gap-2">
+          <label for="username">{{ _("Username") }}</label>
+          <input id="username" name="username" type="text" autocomplete="username" required autofocus
+                 value="{{ username or "" }}">
+        </div>
+        <div class="grid gap-2">
+          <label for="password">{{ _("Password") }}</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn-primary w-full">{{ _("Sign in") }}</button>
+      </form>
+    </section>
+  </div>
+</div>
+{% endblock %}

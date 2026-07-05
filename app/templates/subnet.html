@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}{{ subnet.name }}{% endblock %}
+
+{% block breadcrumb %}
+<nav class="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
+  <a href="/" class="underline">{{ _("Dashboard") }}</a>
+  <span aria-hidden="true"> › </span>
+  <span class="text-foreground">{{ subnet.name }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+{% set manager = user.role.value == "manager" %}
+
+{# ---- Panneau infos VLAN ---- #}
+<div class="card mb-6">
+  <header class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-xl font-semibold flex items-center gap-2">
+        {{ subnet.name }}
+        {% if subnet.vlan_id %}<span class="badge-outline">VLAN {{ subnet.vlan_id }}</span>{% endif %}
+      </h1>
+      {% if subnet.description %}<p class="text-sm text-muted-foreground">{{ subnet.description }}</p>{% endif %}
+    </div>
+    <div class="flex gap-2">
+      <a href="/subnets/{{ subnet.id }}/plan" class="btn-sm-outline">{{ _("Plan view") }}</a>
+      {% if manager %}
+        <button type="button" class="btn-sm-outline" hx-get="/subnets/{{ subnet.id }}/edit" hx-target="#modal">{{ _("Edit") }}</button>
+      {% endif %}
+    </div>
+  </header>
+  <section>
+    <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2 text-sm">
+      <div><dt class="text-muted-foreground">{{ _("Network") }}</dt><dd class="font-mono">{{ stats.network_address }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Netmask") }}</dt><dd class="font-mono">{{ stats.netmask }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Broadcast") }}</dt><dd class="font-mono">{{ stats.broadcast }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Gateway") }}</dt><dd class="font-mono">{{ subnet.gateway or "—" }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("First usable IP") }}</dt><dd class="font-mono">{{ stats.first_usable }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Last usable IP") }}</dt><dd class="font-mono">{{ stats.last_usable }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Capacity") }}</dt><dd>{{ stats.capacity }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Occupancy") }}</dt><dd>{{ stats.used }} ({{ stats.occupancy_percent }}%)</dd></div>
+    </dl>
+    {% if subnet.notes %}<p class="mt-3 text-sm text-muted-foreground whitespace-pre-line">{{ subnet.notes }}</p>{% endif %}
+  </section>
+</div>
+
+{# ---- Grille des IP ---- #}
+<div class="flex items-center justify-between mb-3 gap-4 flex-wrap">
+  <h2 class="text-lg font-semibold">{{ _("IP addresses") }}</h2>
+  {% if manager %}
+    <button type="button" class="btn" hx-get="/subnets/{{ subnet.id }}/ips/new" hx-target="#modal">{{ _("New IP") }}</button>
+  {% endif %}
+</div>
+
+<form class="flex items-end gap-3 flex-wrap mb-4 text-sm" id="ip-filters"
+      hx-get="/subnets/{{ subnet.id }}" hx-target="#ip-rows" hx-swap="outerHTML"
+      hx-trigger="input delay:400ms, change">
+  <div class="grid gap-1">
+    <label class="label text-xs" for="filter-q">{{ _("Search") }}</label>
+    <input class="input h-8 w-56" id="filter-q" type="search" name="q" value="{{ filters.q }}"
+           placeholder="{{ _("IP, hostname, label, MAC…") }}">
+  </div>
+  <div class="grid gap-1">
+    <label class="label text-xs" for="filter-status">{{ _("Status") }}</label>
+    <select class="select h-8" id="filter-status" name="status">
+      <option value="">{{ _("All") }}</option>
+      <option value="utilisee" {{ "selected" if filters.status == "utilisee" }}>{{ _("Used") }}</option>
+      <option value="libre" {{ "selected" if filters.status == "libre" }}>{{ _("Free") }}</option>
+      <option value="reservee" {{ "selected" if filters.status == "reservee" }}>{{ _("Reserved") }}</option>
+    </select>
+  </div>
+  <div class="grid gap-1">
+    <label class="label text-xs" for="filter-health">{{ _("Health") }}</label>
+    <select class="select h-8" id="filter-health" name="health">
+      <option value="">{{ _("All") }}</option>
+      <option value="ok" {{ "selected" if filters.health == "ok" }}>{{ _("OK") }}</option>
+      <option value="warn" {{ "selected" if filters.health == "warn" }}>{{ _("Warning") }}</option>
+      <option value="red" {{ "selected" if filters.health == "red" }}>{{ _("Down") }}</option>
+      <option value="dark_red" {{ "selected" if filters.health == "dark_red" }}>{{ _("Stale") }}</option>
+      <option value="unknown" {{ "selected" if filters.health == "unknown" }}>{{ _("Never checked") }}</option>
+      <option value="none" {{ "selected" if filters.health == "none" }}>{{ _("No target") }}</option>
+    </select>
+  </div>
+  <label class="flex items-center gap-2 h-8 text-sm">
+    <input type="checkbox" class="checkbox" name="show_free" value="true" {{ "checked" if filters.show_free }}>
+    {{ _("Show free IPs") }}
+  </label>
+</form>
+
+<div class="card overflow-x-auto">
+  <section class="p-0">
+    <table class="table w-full">
+      <thead>
+        <tr>
+          <th class="w-8"></th>
+          <th>{{ _("Address") }}</th>
+          <th>{{ _("Status") }}</th>
+          <th>{{ _("Hostname") }}</th>
+          <th>{{ _("Device") }}</th>
+          <th>{{ _("MAC") }}</th>
+          <th>{{ _("Targets") }}</th>
+          <th>{{ _("Last check") }}</th>
+          <th></th>
+        </tr>
+      </thead>
+      {% include "partials/_ip_rows.html" %}
+    </table>
+  </section>
+</div>
+{% endblock %}

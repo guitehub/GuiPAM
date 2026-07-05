@@ -1,0 +1,20 @@
+<tbody id="audit-rows">
+  {% for entry in entries %}
+  <tr>
+    <td class="whitespace-nowrap text-muted-foreground" title="{{ entry.ts | dt }}">{{ entry.ts | relative }}</td>
+    <td class="font-medium">{{ entry.username }}</td>
+    <td><span class="badge-outline">{{ entry.action }}</span></td>
+    <td class="text-muted-foreground">{{ entry.entity_type }}{% if entry.entity_id %} #{{ entry.entity_id }}{% endif %}</td>
+    <td>
+      {% if entry.changes %}
+        <details>
+          <summary class="cursor-pointer text-xs text-muted-foreground">{{ entry.changes | length }} {{ _("field(s)") }}</summary>
+          <pre class="text-xs bg-muted rounded p-2 mt-1 overflow-x-auto max-w-xl">{{ entry.changes | tojson(indent=2) }}</pre>
+        </details>
+      {% else %}—{% endif %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="5" class="text-center py-8 text-muted-foreground">{{ _("No audit entries.") }}</td></tr>
+  {% endfor %}
+</tbody>

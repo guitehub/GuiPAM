@@ -1,0 +1,24 @@
+# Données locales & secrets
+data/
+.env
+*.db
+*.db-wal
+*.db-shm
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Assets construits (générés par le build Docker ou `make css`)
+app/static/app.css
+*.mo
+
+# Divers
+.claude/settings.local.json
+.cache/
+messages.pot
