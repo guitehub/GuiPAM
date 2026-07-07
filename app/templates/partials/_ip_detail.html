@@ -6,6 +6,8 @@
       <div><dt class="text-muted-foreground">{{ _("Status") }}</dt><dd><span class="{{ ip.status | status_css }}">{{ ip.status | status_label }}</span></dd></div>
       <div><dt class="text-muted-foreground">{{ _("Hostname") }}</dt><dd>{{ ip.hostname or "—" }}</dd></div>
       <div><dt class="text-muted-foreground">{{ _("Device") }}</dt><dd>{{ ip.device_label or "—" }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Hardware") }}</dt><dd>{{ ip.hardware or "—" }}</dd></div>
+      <div><dt class="text-muted-foreground">{{ _("Location") }}</dt><dd>{{ ip.location or "—" }}</dd></div>
       <div><dt class="text-muted-foreground">{{ _("MAC") }}</dt><dd class="font-mono">{{ ip.mac or "—" }}</dd></div>
       <div><dt class="text-muted-foreground">{{ _("Created") }}</dt><dd>{{ ip.created_at | dt }}</dd></div>
     </dl>

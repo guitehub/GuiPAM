@@ -89,6 +89,8 @@ class IPAddress(SQLModel, table=True):
     hostname: str | None = None
     mac: str | None = None
     device_label: str | None = None
+    hardware: str | None = None
+    location: str | None = None
     description: str | None = None
     status: IPStatus = Field(default=IPStatus.utilisee)
     created_at: datetime = Field(default_factory=utcnow)

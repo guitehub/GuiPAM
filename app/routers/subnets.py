@@ -207,7 +207,10 @@ def _filter_ips(
         if q:
             needle = q.lower()
             haystack = " ".join(
-                filter(None, [ip.address, ip.hostname, ip.device_label, ip.mac, ip.description])
+                filter(
+                    None,
+                    [ip.address, ip.hostname, ip.device_label, ip.hardware, ip.location, ip.mac, ip.description],
+                )
             ).lower()
             if needle not in haystack:
                 continue

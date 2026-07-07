@@ -34,6 +34,8 @@ def _ip_dict(ip: IPAddress) -> dict:
         "hostname": ip.hostname,
         "mac": ip.mac,
         "device_label": ip.device_label,
+        "hardware": ip.hardware,
+        "location": ip.location,
         "description": ip.description,
         "status": ip.status.value,
     }
@@ -96,6 +98,8 @@ async def create_ip(
     hostname: Annotated[str, Form()] = "",
     mac: Annotated[str, Form()] = "",
     device_label: Annotated[str, Form()] = "",
+    hardware: Annotated[str, Form()] = "",
+    location: Annotated[str, Form()] = "",
     description: Annotated[str, Form()] = "",
 ):
     subnet = await session.get(Subnet, subnet_id)
@@ -116,6 +120,8 @@ async def create_ip(
         hostname=hostname.strip() or None,
         mac=values["mac"],
         device_label=device_label.strip() or None,
+        hardware=hardware.strip() or None,
+        location=location.strip() or None,
         description=description.strip() or None,
         status=_parse_status(status),
     )
@@ -138,6 +144,8 @@ async def update_ip(
     hostname: Annotated[str, Form()] = "",
     mac: Annotated[str, Form()] = "",
     device_label: Annotated[str, Form()] = "",
+    hardware: Annotated[str, Form()] = "",
+    location: Annotated[str, Form()] = "",
     description: Annotated[str, Form()] = "",
 ):
     ip = await _get_ip(session, ip_id, with_monitors=False)
@@ -156,6 +164,8 @@ async def update_ip(
     ip.hostname = hostname.strip() or None
     ip.mac = values["mac"]
     ip.device_label = device_label.strip() or None
+    ip.hardware = hardware.strip() or None
+    ip.location = location.strip() or None
     ip.description = description.strip() or None
     ip.status = _parse_status(status)
     ip.updated_at = utcnow()

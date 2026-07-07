@@ -5,6 +5,11 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+### Added
+- Champs « Matériel » et « Lieu » sur les adresses IP : formulaire, détail, colonnes de la grille,
+  recherche plein texte, export/import CSV (alias `matériel`, `lieu`, `emplacement`, `site`…),
+  migration Alembic automatique au démarrage.
+
 ## [0.1.0] — 2026-07-05
 
 ### Added

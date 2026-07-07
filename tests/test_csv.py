@@ -72,3 +72,21 @@ class TestRoundTrip:
         assert report.created == 0
         assert report.skipped == 2
         assert not report.errors
+
+    async def test_materiel_et_lieu(self, db_session):
+        contenu = (
+            "ip;matériel;lieu\n"
+            "10.20.0.5;Dell R730;Salle serveur\n"
+        ).encode()
+        report = await csv_io.import_csv(db_session, contenu)
+        assert report.created == 1
+        assert not report.errors
+
+        exported = await csv_io.export_csv(db_session)
+        assert "Dell R730" in exported
+        assert "Salle serveur" in exported
+
+        # Round-trip : les colonnes hardware/location de l'export sont relues telles quelles.
+        report = await csv_io.import_csv(db_session, exported.encode())
+        assert report.created == 0
+        assert not report.errors

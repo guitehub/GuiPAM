@@ -41,6 +41,18 @@
           <input type="text" id="ip-device" name="device_label" placeholder="{{ _("e.g. NAS, printer, hypervisor…") }}"
                  value="{{ ip.device_label if ip and ip.device_label else "" }}">
         </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="grid gap-2">
+            <label for="ip-hardware">{{ _("Hardware") }}</label>
+            <input type="text" id="ip-hardware" name="hardware" placeholder="{{ _("e.g. Dell R730, Zyxel GS1200…") }}"
+                   value="{{ ip.hardware if ip and ip.hardware else "" }}">
+          </div>
+          <div class="grid gap-2">
+            <label for="ip-location">{{ _("Location") }}</label>
+            <input type="text" id="ip-location" name="location" placeholder="{{ _("e.g. server room, office 2…") }}"
+                   value="{{ ip.location if ip and ip.location else "" }}">
+          </div>
+        </div>
         <div class="grid gap-2">
           <label for="ip-description">{{ _("Description") }}</label>
           <textarea id="ip-description" name="description" rows="2">{{ ip.description if ip and ip.description else "" }}</textarea>

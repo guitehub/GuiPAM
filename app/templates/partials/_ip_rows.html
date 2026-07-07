@@ -2,7 +2,7 @@
   {% for ip in ips %}
     {% include "partials/_ip_row.html" %}
     <tr id="ip-detail-tr-{{ ip.id }}" class="hidden">
-      <td colspan="9" class="bg-muted/30 p-0">
+      <td colspan="11" class="bg-muted/30 p-0">
         <div id="ip-detail-{{ ip.id }}" class="p-4">
           <p class="text-sm text-muted-foreground">{{ _("Loading…") }}</p>
         </div>
@@ -10,7 +10,7 @@
     </tr>
   {% else %}
     <tr>
-      <td colspan="9" class="text-center py-8 text-muted-foreground">
+      <td colspan="11" class="text-center py-8 text-muted-foreground">
         {% if total_ips %}
           {{ _("No address matches these filters.") }}
         {% else %}

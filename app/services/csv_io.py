@@ -12,7 +12,10 @@ from app.models import IPAddress, IPStatus, Subnet, utcnow
 from app.services import ipam
 
 # En-têtes canoniques de l'export (le round-trip import/export les réutilise).
-EXPORT_COLUMNS = ["subnet_cidr", "address", "status", "hostname", "mac", "device_label", "description"]
+EXPORT_COLUMNS = [
+    "subnet_cidr", "address", "status", "hostname", "mac",
+    "device_label", "hardware", "location", "description",
+]
 
 # Alias de colonnes tolérés à l'import (clés normalisées : minuscules, sans accents).
 COLUMN_ALIASES: dict[str, str] = {
@@ -34,6 +37,11 @@ COLUMN_ALIASES: dict[str, str] = {
     "device_label": "device_label", "device": "device_label", "appareil": "device_label",
     "equipement": "device_label", "label": "device_label", "libelle": "device_label",
     "type": "device_label", "modele": "device_label",
+    # hardware
+    "hardware": "hardware", "materiel": "hardware",
+    # location
+    "location": "location", "lieu": "location", "lieux": "location",
+    "emplacement": "location", "site": "location", "salle": "location",
     # description
     "description": "description", "commentaire": "description", "comment": "description",
     "notes": "description", "note": "description", "remarque": "description",
@@ -156,6 +164,8 @@ async def import_csv(session: AsyncSession, content: bytes) -> ImportReport:
             hostname=record.get("hostname") or None,
             mac=mac,
             device_label=record.get("device_label") or None,
+            hardware=record.get("hardware") or None,
+            location=record.get("location") or None,
             description=record.get("description") or None,
             status=parse_status(record.get("status")),
         )
@@ -219,6 +229,8 @@ async def export_csv(session: AsyncSession) -> str:
                 ip.hostname or "",
                 ip.mac or "",
                 ip.device_label or "",
+                ip.hardware or "",
+                ip.location or "",
                 ip.description or "",
             ]
         )

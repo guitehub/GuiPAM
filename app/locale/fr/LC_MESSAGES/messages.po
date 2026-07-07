@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GuiPAM 0.1.0\n"
+"Project-Id-Version: GuiPAM VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-07-05 23:05+0200\n"
+"POT-Creation-Date: 2026-07-07 17:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -76,7 +76,7 @@ msgstr "Actif"
 msgid "Active account"
 msgstr "Compte actif"
 
-#: app/templates/partials/_ip_detail.html:23
+#: app/templates/partials/_ip_detail.html:25
 msgid "Add target"
 msgstr "Ajouter une cible"
 
@@ -96,17 +96,17 @@ msgstr "L'adresse %(address)s existe déjà dans le VLAN « %(name)s »."
 msgid "Address %(address)s is outside subnet %(cidr)s."
 msgstr "L'adresse %(address)s est hors du subnet %(cidr)s."
 
-#: app/routers/ips.py:126
+#: app/routers/ips.py:132
 #, python-format
 msgid "Address %s created."
 msgstr "Adresse %s créée."
 
-#: app/routers/ips.py:177
+#: app/routers/ips.py:187
 #, python-format
 msgid "Address %s deleted."
 msgstr "Adresse %s supprimée."
 
-#: app/routers/ips.py:165
+#: app/routers/ips.py:175
 #, python-format
 msgid "Address %s updated."
 msgstr "Adresse %s mise à jour."
@@ -160,7 +160,7 @@ msgstr "CIDR"
 msgid "CIDR %(cidr)s overlaps VLAN “%(name)s” (%(other)s)."
 msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
 
-#: app/templates/base.html:95 app/templates/partials/_ip_form.html:49
+#: app/templates/base.html:95 app/templates/partials/_ip_form.html:61
 #: app/templates/partials/_monitor_form.html:45
 #: app/templates/partials/_reseau_form.html:34
 #: app/templates/partials/_subnet_form.html:44
@@ -190,13 +190,13 @@ msgstr "Capacité"
 msgid "Changes"
 msgstr "Modifications"
 
-#: app/templates/partials/_ip_detail.html:32
-#: app/templates/partials/_ip_row.html:19
+#: app/templates/partials/_ip_detail.html:34
+#: app/templates/partials/_ip_row.html:21
 #: app/templates/partials/_monitor_row.html:21
 msgid "Check"
 msgstr "Vérifier"
 
-#: app/templates/partials/_ip_row.html:19
+#: app/templates/partials/_ip_row.html:21
 msgid "Check all targets of this IP now"
 msgstr "Vérifier toutes les cibles de cette IP maintenant"
 
@@ -208,7 +208,7 @@ msgstr "Confirmer"
 msgid "Create"
 msgstr "Créer"
 
-#: app/templates/partials/_ip_detail.html:10
+#: app/templates/partials/_ip_detail.html:12
 msgid "Created"
 msgstr "Créée le"
 
@@ -223,7 +223,7 @@ msgstr "Tableau de bord"
 msgid "Default language"
 msgstr "Langue par défaut"
 
-#: app/templates/partials/_ip_row.html:26
+#: app/templates/partials/_ip_row.html:28
 #: app/templates/partials/_monitor_row.html:27
 #: app/templates/partials/_subnet_row.html:23
 #: app/templates/partials/_user_row.html:14
@@ -235,7 +235,7 @@ msgstr "Supprimer"
 msgid "Delete VLAN “%(name)s” and all its addresses and targets?"
 msgstr "Supprimer le VLAN « %(name)s » et toutes ses adresses et cibles ?"
 
-#: app/templates/partials/_ip_row.html:25
+#: app/templates/partials/_ip_row.html:27
 #, python-format
 msgid "Delete address %(address)s and its monitor targets?"
 msgstr "Supprimer l'adresse %(address)s et ses cibles de suivi ?"
@@ -249,7 +249,7 @@ msgstr "Supprimer cette cible de suivi ?"
 msgid "Delete user “%(name)s”? Their audit entries are kept."
 msgstr "Supprimer l'utilisateur « %(name)s » ? Ses entrées d'audit sont conservées."
 
-#: app/templates/partials/_ip_form.html:45
+#: app/templates/partials/_ip_form.html:57
 #: app/templates/partials/_reseau_form.html:15
 #: app/templates/partials/_subnet_form.html:36
 #: app/templates/subnet_plan.html:39
@@ -284,8 +284,8 @@ msgstr "Down depuis un moment"
 msgid "Download export.csv"
 msgstr "Télécharger export.csv"
 
-#: app/templates/dashboard.html:14 app/templates/partials/_ip_detail.html:13
-#: app/templates/partials/_ip_row.html:22
+#: app/templates/dashboard.html:14 app/templates/partials/_ip_detail.html:15
+#: app/templates/partials/_ip_row.html:24
 #: app/templates/partials/_monitor_row.html:24
 #: app/templates/partials/_subnet_row.html:19
 #: app/templates/partials/_user_row.html:10 app/templates/subnet.html:28
@@ -322,7 +322,7 @@ msgstr "Entité"
 msgid "Export to CSV"
 msgstr "Exporter en CSV"
 
-#: app/templates/partials/_ip_detail.html:38
+#: app/templates/partials/_ip_detail.html:40
 msgid "Failures"
 msgstr "Échecs"
 
@@ -355,6 +355,11 @@ msgstr "La passerelle %(gateway)s est hors du subnet %(cidr)s."
 #: app/templates/partials/_subnet_form.html:30
 msgid "Gateway (optional)"
 msgstr "Passerelle (facultative)"
+
+#: app/templates/partials/_ip_detail.html:9
+#: app/templates/partials/_ip_form.html:46 app/templates/subnet.html:100
+msgid "Hardware"
+msgstr "Matériel"
 
 #: app/templates/subnet.html:73
 msgid "Health"
@@ -404,7 +409,7 @@ msgstr "Import / Export"
 msgid "Import a CSV file"
 msgstr "Importer un fichier CSV"
 
-#: app/templates/partials/_ip_detail.html:34
+#: app/templates/partials/_ip_detail.html:36
 msgid "Interval"
 msgstr "Intervalle"
 
@@ -435,7 +440,7 @@ msgstr "Jeton CSRF invalide ou manquant."
 msgid "Invalid username or password."
 msgstr "Identifiant ou mot de passe invalide."
 
-#: app/templates/partials/_ip_detail.html:33
+#: app/templates/partials/_ip_detail.html:35
 #: app/templates/partials/_monitor_form.html:29
 msgid "Label"
 msgstr "Libellé"
@@ -449,7 +454,7 @@ msgstr "Langue"
 msgid "Large subnet: only the first %(max)d addresses are shown."
 msgstr "Grand subnet : seules les %(max)d premières adresses sont affichées."
 
-#: app/templates/subnet.html:102
+#: app/templates/subnet.html:104
 msgid "Last check"
 msgstr "Dernier check"
 
@@ -457,7 +462,7 @@ msgstr "Dernier check"
 msgid "Last login"
 msgstr "Dernière connexion"
 
-#: app/templates/partials/_ip_detail.html:36
+#: app/templates/partials/_ip_detail.html:38
 msgid "Last success"
 msgstr "Dernier succès"
 
@@ -465,12 +470,12 @@ msgstr "Dernier succès"
 msgid "Last usable IP"
 msgstr "Dernière IP utile"
 
-#: app/templates/partials/_ip_detail.html:37
+#: app/templates/partials/_ip_detail.html:39
 msgid "Latency"
 msgstr "Latence"
 
-#: app/services/csv_io.py:128 app/services/csv_io.py:135
-#: app/services/csv_io.py:149
+#: app/services/csv_io.py:136 app/services/csv_io.py:143
+#: app/services/csv_io.py:157
 #, python-format
 msgid "Line %(line)d: %(error)s"
 msgstr "Ligne %(line)d : %(error)s"
@@ -479,11 +484,16 @@ msgstr "Ligne %(line)d : %(error)s"
 msgid "Loading…"
 msgstr "Chargement…"
 
+#: app/templates/partials/_ip_detail.html:10
+#: app/templates/partials/_ip_form.html:51 app/templates/subnet.html:101
+msgid "Location"
+msgstr "Lieu"
+
 #: app/templates/base.html:67
 msgid "Log out"
 msgstr "Se déconnecter"
 
-#: app/templates/partials/_ip_detail.html:9 app/templates/subnet.html:100
+#: app/templates/partials/_ip_detail.html:11 app/templates/subnet.html:102
 msgid "MAC"
 msgstr "MAC"
 
@@ -508,7 +518,7 @@ msgstr "Cible de suivi introuvable."
 msgid "Monitor target updated."
 msgstr "Cible de suivi mise à jour."
 
-#: app/templates/partials/_ip_detail.html:20
+#: app/templates/partials/_ip_detail.html:22
 msgid "Monitor targets"
 msgstr "Cibles de suivi"
 
@@ -568,7 +578,7 @@ msgstr "Nouvel utilisateur"
 msgid "Next"
 msgstr "Suivante"
 
-#: app/services/csv_io.py:110
+#: app/services/csv_io.py:118
 msgid "No IP address column found in the file."
 msgstr "Aucune colonne d'adresse IP trouvée dans le fichier."
 
@@ -592,7 +602,7 @@ msgstr "Aucune entrée d'audit."
 msgid "No monitor target"
 msgstr "Aucune cible de suivi"
 
-#: app/templates/partials/_ip_detail.html:50
+#: app/templates/partials/_ip_detail.html:52
 msgid "No monitor target. Add a TCP port check or an ICMP ping to track this address."
 msgstr "Aucune cible de suivi. Ajoutez un check de port TCP ou un ping ICMP pour suivre cette adresse."
 
@@ -699,7 +709,7 @@ msgstr "Préfixes racine (un par ligne, informatif)"
 msgid "Root prefixes:"
 msgstr "Préfixes racine :"
 
-#: app/templates/partials/_ip_form.html:50
+#: app/templates/partials/_ip_form.html:62
 #: app/templates/partials/_monitor_form.html:46
 #: app/templates/partials/_reseau_form.html:35
 #: app/templates/partials/_subnet_form.html:45
@@ -729,7 +739,7 @@ msgid "Stale"
 msgstr "Obsolète"
 
 #: app/templates/partials/_ip_detail.html:6
-#: app/templates/partials/_ip_detail.html:35
+#: app/templates/partials/_ip_detail.html:37
 #: app/templates/partials/_ip_form.html:21 app/templates/subnet.html:64
 #: app/templates/subnet.html:97 app/templates/subnet_plan.html:36
 msgid "Status"
@@ -740,11 +750,11 @@ msgstr "Statut"
 msgid "Subnet %(cidr)s is full (%(capacity)d usable addresses)."
 msgstr "Le subnet %(cidr)s est plein (%(capacity)d adresses utilisables)."
 
-#: app/templates/subnet.html:101
+#: app/templates/subnet.html:103
 msgid "Targets"
 msgstr "Cibles"
 
-#: app/services/csv_io.py:105
+#: app/services/csv_io.py:113
 msgid "The file is empty."
 msgstr "Le fichier est vide."
 
@@ -832,7 +842,7 @@ msgstr "L'identifiant « %s » est déjà pris."
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: app/routers/ips.py:77 app/routers/ips.py:103 app/routers/subnets.py:23
+#: app/routers/ips.py:79 app/routers/ips.py:107 app/routers/subnets.py:23
 msgid "VLAN not found."
 msgstr "VLAN introuvable."
 
@@ -891,6 +901,10 @@ msgstr "Votre compte ne peut rien modifier."
 msgid "disabled"
 msgstr "désactivée"
 
+#: app/templates/partials/_ip_form.html:47
+msgid "e.g. Dell R730, Zyxel GS1200…"
+msgstr "ex. Dell R730, Zyxel GS1200…"
+
 #: app/templates/partials/_monitor_form.html:30
 msgid "e.g. HTTPS admin UI"
 msgstr "ex. interface d'admin HTTPS"
@@ -898,6 +912,10 @@ msgstr "ex. interface d'admin HTTPS"
 #: app/templates/partials/_ip_form.html:41
 msgid "e.g. NAS, printer, hypervisor…"
 msgstr "ex. NAS, imprimante, hyperviseur…"
+
+#: app/templates/partials/_ip_form.html:52
+msgid "e.g. server room, office 2…"
+msgstr "ex. salle serveur, bureau 2…"
 
 #: app/templates/partials/_audit_rows.html:11
 msgid "field(s)"
