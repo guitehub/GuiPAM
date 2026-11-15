@@ -22,7 +22,7 @@ from app.config import Settings, get_settings
 from app.database import dispose_engine, init_engine, session_factory
 from app.deps import NotAuthenticatedError
 from app.i18n import LOCALE_COOKIE, negotiate_locale, set_locale
-from app.models import RESEAU_SINGLETON_ID, Reseau, Role, User
+from app.models import RESEAU_SINGLETON_ID, Reseau, Role, Subnet, User
 from app.routers import (
     audit as audit_router,
     auth as auth_router,
@@ -36,7 +36,7 @@ from app.routers import (
     subnets as subnets_router,
     users as users_router,
 )
-from app.services import backup
+from app.services import backup, ipam
 from app.services.auth import CSRF_SESSION_KEY, generate_csrf_token, hash_password
 from app.services.monitor import scheduler_tick
 
@@ -160,6 +160,7 @@ def create_app() -> FastAPI:
 
         user = None
         reseau = None
+        nav_subnets: list[Subnet] = []
         try:
             async with session_factory()() as session:
                 user_id = request.session.get("user_id")
@@ -168,10 +169,16 @@ def create_app() -> FastAPI:
                     if user is not None and not user.is_active:
                         user = None
                 reseau = await session.get(Reseau, RESEAU_SINGLETON_ID)
+                # Menu « Réseaux » : seulement pour les pages complètes (les partials
+                # HTMX n'étendent pas base.html).
+                if user is not None and not request.headers.get("hx-request"):
+                    rows = (await session.exec(select(Subnet))).all()
+                    nav_subnets = sorted(rows, key=lambda s: ipam.network_sort_key(s.cidr))
         except RuntimeError:
             pass  # moteur non initialisé (tests unitaires sans DB)
         request.state.user = user
         request.state.reseau = reseau
+        request.state.nav_subnets = nav_subnets
         set_locale(
             negotiate_locale(
                 user.locale if user else None,

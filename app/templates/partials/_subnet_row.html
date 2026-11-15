@@ -1,3 +1,4 @@
+{% from "partials/_icons.html" import icon %}
 <tr>
   <td class="w-8"><span class="health-dot {{ summary.health | health_css }}" title="{{ summary.health | health_label }}"></span></td>
   <td>{% if summary.subnet.vlan_id %}<span class="badge-outline">{{ summary.subnet.vlan_id }}</span>{% else %}—{% endif %}</td>
@@ -16,12 +17,12 @@
   <td class="text-sm">{{ summary.ip_count }}</td>
   <td class="text-right whitespace-nowrap">
     {% if user.role.value == "manager" %}
-      <button type="button" class="btn-sm-ghost" hx-get="/subnets/{{ summary.subnet.id }}/edit" hx-target="#modal">{{ _("Edit") }}</button>
-      <button type="button" class="btn-sm-ghost text-destructive"
+      <button type="button" class="btn-sm-icon-ghost" hx-get="/subnets/{{ summary.subnet.id }}/edit" hx-target="#modal"
+              title="{{ _("Edit") }}" aria-label="{{ _("Edit") }}">{{ icon("pencil") }}</button>
+      <button type="button" class="btn-sm-icon-ghost text-destructive"
               hx-delete="/subnets/{{ summary.subnet.id }}"
-              hx-confirm="{{ _("Delete VLAN “%(name)s” and all its addresses and targets?", name=summary.subnet.name) }}">
-        {{ _("Delete") }}
-      </button>
+              hx-confirm="{{ _("Delete VLAN “%(name)s” and all its addresses and targets?", name=summary.subnet.name) }}"
+              title="{{ _("Delete") }}" aria-label="{{ _("Delete") }}">{{ icon("trash") }}</button>
     {% endif %}
   </td>
 </tr>

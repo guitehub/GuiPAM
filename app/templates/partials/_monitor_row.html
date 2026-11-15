@@ -1,3 +1,4 @@
+{% from "partials/_icons.html" import icon %}
 {% set h = health(target) %}
 <tr id="monitor-{{ target.id }}" {% if not target.enabled %}class="opacity-50"{% endif %}>
   <td class="w-8"><span class="health-dot {{ h | health_css }}" title="{{ h | health_label }}"></span></td>
@@ -5,7 +6,7 @@
     {% if target.protocol.value == "tcp" %}TCP :{{ target.port }}{% else %}ICMP ping{% endif %}
     {% if not target.enabled %}<span class="badge-outline ml-1">{{ _("disabled") }}</span>{% endif %}
   </td>
-  <td>{{ target.label or "—" }}</td>
+  <td class="cell-wrap">{{ target.label or "—" }}</td>
   <td class="text-xs">{{ target.interval_seconds }}s</td>
   <td class="text-xs">
     {% if target.last_status.value == "up" %}<span class="badge-primary">up</span>
@@ -16,15 +17,16 @@
   <td class="text-xs">{% if target.latency_ms is not none %}{{ "%.1f" | format(target.latency_ms) }} ms{% else %}—{% endif %}</td>
   <td class="text-xs">{{ target.consecutive_failures }}</td>
   <td class="text-right whitespace-nowrap">
-    <button type="button" class="btn-sm-ghost"
-            hx-post="/monitors/{{ target.id }}/check" hx-target="#monitor-{{ target.id }}" hx-swap="outerHTML">
-      {{ _("Check") }}
-    </button>
+    <button type="button" class="btn-sm-icon-ghost"
+            hx-post="/monitors/{{ target.id }}/check" hx-target="#monitor-{{ target.id }}" hx-swap="outerHTML"
+            title="{{ _("Check now") }}" aria-label="{{ _("Check now") }}">{{ icon("refresh") }}</button>
     {% if user.role.value == "manager" %}
-      <button type="button" class="btn-sm-ghost" hx-get="/monitors/{{ target.id }}/edit" hx-target="#modal">{{ _("Edit") }}</button>
-      <button type="button" class="btn-sm-ghost text-destructive"
+      <button type="button" class="btn-sm-icon-ghost" hx-get="/monitors/{{ target.id }}/edit" hx-target="#modal"
+              title="{{ _("Edit") }}" aria-label="{{ _("Edit") }}">{{ icon("pencil") }}</button>
+      <button type="button" class="btn-sm-icon-ghost text-destructive"
               hx-delete="/monitors/{{ target.id }}"
-              hx-confirm="{{ _("Delete this monitor target?") }}">{{ _("Delete") }}</button>
+              hx-confirm="{{ _("Delete this monitor target?") }}"
+              title="{{ _("Delete") }}" aria-label="{{ _("Delete") }}">{{ icon("trash") }}</button>
     {% endif %}
   </td>
 </tr>

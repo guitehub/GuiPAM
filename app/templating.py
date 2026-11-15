@@ -82,6 +82,7 @@ def render(
     ctx: dict[str, Any] = {
         "user": getattr(request.state, "user", None),
         "reseau": getattr(request.state, "reseau", None),
+        "nav_subnets": getattr(request.state, "nav_subnets", []),
         "csrf_token": request.session.get(CSRF_SESSION_KEY, ""),
         "locale": get_locale(),
         "settings": settings,

@@ -162,7 +162,7 @@ locale par défaut du réseau → français.
 GuiPAM se pilote aussi depuis des machines : tout ce que l'UI permet sur les VLAN, les IP et la
 supervision est disponible en JSON sous `/api/v1`, avec **exactement les mêmes règles métier**.
 
-1. Un manager ouvre **API** dans la barre de navigation, crée un **compte de service** puis une **clé**.
+1. Un manager ouvre **Administration › Comptes de service** dans la barre de navigation, crée un **compte de service** puis une **clé**.
    La clé n'est affichée qu'une fois (seule son empreinte SHA-256 est stockée) ; elle peut avoir une
    date d'expiration et se révoque d'un clic.
 2. L'outil envoie la clé à chaque requête : `Authorization: Bearer gpm_…`.

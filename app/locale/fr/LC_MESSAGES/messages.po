@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GuiPAM VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 15:51+0100\n"
+"POT-Creation-Date: 2026-11-15 18:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -38,12 +38,12 @@ msgstr "%(count)d erreur(s)"
 msgid "%(count)d skipped (duplicates)"
 msgstr "%(count)d ignorée(s) (doublons)"
 
-#: app/services/ipam.py:154
+#: app/services/ipam.py:178
 #, python-format
 msgid "%s is the broadcast address and cannot be assigned."
 msgstr "%s est l'adresse de broadcast et ne peut pas être attribuée."
 
-#: app/services/ipam.py:150
+#: app/services/ipam.py:174
 #, python-format
 msgid "%s is the network address and cannot be assigned."
 msgstr "%s est l'adresse réseau et ne peut pas être attribuée."
@@ -69,10 +69,7 @@ msgstr "Une clé en lecture-écriture nécessite un compte de service au rôle m
 msgid "A service account named “%s” already exists."
 msgstr "Un compte de service nommé « %s » existe déjà."
 
-#: app/templates/base.html:47
-msgid "API"
-msgstr "API"
-
+#: app/templates/partials/_main_nav.html:75
 #: app/templates/service_accounts.html:19
 msgid "API documentation"
 msgstr "Documentation de l'API"
@@ -82,6 +79,7 @@ msgid "API key not found."
 msgstr "Clé d'API introuvable."
 
 #: app/templates/partials/_api_key_form.html:14
+#: app/templates/partials/_main_nav.html:68
 #: app/templates/service_accounts.html:51
 msgid "Access"
 msgstr "Accès"
@@ -108,17 +106,17 @@ msgid "Add target"
 msgstr "Ajouter une cible"
 
 #: app/templates/partials/_ip_detail.html:5
-#: app/templates/partials/_ip_form.html:16 app/templates/subnet.html:96
+#: app/templates/partials/_ip_form.html:16 app/templates/subnet.html:98
 #: app/templates/subnet_plan.html:35
 msgid "Address"
 msgstr "Adresse"
 
-#: app/services/inventory.py:273 app/services/ipam.py:159
+#: app/services/inventory.py:273 app/services/ipam.py:183
 #, python-format
 msgid "Address %(address)s already exists in VLAN “%(name)s”."
 msgstr "L'adresse %(address)s existe déjà dans le VLAN « %(name)s »."
 
-#: app/services/ipam.py:143
+#: app/services/ipam.py:167
 #, python-format
 msgid "Address %(address)s is outside subnet %(cidr)s."
 msgstr "L'adresse %(address)s est hors du subnet %(cidr)s."
@@ -142,10 +140,18 @@ msgstr "Adresse %s mise à jour."
 msgid "Addresses whose targets no longer respond, worst first. Fix them or clean up stale entries."
 msgstr "Adresses dont les cibles ne répondent plus, les pires d'abord. Réparez-les ou nettoyez les entrées obsolètes."
 
+#: app/templates/partials/_main_nav.html:54
+msgid "Administration"
+msgstr "Administration"
+
 #: app/templates/audit.html:25 app/templates/audit.html:32
 #: app/templates/subnet.html:66 app/templates/subnet.html:75
 msgid "All"
 msgstr "Toutes"
+
+#: app/templates/partials/_main_nav.html:42
+msgid "All VLANs"
+msgstr "Tous les VLAN"
 
 #: app/templates/partials/_health_legend.html:13
 msgid "An IP shows the worst color of its active targets."
@@ -155,7 +161,7 @@ msgstr "Une IP affiche la pire couleur de ses cibles actives."
 msgid "An allocated address cannot have the status “libre”."
 msgstr "Une adresse allouée ne peut pas avoir le statut « libre »."
 
-#: app/templates/base.html:94
+#: app/templates/base.html:88
 msgid "Are you sure?"
 msgstr "Confirmer ?"
 
@@ -164,7 +170,7 @@ msgid "Ask a manager to create it."
 msgstr "Demandez à un manager de le créer."
 
 #: app/templates/audit.html:2 app/templates/audit.html:8
-#: app/templates/audit.html:13 app/templates/base.html:43
+#: app/templates/audit.html:13 app/templates/partials/_main_nav.html:65
 msgid "Audit log"
 msgstr "Journal d'audit"
 
@@ -191,8 +197,8 @@ msgstr "CIDR"
 msgid "CIDR %(cidr)s overlaps VLAN “%(name)s” (%(other)s)."
 msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
 
-#: app/templates/base.html:98 app/templates/partials/_api_key_form.html:29
-#: app/templates/partials/_ip_form.html:61
+#: app/templates/base.html:92 app/templates/partials/_api_key_form.html:29
+#: app/templates/partials/_ip_form.html:63
 #: app/templates/partials/_monitor_form.html:45
 #: app/templates/partials/_reseau_form.html:34
 #: app/templates/partials/_service_account_form.html:38
@@ -223,17 +229,15 @@ msgstr "Capacité"
 msgid "Changes"
 msgstr "Modifications"
 
-#: app/templates/partials/_ip_detail.html:34
-#: app/templates/partials/_ip_row.html:21
-#: app/templates/partials/_monitor_row.html:21
-msgid "Check"
-msgstr "Vérifier"
-
-#: app/templates/partials/_ip_row.html:21
+#: app/templates/partials/_ip_row.html:22
 msgid "Check all targets of this IP now"
 msgstr "Vérifier toutes les cibles de cette IP maintenant"
 
-#: app/templates/base.html:99
+#: app/templates/partials/_monitor_row.html:22
+msgid "Check now"
+msgstr "Vérifier maintenant"
+
+#: app/templates/base.html:93
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -266,31 +270,35 @@ msgstr "Créer la clé"
 msgid "Created"
 msgstr "Créée le"
 
-#: app/templates/audit.html:6 app/templates/base.html:42
-#: app/templates/dashboard.html:2 app/templates/import_export.html:6
+#: app/templates/audit.html:6 app/templates/dashboard.html:2
+#: app/templates/import_export.html:6 app/templates/partials/_main_nav.html:15
 #: app/templates/service_accounts.html:6 app/templates/subnet.html:6
 #: app/templates/subnet_plan.html:6 app/templates/users.html:6
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
+#: app/templates/partials/_main_nav.html:64
+msgid "Data"
+msgstr "Données"
+
 #: app/templates/partials/_reseau_form.html:27
 msgid "Default language"
 msgstr "Langue par défaut"
 
-#: app/templates/partials/_ip_row.html:28
-#: app/templates/partials/_monitor_row.html:27
-#: app/templates/partials/_subnet_row.html:23
+#: app/templates/partials/_ip_row.html:30
+#: app/templates/partials/_monitor_row.html:29
+#: app/templates/partials/_subnet_row.html:25
 #: app/templates/partials/_user_row.html:14
 #: app/templates/service_accounts.html:41
 msgid "Delete"
 msgstr "Supprimer"
 
-#: app/templates/partials/_subnet_row.html:22
+#: app/templates/partials/_subnet_row.html:24
 #, python-format
 msgid "Delete VLAN “%(name)s” and all its addresses and targets?"
 msgstr "Supprimer le VLAN « %(name)s » et toutes ses adresses et cibles ?"
 
-#: app/templates/partials/_ip_row.html:27
+#: app/templates/partials/_ip_row.html:29
 #, python-format
 msgid "Delete address %(address)s and its monitor targets?"
 msgstr "Supprimer l'adresse %(address)s et ses cibles de suivi ?"
@@ -300,7 +308,7 @@ msgstr "Supprimer l'adresse %(address)s et ses cibles de suivi ?"
 msgid "Delete service account “%(name)s”? All its keys stop working immediately. Audit entries are kept."
 msgstr "Supprimer le compte de service « %(name)s » ? Toutes ses clés cessent de fonctionner immédiatement. Les entrées d'audit sont conservées."
 
-#: app/templates/partials/_monitor_row.html:27
+#: app/templates/partials/_monitor_row.html:28
 msgid "Delete this monitor target?"
 msgstr "Supprimer cette cible de suivi ?"
 
@@ -309,7 +317,7 @@ msgstr "Supprimer cette cible de suivi ?"
 msgid "Delete user “%(name)s”? Their audit entries are kept."
 msgstr "Supprimer l'utilisateur « %(name)s » ? Ses entrées d'audit sont conservées."
 
-#: app/templates/partials/_ip_form.html:57
+#: app/templates/partials/_ip_form.html:59
 #: app/templates/partials/_reseau_form.html:15
 #: app/templates/partials/_service_account_form.html:19
 #: app/templates/partials/_subnet_form.html:36
@@ -317,12 +325,12 @@ msgstr "Supprimer l'utilisateur « %(name)s » ? Ses entrées d'audit sont conse
 msgid "Description"
 msgstr "Description"
 
-#: app/templates/partials/_ip_detail.html:8 app/templates/subnet.html:99
+#: app/templates/partials/_ip_detail.html:8 app/templates/subnet.html:101
 #: app/templates/subnet_plan.html:38
 msgid "Device"
 msgstr "Appareil"
 
-#: app/templates/partials/_ip_form.html:40
+#: app/templates/partials/_ip_form.html:42
 msgid "Device label"
 msgstr "Libellé d'appareil"
 
@@ -359,9 +367,9 @@ msgid "Download export.csv"
 msgstr "Télécharger export.csv"
 
 #: app/templates/dashboard.html:14 app/templates/partials/_ip_detail.html:15
-#: app/templates/partials/_ip_row.html:24
-#: app/templates/partials/_monitor_row.html:24
-#: app/templates/partials/_subnet_row.html:19
+#: app/templates/partials/_ip_row.html:26
+#: app/templates/partials/_monitor_row.html:25
+#: app/templates/partials/_subnet_row.html:21
 #: app/templates/partials/_user_row.html:10
 #: app/templates/service_accounts.html:37 app/templates/subnet.html:28
 msgid "Edit"
@@ -430,10 +438,13 @@ msgstr "Fichier trop volumineux."
 msgid "First usable IP"
 msgstr "Première IP utile"
 
-#: app/templates/partials/_ip_form.html:24
-#: app/templates/partials/_stats.html:12 app/templates/subnet.html:68
+#: app/templates/partials/_ip_form.html:26 app/templates/subnet.html:68
 msgid "Free"
-msgstr "Libres"
+msgstr "Libre"
+
+#: app/templates/partials/_stats.html:12
+msgid "Free IPs"
+msgstr "IP libres"
 
 #: app/templates/import_export.html:56
 msgid "Full backup"
@@ -461,7 +472,7 @@ msgid "GuiPAM also keeps automatic snapshots of its database in the “backups�
 msgstr "GuiPAM conserve aussi des instantanés automatiques de sa base dans le dossier « backups » du volume de données : un avant chaque migration de schéma, et un par jour."
 
 #: app/templates/partials/_ip_detail.html:9
-#: app/templates/partials/_ip_form.html:46 app/templates/subnet.html:100
+#: app/templates/partials/_ip_form.html:48 app/templates/subnet.html:102
 msgid "Hardware"
 msgstr "Matériel"
 
@@ -475,7 +486,7 @@ msgid "Health color legend"
 msgstr "Légende du code couleur santé"
 
 #: app/templates/partials/_ip_detail.html:7
-#: app/templates/partials/_ip_form.html:31 app/templates/subnet.html:98
+#: app/templates/partials/_ip_form.html:33 app/templates/subnet.html:100
 #: app/templates/subnet_plan.html:37
 msgid "Hostname"
 msgstr "Nom d'hôte"
@@ -509,8 +520,8 @@ msgstr "Identifiant"
 msgid "Import"
 msgstr "Importer"
 
-#: app/templates/base.html:44 app/templates/import_export.html:2
-#: app/templates/import_export.html:8 app/templates/import_export.html:14
+#: app/templates/import_export.html:2 app/templates/import_export.html:8
+#: app/templates/import_export.html:14 app/templates/partials/_main_nav.html:66
 msgid "Import / Export"
 msgstr "Import / Export"
 
@@ -581,7 +592,7 @@ msgstr "Clé « %s » révoquée."
 msgid "Label"
 msgstr "Libellé"
 
-#: app/templates/base.html:62
+#: app/templates/base.html:56
 msgid "Language"
 msgstr "Langue"
 
@@ -590,7 +601,7 @@ msgstr "Langue"
 msgid "Large subnet: only the first %(max)d addresses are shown."
 msgstr "Grand subnet : seules les %(max)d premières adresses sont affichées."
 
-#: app/templates/subnet.html:104
+#: app/templates/subnet.html:106
 msgid "Last check"
 msgstr "Dernier check"
 
@@ -633,21 +644,25 @@ msgid "Loading…"
 msgstr "Chargement…"
 
 #: app/templates/partials/_ip_detail.html:10
-#: app/templates/partials/_ip_form.html:51 app/templates/subnet.html:101
+#: app/templates/partials/_ip_form.html:53 app/templates/subnet.html:103
 msgid "Location"
 msgstr "Lieu"
 
-#: app/templates/base.html:70
+#: app/templates/base.html:64
 msgid "Log out"
 msgstr "Se déconnecter"
 
-#: app/templates/partials/_ip_detail.html:11 app/templates/subnet.html:102
+#: app/templates/partials/_ip_detail.html:11 app/templates/subnet.html:104
 msgid "MAC"
 msgstr "MAC"
 
-#: app/templates/partials/_ip_form.html:35
+#: app/templates/partials/_ip_form.html:37
 msgid "MAC address"
 msgstr "Adresse MAC"
+
+#: app/templates/partials/_main_nav.html:14
+msgid "Main menu"
+msgstr "Menu principal"
 
 #: app/api/auth.py:74
 msgid "Missing, invalid, expired or revoked API key."
@@ -689,10 +704,11 @@ msgstr "Le nom est requis."
 msgid "Netmask"
 msgstr "Masque"
 
-#: app/templates/subnet.html:34
+#: app/templates/partials/_main_nav.html:59 app/templates/subnet.html:34
 msgid "Network"
 msgstr "Réseau"
 
+#: app/templates/partials/_main_nav.html:61
 #: app/templates/partials/_reseau_form.html:4
 msgid "Network settings"
 msgstr "Paramètres du réseau"
@@ -700,6 +716,10 @@ msgstr "Paramètres du réseau"
 #: app/routers/reseau.py:53
 msgid "Network settings saved."
 msgstr "Paramètres du réseau enregistrés."
+
+#: app/templates/partials/_main_nav.html:21
+msgid "Networks"
+msgstr "Réseaux"
 
 #: app/templates/partials/_health_legend.html:7 app/templates/subnet.html:80
 msgid "Never checked"
@@ -715,6 +735,7 @@ msgid "New IP in %(name)s"
 msgstr "Nouvelle IP dans %(name)s"
 
 #: app/templates/dashboard.html:37 app/templates/dashboard.html:71
+#: app/templates/partials/_main_nav.html:45
 #: app/templates/partials/_subnet_form.html:4
 msgid "New VLAN"
 msgstr "Nouveau VLAN"
@@ -749,6 +770,10 @@ msgstr "Suivante"
 #: app/services/csv_io.py:118
 msgid "No IP address column found in the file."
 msgstr "Aucune colonne d'adresse IP trouvée dans le fichier."
+
+#: app/templates/partials/_main_nav.html:39
+msgid "No VLAN yet."
+msgstr "Aucun VLAN pour l'instant."
 
 #: app/templates/dashboard.html:69
 msgid "No VLAN yet. Create your first VLAN to start tracking addresses."
@@ -876,10 +901,13 @@ msgstr "Compte en lecture seule : action non autorisée."
 msgid "Read-only account: import is not available."
 msgstr "Compte en lecture seule : l'import n'est pas disponible."
 
-#: app/templates/partials/_ip_form.html:25
-#: app/templates/partials/_stats.html:16 app/templates/subnet.html:69
+#: app/templates/partials/_ip_form.html:27 app/templates/subnet.html:69
 msgid "Reserved"
-msgstr "Réservées"
+msgstr "Réservée"
+
+#: app/templates/partials/_stats.html:16
+msgid "Reserved IPs"
+msgstr "IP réservées"
 
 #: app/templates/partials/_user_form.html:57
 msgid "Reset password"
@@ -920,7 +948,7 @@ msgstr "Préfixes racine (un par ligne, informatif)"
 msgid "Root prefixes:"
 msgstr "Préfixes racine :"
 
-#: app/templates/partials/_ip_form.html:62
+#: app/templates/partials/_ip_form.html:64
 #: app/templates/partials/_monitor_form.html:46
 #: app/templates/partials/_reseau_form.html:35
 #: app/templates/partials/_service_account_form.html:39
@@ -952,6 +980,7 @@ msgstr "Compte de service « %s » supprimé (ses clés ne fonctionnent plus)."
 msgid "Service account “%s” updated."
 msgstr "Compte de service « %s » mis à jour."
 
+#: app/templates/partials/_main_nav.html:71
 #: app/templates/service_accounts.html:2 app/templates/service_accounts.html:8
 #: app/templates/service_accounts.html:14
 msgid "Service accounts"
@@ -961,7 +990,7 @@ msgstr "Comptes de service"
 msgid "Service accounts let scripts, playbooks and AI agents use GuiPAM through its JSON API, with an access key."
 msgstr "Les comptes de service permettent à des scripts, des playbooks et des agents IA d'utiliser GuiPAM via son API JSON, avec une clé d'accès."
 
-#: app/templates/partials/_ip_row.html:7
+#: app/templates/partials/_ip_row.html:8
 msgid "Show details"
 msgstr "Afficher le détail"
 
@@ -984,17 +1013,21 @@ msgstr "État"
 
 #: app/templates/partials/_ip_detail.html:6
 #: app/templates/partials/_ip_detail.html:37
-#: app/templates/partials/_ip_form.html:21 app/templates/subnet.html:64
-#: app/templates/subnet.html:97 app/templates/subnet_plan.html:36
+#: app/templates/partials/_ip_form.html:23 app/templates/subnet.html:64
+#: app/templates/subnet.html:99 app/templates/subnet_plan.html:36
 msgid "Status"
 msgstr "Statut"
 
-#: app/services/ipam.py:126
+#: app/services/ipam.py:150
 #, python-format
 msgid "Subnet %(cidr)s is full (%(capacity)d usable addresses)."
 msgstr "Le subnet %(cidr)s est plein (%(capacity)d adresses utilisables)."
 
-#: app/templates/subnet.html:103
+#: app/templates/partials/_ip_detail.html:34
+msgid "Target"
+msgstr "Cible"
+
+#: app/templates/subnet.html:105
 msgid "Targets"
 msgstr "Cibles"
 
@@ -1049,7 +1082,7 @@ msgstr "À traiter"
 msgid "To review (red)"
 msgstr "À traiter (rouges)"
 
-#: app/templates/base.html:51
+#: app/templates/base.html:45
 msgid "Toggle light/dark theme"
 msgstr "Basculer le thème clair/sombre"
 
@@ -1074,10 +1107,13 @@ msgstr "Up mais vieillissant, ou down récemment"
 msgid "Up, recent success"
 msgstr "Up, succès récent"
 
-#: app/templates/partials/_ip_form.html:23 app/templates/partials/_stats.html:8
-#: app/templates/subnet.html:67
+#: app/templates/partials/_ip_form.html:25 app/templates/subnet.html:67
 msgid "Used"
-msgstr "Utilisées"
+msgstr "Utilisée"
+
+#: app/templates/partials/_stats.html:8
+msgid "Used IPs"
+msgstr "IP utilisées"
 
 #: app/templates/audit.html:19
 msgid "User"
@@ -1116,7 +1152,7 @@ msgstr "L'identifiant est requis."
 msgid "Username “%s” is already taken."
 msgstr "L'identifiant « %s » est déjà pris."
 
-#: app/templates/base.html:46 app/templates/users.html:2
+#: app/templates/partials/_main_nav.html:70 app/templates/users.html:2
 #: app/templates/users.html:8 app/templates/users.html:14
 msgid "Users"
 msgstr "Utilisateurs"
@@ -1181,12 +1217,12 @@ msgstr "Votre compte ne peut rien modifier."
 msgid "active"
 msgstr "active"
 
-#: app/templates/partials/_monitor_row.html:6
+#: app/templates/partials/_monitor_row.html:7
 #: app/templates/service_accounts.html:31
 msgid "disabled"
 msgstr "désactivé"
 
-#: app/templates/partials/_ip_form.html:47
+#: app/templates/partials/_ip_form.html:49
 msgid "e.g. Dell R730, Zyxel GS1200…"
 msgstr "ex. Dell R730, Zyxel GS1200…"
 
@@ -1194,11 +1230,11 @@ msgstr "ex. Dell R730, Zyxel GS1200…"
 msgid "e.g. HTTPS admin UI"
 msgstr "ex. interface d'admin HTTPS"
 
-#: app/templates/partials/_ip_form.html:41
+#: app/templates/partials/_ip_form.html:43
 msgid "e.g. NAS, printer, hypervisor…"
 msgstr "ex. NAS, imprimante, hyperviseur…"
 
-#: app/templates/partials/_ip_form.html:52
+#: app/templates/partials/_ip_form.html:54
 msgid "e.g. server room, office 2…"
 msgstr "ex. salle serveur, bureau 2…"
 
@@ -1252,7 +1288,7 @@ msgstr "enregistrées"
 msgid "revoked"
 msgstr "révoquée"
 
-#: app/templates/partials/_monitor_row.html:13
+#: app/templates/partials/_monitor_row.html:14
 msgid "unknown"
 msgstr "inconnu"
 

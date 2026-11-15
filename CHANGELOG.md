@@ -5,6 +5,27 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+### Changed
+- Barre de navigation réorganisée : **Tableau de bord**, menu **Réseaux** (accès direct à chaque VLAN,
+  VLAN courant mis en évidence, « Tous les VLAN », « Nouveau VLAN » pour les managers) et menu
+  **Administration** (paramètres du réseau, journal d'audit, import/export, utilisateurs, comptes de
+  service, documentation de l'API). L'entrée « API » devient « Comptes de service ».
+- Mise en page élargie (jusqu'à 1600 px, au lieu de 1152 px) : la grille des adresses IP tient sans
+  défilement horizontal dans une fenêtre de ~1400 px. Les actions des lignes (vérifier, modifier,
+  supprimer) deviennent des boutons icônes avec infobulle ; les textes libres (appareil, matériel, lieu)
+  passent à la ligne seulement si la place manque ; sur fenêtre étroite, les colonnes secondaires se
+  masquent par priorité (MAC < 1280 px ; matériel, lieu, nombre de cibles < 1024 px ; dernier check
+  < 768 px), leur contenu reste dans le détail de l'IP et dans la recherche.
+- Tableaux bord à bord dans leur carte (plus de bande vide au-dessus et au-dessous).
+
+### Fixed
+- VLAN triés dans l'ordre numérique des adresses (10.0.2.0/24 avant 10.0.10.0/24) et non plus
+  alphabétique, sur le tableau de bord comme dans le menu.
+- Statut d'une IP au singulier (« Utilisée », « Libre », « Réservée ») ; les compteurs du tableau de
+  bord deviennent « IP utilisées », « IP libres », « IP réservées ».
+- Texte des listes déroulantes de filtre centré verticalement (il était décalé vers le bas).
+- En-tête de colonne « Cible » (au lieu de « Vérifier ») dans les cibles de suivi d'une IP.
+
 ### Interne
 - Build reproductible : version de Tailwind figée (v4.3.5) dans le Dockerfile et le Makefile, au lieu de `latest`.
 - Intégration continue GitHub Actions : tests et construction de l'image Docker à chaque push, tag et pull request.

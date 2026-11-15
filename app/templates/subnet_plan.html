@@ -2,7 +2,7 @@
 {% block title %}{{ _("Plan") }} — {{ subnet.name }}{% endblock %}
 
 {% block breadcrumb %}
-<nav class="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
+<nav class="page-container pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
   <a href="/" class="underline">{{ _("Dashboard") }}</a>
   <span aria-hidden="true"> › </span>
   <a href="/subnets/{{ subnet.id }}" class="underline">{{ subnet.name }}</a>
@@ -26,8 +26,8 @@
 </div>
 {% endif %}
 
-<div class="card overflow-x-auto">
-  <section class="p-0">
+<div class="card table-card">
+  <section>
     <table class="table w-full text-sm">
       <thead>
         <tr>

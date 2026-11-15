@@ -7,9 +7,9 @@ Specs clés : voir README.md et ROADMAP.md.
 ## Commandes
 
 ```bash
-.venv/bin/pytest tests/ -q                 # 102 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde)
+.venv/bin/pytest tests/ -q                 # 106 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu)
 make css                                   # recompile app/static/app.css (binaire Tailwind standalone)
-make i18n                                  # extraction + régénération du .po fr + compilation .mo
+PATH="$PWD/.venv/bin:$PATH" make i18n      # extraction + régénération du .po fr + compilation .mo (le Makefile appelle `python`, absent hors venv)
 .venv/bin/python -m app.main               # serveur dev (env GUIPAM_* requis, voir .env.example)
 ```
 
@@ -61,6 +61,16 @@ Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `G
 - Mode sombre : toujours poser **les deux** marqueurs sur `<html>` — `data-theme="light|dark"` (guitestyle) et
   la classe `.dark` (Basecoat/Tailwind `dark:`). Fait par le script anti-FOUC de `base.html` et la bascule de `app.js`.
 
+## Mise en page (conventions)
+
+- Largeur : classe `page-container` (définie dans `input.css`, max 1600px) pour en-tête, fil d'Ariane, contenu,
+  pied — jamais de `max-w-*` local. Carte ne contenant qu'un tableau : `card table-card` + `<section>`.
+- Grille des IP = écran principal : elle doit tenir **sans défilement horizontal** jusqu'à ~700px. Texte libre
+  → `cell-wrap` (retour à la ligne seulement si nécessaire) ; identifiants (adresse, nom d'hôte, MAC) en nowrap ;
+  colonnes secondaires masquées par priorité (`hidden xl:table-cell`…), leur contenu restant dans le détail.
+- Actions de ligne : boutons icônes `btn-sm-icon-ghost` + `title` + `aria-label`, icônes via
+  `{% from "partials/_icons.html" import icon %}` (tracés Lucide en ligne, pas de bibliothèque).
+
 ## Pièges UI connus (déjà mordu)
 
 - **Basecoat ne style que `input[type=…]` explicites** : toujours mettre `type="text"` (etc.) sur les inputs.
@@ -97,6 +107,9 @@ aucune mise à jour ne perd de données, et une version majeure est toujours mig
 
 Toujours vérifier en réel (pas seulement pytest) : lancer le serveur, dérouler login → création → check.
 Pas de `python3-venv` sur ce poste : créer le venv avec `~/.local/bin/virtualenv .venv`.
+Captures d'écran (revue UI) : Playwright + Chromium dans un venv jetable ; les bibliothèques manquantes
+s'obtiennent sans sudo : `apt-get download libnspr4 libnss3 libasound2t64`, `dpkg-deb -x` dans un dossier,
+puis `LD_LIBRARY_PATH=<dossier>/usr/lib/x86_64-linux-gnu`. Mesurer `scrollWidth` vs `clientWidth` du tableau.
 Docker est disponible sur ce poste : l'image se build et démarre (validé le 2026-11-15, v0.2.0).
 Le port 8080 y est pris par Nextcloud → conteneur de test sur un autre port :
 `docker build -t guipam:test . && docker run -d --name guipam-test -p 127.0.0.1:8081:8080 -v guipam-test-data:/data

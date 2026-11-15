@@ -5,15 +5,15 @@
   </section></div>
   <div class="card"><section class="py-3">
     <p class="text-2xl font-semibold">{{ data.used }}</p>
-    <p class="text-xs text-muted-foreground">{{ _("Used") }}</p>
+    <p class="text-xs text-muted-foreground">{{ _("Used IPs") }}</p>
   </section></div>
   <div class="card"><section class="py-3">
     <p class="text-2xl font-semibold">{{ data.free }}</p>
-    <p class="text-xs text-muted-foreground">{{ _("Free") }}</p>
+    <p class="text-xs text-muted-foreground">{{ _("Free IPs") }}</p>
   </section></div>
   <div class="card"><section class="py-3">
     <p class="text-2xl font-semibold">{{ data.reserved }}</p>
-    <p class="text-xs text-muted-foreground">{{ _("Reserved") }}</p>
+    <p class="text-xs text-muted-foreground">{{ _("Reserved IPs") }}</p>
   </section></div>
   <div class="card {% if data.red_count %}border-[var(--health-red)]{% endif %}"><section class="py-3">
     <p class="text-2xl font-semibold {% if data.red_count %}text-[var(--health-red)]{% endif %}">{{ data.red_count }}</p>

@@ -27,25 +27,19 @@
       hx-headers='{"X-CSRF-Token": "{{ csrf_token }}"}'>
 
   <header class="border-b border-border bg-card">
-    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4 flex-wrap">
+    <div class="page-container py-3 flex items-center gap-4 flex-wrap">
       <a href="/" class="flex items-center gap-2 font-semibold text-lg">
         <span aria-hidden="true">🌐</span> GuiPAM
       </a>
       {% if reseau %}
-        <span class="text-muted-foreground text-sm truncate">{{ reseau.name }}</span>
+        <span class="hidden lg:inline text-muted-foreground text-sm truncate">{{ reseau.name }}</span>
       {% endif %}
       {% if user %}
         {% if user.role.value == "user" %}
           <span class="badge-secondary" title="{{ _("Your account cannot modify anything.") }}">{{ _("Read-only") }}</span>
         {% endif %}
-        <nav class="flex items-center gap-1 ml-auto text-sm">
-          <a href="/" class="btn-sm-ghost">{{ _("Dashboard") }}</a>
-          <a href="/audit" class="btn-sm-ghost">{{ _("Audit log") }}</a>
-          <a href="/import" class="btn-sm-ghost">{{ _("Import / Export") }}</a>
-          {% if user.role.value == "manager" %}
-            <a href="/users" class="btn-sm-ghost">{{ _("Users") }}</a>
-            <a href="/service-accounts" class="btn-sm-ghost">{{ _("API") }}</a>
-          {% endif %}
+        {% include "partials/_main_nav.html" %}
+        <div class="flex items-center gap-1 ml-auto text-sm">
           {% include "partials/_health_legend.html" %}
           <button type="button" class="btn-sm-icon-ghost" data-theme-toggle
                   title="{{ _("Toggle light/dark theme") }}" aria-label="{{ _("Toggle light/dark theme") }}">
@@ -60,7 +54,7 @@
               <form method="post" action="/locale" class="flex items-center gap-2">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <label class="label text-xs" for="locale-select">{{ _("Language") }}</label>
-                <select id="locale-select" name="locale" class="select flex-1 h-8 text-xs" onchange="this.form.submit()">
+                <select id="locale-select" name="locale" class="select flex-1 h-8 py-0 text-xs" onchange="this.form.submit()">
                   <option value="fr" {{ "selected" if locale == "fr" }}>Français</option>
                   <option value="en" {{ "selected" if locale == "en" }}>English</option>
                 </select>
@@ -71,18 +65,18 @@
               </form>
             </div>
           </div>
-        </nav>
+        </div>
       {% endif %}
     </div>
   </header>
 
   {% block breadcrumb %}{% endblock %}
 
-  <main class="mx-auto max-w-6xl px-4 py-6">
+  <main class="page-container py-6">
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="mx-auto max-w-6xl px-4 py-6 text-xs text-muted-foreground">
+  <footer class="page-container py-6 text-xs text-muted-foreground">
     GuiPAM v{{ app_version }} — <a class="underline" href="https://opensource.org/license/mit" rel="noopener">MIT</a>
   </footer>
 

@@ -46,9 +46,8 @@ async def load_dashboard(session: SessionDep) -> tuple[list[SubnetSummary], list
     result = await session.exec(
         select(Subnet)
         .options(selectinload(Subnet.ips).selectinload(IPAddress.monitors))  # type: ignore[arg-type]
-        .order_by(Subnet.cidr)
     )
-    subnets = result.all()
+    subnets = sorted(result.all(), key=lambda s: ipam.network_sort_key(s.cidr))
 
     summaries: list[SubnetSummary] = []
     attention: list[Attention] = []

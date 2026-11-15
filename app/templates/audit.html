@@ -2,7 +2,7 @@
 {% block title %}{{ _("Audit log") }}{% endblock %}
 
 {% block breadcrumb %}
-<nav class="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
+<nav class="page-container pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
   <a href="/" class="underline">{{ _("Dashboard") }}</a>
   <span aria-hidden="true"> › </span>
   <span class="text-foreground">{{ _("Audit log") }}</span>
@@ -21,22 +21,22 @@
   </div>
   <div class="grid gap-1">
     <label class="label text-xs" for="audit-action">{{ _("Action") }}</label>
-    <select class="select h-8" id="audit-action" name="action">
+    <select class="select h-8 py-0" id="audit-action" name="action">
       <option value="">{{ _("All") }}</option>
       {% for a in actions %}<option value="{{ a }}" {{ "selected" if filters.action == a }}>{{ a }}</option>{% endfor %}
     </select>
   </div>
   <div class="grid gap-1">
     <label class="label text-xs" for="audit-entity">{{ _("Entity") }}</label>
-    <select class="select h-8" id="audit-entity" name="entity_type">
+    <select class="select h-8 py-0" id="audit-entity" name="entity_type">
       <option value="">{{ _("All") }}</option>
       {% for e in entity_types %}<option value="{{ e }}" {{ "selected" if filters.entity_type == e }}>{{ e }}</option>{% endfor %}
     </select>
   </div>
 </form>
 
-<div class="card overflow-x-auto">
-  <section class="p-0">
+<div class="card table-card">
+  <section>
     <table class="table w-full text-sm">
       <thead>
         <tr>

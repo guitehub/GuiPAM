@@ -2,7 +2,7 @@
 {% block title %}{{ subnet.name }}{% endblock %}
 
 {% block breadcrumb %}
-<nav class="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
+<nav class="page-container pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
   <a href="/" class="underline">{{ _("Dashboard") }}</a>
   <span aria-hidden="true"> › </span>
   <span class="text-foreground">{{ subnet.name }}</span>
@@ -62,7 +62,7 @@
   </div>
   <div class="grid gap-1">
     <label class="label text-xs" for="filter-status">{{ _("Status") }}</label>
-    <select class="select h-8" id="filter-status" name="status">
+    <select class="select h-8 py-0" id="filter-status" name="status">
       <option value="">{{ _("All") }}</option>
       <option value="utilisee" {{ "selected" if filters.status == "utilisee" }}>{{ _("Used") }}</option>
       <option value="libre" {{ "selected" if filters.status == "libre" }}>{{ _("Free") }}</option>
@@ -71,7 +71,7 @@
   </div>
   <div class="grid gap-1">
     <label class="label text-xs" for="filter-health">{{ _("Health") }}</label>
-    <select class="select h-8" id="filter-health" name="health">
+    <select class="select h-8 py-0" id="filter-health" name="health">
       <option value="">{{ _("All") }}</option>
       <option value="ok" {{ "selected" if filters.health == "ok" }}>{{ _("OK") }}</option>
       <option value="warn" {{ "selected" if filters.health == "warn" }}>{{ _("Warning") }}</option>
@@ -87,8 +87,10 @@
   </label>
 </form>
 
-<div class="card overflow-x-auto">
-  <section class="p-0">
+{# Colonnes secondaires masquées par ordre de priorité quand la fenêtre rétrécit (MAC < 1280px,
+   matériel, lieu et nombre de cibles < 1024px, dernier check < 768px) : elles restent dans le détail de l'IP et la recherche. #}
+<div class="card table-card">
+  <section>
     <table class="table w-full">
       <thead>
         <tr>
@@ -97,11 +99,11 @@
           <th>{{ _("Status") }}</th>
           <th>{{ _("Hostname") }}</th>
           <th>{{ _("Device") }}</th>
-          <th>{{ _("Hardware") }}</th>
-          <th>{{ _("Location") }}</th>
-          <th>{{ _("MAC") }}</th>
-          <th>{{ _("Targets") }}</th>
-          <th>{{ _("Last check") }}</th>
+          <th class="hidden lg:table-cell">{{ _("Hardware") }}</th>
+          <th class="hidden lg:table-cell">{{ _("Location") }}</th>
+          <th class="hidden xl:table-cell">{{ _("MAC") }}</th>
+          <th class="hidden lg:table-cell">{{ _("Targets") }}</th>
+          <th class="hidden md:table-cell">{{ _("Last check") }}</th>
           <th></th>
         </tr>
       </thead>

@@ -31,7 +31,7 @@
 </div>
 
 {# ---- Liste des VLAN ---- #}
-<div class="flex items-center justify-between mt-8 mb-3">
+<div class="flex items-center justify-between mt-8 mb-3 scroll-mt-4" id="vlans">
   <h2 class="text-lg font-semibold">{{ _("VLANs") }}</h2>
   {% if manager %}
     <button type="button" class="btn" hx-get="/subnets/new" hx-target="#modal">{{ _("New VLAN") }}</button>
@@ -39,8 +39,8 @@
 </div>
 
 {% if summaries %}
-<div class="card overflow-x-auto">
-  <section class="p-0">
+<div class="card table-card">
+  <section>
     <table class="table w-full">
       <thead>
         <tr>

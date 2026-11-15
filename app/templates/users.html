@@ -2,7 +2,7 @@
 {% block title %}{{ _("Users") }}{% endblock %}
 
 {% block breadcrumb %}
-<nav class="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
+<nav class="page-container pt-4 text-sm text-muted-foreground" aria-label="{{ _("Breadcrumb") }}">
   <a href="/" class="underline">{{ _("Dashboard") }}</a>
   <span aria-hidden="true"> › </span>
   <span class="text-foreground">{{ _("Users") }}</span>
@@ -15,8 +15,8 @@
   <button type="button" class="btn" hx-get="/users/new" hx-target="#modal">{{ _("New user") }}</button>
 </div>
 
-<div class="card overflow-x-auto">
-  <section class="p-0">
+<div class="card table-card">
+  <section>
     <table class="table w-full">
       <thead>
         <tr>

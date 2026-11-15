@@ -102,6 +102,15 @@ def validate_subnet(
     return network
 
 
+def network_sort_key(cidr: str) -> tuple[int, int]:
+    """Ordre numérique des CIDR (10.0.2.0/24 avant 10.0.10.0/24, contrairement au tri texte)."""
+    try:
+        network = ipaddress.ip_network(cidr)
+    except ValueError:
+        return (1 << 32, 0)
+    return (int(network.network_address), network.prefixlen)
+
+
 def address_prefix(cidr: str) -> str:
     """Octets communs à toutes les adresses du subnet, prêts à compléter : « 192.168.1. ».
 
