@@ -1,13 +1,14 @@
 # GuiPAM — notes pour Claude Code
 
 IPAM auto-hébergé mono-réseau avec suivi dynamique (checks TCP/ICMP, code couleur santé).
-Cahier des charges v2 implémenté en v0.1.0 ; v0.2.0 ajoute l'API JSON `/api/v1` et les comptes de service ; v0.3.0 la pause volontaire des hôtes.
+Cahier des charges v2 implémenté en v0.1.0 ; v0.2.0 ajoute l'API JSON `/api/v1` et les comptes de service ; v0.3.0 la pause volontaire des hôtes ;
+v0.4.0 les réglages du suivi dans l'interface et le code couleur relatif à chaque cible.
 Specs clés : voir README.md et ROADMAP.md.
 
 ## Commandes
 
 ```bash
-.venv/bin/pytest tests/ -q                 # 117 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause)
+.venv/bin/pytest tests/ -q                 # 138 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause, réglages du suivi)
 make css                                   # recompile app/static/app.css (binaire Tailwind standalone)
 PATH="$PWD/.venv/bin:$PATH" make i18n      # extraction + régénération du .po fr + compilation .mo (le Makefile appelle `python`, absent hors venv)
 .venv/bin/python -m app.main               # serveur dev (env GUIPAM_* requis, voir .env.example)
@@ -33,8 +34,15 @@ Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `G
   n'apparaît que sous `paused`). Mutations dans `inventory.pause_ip/resume_ip` ; reprises auto dans
   `inventory.resume_due_pauses` (appelée par le scheduler et les checks manuels), déclenchées par l'échéance ou
   par un **retour** (`apply_result` renvoie True sur une transition down → up, pas sur un premier succès).
-- **Seuils santé** centralisés dans `app/services/monitor.py` : `health()` / `ip_health()` (= pire cible active).
-  Gravité : ok < unknown < warn < red < dark_red.
+- **Règles de santé** centralisées dans `app/services/monitor.py` : `health()` / `ip_health()` (= pire cible active).
+  Gravité : ok < unknown < warn < red < dark_red. Elles sont **relatives à la cible** : ambre si le dernier succès
+  dépasse N × son intervalle (+ un tick), rouge après N échecs consécutifs ; seul le rouge foncé est une durée.
+- **Réglages du suivi** (`MonitoringSettings` : intervalle par défaut + 3 seuils) : colonnes facultatives de `reseau`,
+  NULL = valeur d'instance `GUIPAM_*` du même nom. `health()` reste synchrone grâce à un cache
+  (`monitor.monitoring()`), rafraîchi au démarrage, par `update_reseau`, après une restauration et à chaque requête
+  d'interface. Ne jamais lire ces réglages dans `get_settings()` directement : passer par `monitor.monitoring()`.
+  Ajouter un réglage = champ du dataclass + colonne + réglage `Settings` de même nom + borne dans
+  `inventory.MONITORING_LIMITS`.
 - **Migrations Alembic appliquées au démarrage** (lifespan, via thread) ; env.py sync (pas d'async nécessaire).
 - **Contrat formulaires HTMX** : erreur → 422 + partial re-rendu, dont `app.js` ne reprend que le bloc
   `[data-form-errors]` (saisie conservée, champs de `error_fields` en rouge via `aria-invalid`) ; succès → 204 + `HX-Refresh`

@@ -30,6 +30,46 @@
             <option value="en" {{ "selected" if reseau.default_locale == "en" }}>English</option>
           </select>
         </div>
+        <fieldset class="grid gap-4 border-t border-border pt-4">
+          <legend class="sr-only">{{ _("Monitoring") }}</legend>
+          <div>
+            <h3 class="font-medium">{{ _("Monitoring") }}</h3>
+            <p class="text-sm text-muted-foreground">{{ _("Each target is judged at its own pace, whatever its interval. Leave a field empty to go back to the instance default.") }}</p>
+          </div>
+          <div class="grid gap-2">
+            <label for="reseau-interval">{{ _("Default interval of new targets (seconds)") }}</label>
+            <input type="number" id="reseau-interval" name="default_check_interval"
+                   min="{{ limits.default_check_interval[0] }}" max="{{ limits.default_check_interval[1] }}"
+                   value="{{ tracking.default_check_interval }}" placeholder="{{ instance.default_check_interval }}">
+            <p class="text-xs text-muted-foreground">{{ _("Pre-filled when a target is created, and still editable there. Existing targets keep their interval.") }}</p>
+          </div>
+          <div class="grid gap-2">
+            <label for="reseau-warn">{{ _("Green → amber (intervals without a success)") }}</label>
+            <input type="number" id="reseau-warn" name="health_warn_intervals"
+                   min="{{ limits.health_warn_intervals[0] }}" max="{{ limits.health_warn_intervals[1] }}"
+                   value="{{ tracking.health_warn_intervals }}" placeholder="{{ instance.health_warn_intervals }}">
+            <p class="text-xs text-muted-foreground">{{ _("A reachable target turns amber when its last success is older than this many times its own interval.") }}</p>
+          </div>
+          <div class="grid gap-2">
+            <label for="reseau-red">{{ _("Amber → red (consecutive failures)") }}</label>
+            <input type="number" id="reseau-red" name="health_red_failures"
+                   min="{{ limits.health_red_failures[0] }}" max="{{ limits.health_red_failures[1] }}"
+                   value="{{ tracking.health_red_failures }}" placeholder="{{ instance.health_red_failures }}">
+            <p class="text-xs text-muted-foreground">{{ _("A down target turns red after this many failed checks in a row.") }}</p>
+          </div>
+          <div class="grid gap-2">
+            <label for="reseau-dark">{{ _("Red → dark red (time without a success)") }}</label>
+            <div class="flex gap-2">
+              <input type="number" id="reseau-dark" name="health_dark_red_value" min="1" class="flex-1" value="{{ dark_value }}">
+              <select name="health_dark_red_unit" class="select" aria-label="{{ _("Unit") }}">
+                <option value="minutes" {{ "selected" if dark_unit == "minutes" }}>{{ _("minutes") }}</option>
+                <option value="hours" {{ "selected" if dark_unit == "hours" }}>{{ _("hours") }}</option>
+                <option value="days" {{ "selected" if dark_unit == "days" }}>{{ _("days") }}</option>
+              </select>
+            </div>
+            <p class="text-xs text-muted-foreground">{{ _("A down target turns dark red after this long without a success: dead service or stale entry to clean up.") }}</p>
+          </div>
+        </fieldset>
         <footer class="flex justify-end gap-2">
           <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
           <button type="submit" class="btn-primary">{{ _("Save") }}</button>

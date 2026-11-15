@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GuiPAM VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 18:42+0100\n"
+"POT-Creation-Date: 2026-11-15 23:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -38,6 +38,11 @@ msgstr "%(count)d erreur(s)"
 msgid "%(count)d skipped (duplicates)"
 msgstr "%(count)d ignorée(s) (doublons)"
 
+#: app/services/inventory.py:709
+#, python-format
+msgid "%(label)s: the value must be between %(min)d and %(max)d."
+msgstr "%(label)s : la valeur doit être comprise entre %(min)d et %(max)d."
+
 #: app/services/ipam.py:178
 #, python-format
 msgid "%s is the broadcast address and cannot be assigned."
@@ -48,7 +53,7 @@ msgstr "%s est l'adresse de broadcast et ne peut pas être attribuée."
 msgid "%s is the network address and cannot be assigned."
 msgstr "%s est l'adresse réseau et ne peut pas être attribuée."
 
-#: app/services/inventory.py:565
+#: app/services/inventory.py:573
 msgid "A TCP check requires a port between 1 and 65535."
 msgstr "Un check TCP nécessite un port entre 1 et 65535."
 
@@ -59,6 +64,18 @@ msgstr "Un check de port TCP, ou un ping ICMP si aucun port n'est pertinent."
 #: app/templates/partials/_subnet_form.html:5
 msgid "A VLAN is a named subnet. The 802.1Q tag is optional."
 msgstr "Un VLAN est un subnet nommé. Le tag 802.1Q est facultatif."
+
+#: app/templates/partials/_reseau_form.html:70
+msgid "A down target turns dark red after this long without a success: dead service or stale entry to clean up."
+msgstr "Une cible en panne passe au rouge foncé après cette durée sans succès : service mort ou entrée obsolète à nettoyer."
+
+#: app/templates/partials/_reseau_form.html:58
+msgid "A down target turns red after this many failed checks in a row."
+msgstr "Une cible en panne passe au rouge après ce nombre de vérifications échouées d'affilée."
+
+#: app/templates/partials/_reseau_form.html:51
+msgid "A reachable target turns amber when its last success is older than this many times its own interval."
+msgstr "Une cible joignable passe à l'ambre quand son dernier succès est plus vieux que ce nombre de fois son propre intervalle."
 
 #: app/routers/service_accounts.py:195
 msgid "A read/write key requires a service account with the manager role."
@@ -111,7 +128,7 @@ msgstr "Ajouter une cible"
 msgid "Address"
 msgstr "Adresse"
 
-#: app/services/inventory.py:275 app/services/ipam.py:183
+#: app/services/inventory.py:283 app/services/ipam.py:183
 #, python-format
 msgid "Address %(address)s already exists in VLAN “%(name)s”."
 msgstr "L'adresse %(address)s existe déjà dans le VLAN « %(name)s »."
@@ -158,11 +175,19 @@ msgstr "Toutes"
 msgid "All VLANs"
 msgstr "Tous les VLAN"
 
+#: app/templates/partials/_reseau_form.html:54
+msgid "Amber → red (consecutive failures)"
+msgstr "Ambre → rouge (échecs consécutifs)"
+
+#: app/services/inventory.py:675
+msgid "Amber → red threshold"
+msgstr "Seuil ambre → rouge"
+
 #: app/templates/partials/_health_legend.html:15
 msgid "An IP shows the worst color of its active targets."
 msgstr "Une IP affiche la pire couleur de ses cibles actives."
 
-#: app/services/inventory.py:380
+#: app/services/inventory.py:388
 msgid "An allocated address cannot have the status “libre”."
 msgstr "Une adresse allouée ne peut pas avoir le statut « libre »."
 
@@ -206,7 +231,7 @@ msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
 #: app/templates/partials/_ip_form.html:63
 #: app/templates/partials/_monitor_form.html:45
 #: app/templates/partials/_pause_form.html:40
-#: app/templates/partials/_reseau_form.html:34
+#: app/templates/partials/_reseau_form.html:74
 #: app/templates/partials/_service_account_form.html:38
 #: app/templates/partials/_subnet_form.html:44
 #: app/templates/partials/_user_form.html:28
@@ -214,7 +239,7 @@ msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
 msgid "Cancel"
 msgstr "Annuler"
 
-#: app/services/inventory.py:111
+#: app/services/inventory.py:119
 #, python-format
 msgid "Cannot change CIDR: %(count)d addresses would fall outside (e.g. %(example)s)."
 msgstr "Impossible de changer le CIDR : %(count)d adresses en sortiraient (ex. %(example)s)."
@@ -259,7 +284,7 @@ msgstr "Copier"
 msgid "Copy it now: it will never be shown again."
 msgstr "Copiez-la maintenant : elle ne sera plus jamais affichée."
 
-#: app/services/inventory.py:428
+#: app/services/inventory.py:436
 msgid "Could not allocate an address (concurrent updates). Try again."
 msgstr "Impossible d'allouer une adresse (modifications concurrentes). Réessayez."
 
@@ -286,6 +311,14 @@ msgstr "Tableau de bord"
 #: app/templates/partials/_main_nav.html:64
 msgid "Data"
 msgstr "Données"
+
+#: app/services/inventory.py:673
+msgid "Default check interval"
+msgstr "Intervalle de vérification par défaut"
+
+#: app/templates/partials/_reseau_form.html:40
+msgid "Default interval of new targets (seconds)"
+msgstr "Intervalle par défaut des nouvelles cibles (secondes)"
 
 #: app/templates/partials/_reseau_form.html:27
 msgid "Default language"
@@ -371,6 +404,10 @@ msgstr "Télécharger une sauvegarde complète"
 #: app/templates/import_export.html:48
 msgid "Download export.csv"
 msgstr "Télécharger export.csv"
+
+#: app/templates/partials/_reseau_form.html:37
+msgid "Each target is judged at its own pace, whatever its interval. Leave a field empty to go back to the instance default."
+msgstr "Chaque cible est jugée à son propre rythme, quel que soit son intervalle. Laissez un champ vide pour revenir à la valeur par défaut de l'instance."
 
 #: app/templates/dashboard.html:14 app/templates/partials/_ip_detail.html:23
 #: app/templates/partials/_ip_row.html:36
@@ -486,6 +523,14 @@ msgstr "La passerelle %(gateway)s est hors du subnet %(cidr)s."
 msgid "Gateway (optional)"
 msgstr "Passerelle (facultative)"
 
+#: app/templates/partials/_reseau_form.html:47
+msgid "Green → amber (intervals without a success)"
+msgstr "Vert → ambre (intervalles sans succès)"
+
+#: app/services/inventory.py:674
+msgid "Green → amber threshold"
+msgstr "Seuil vert → ambre"
+
 #: app/templates/import_export.html:80
 msgid "GuiPAM also keeps automatic snapshots of its database in the “backups” folder of the data volume: one before every schema migration, and one per day."
 msgstr "GuiPAM conserve aussi des instantanés automatiques de sa base dans le dossier « backups » du volume de données : un avant chaque migration de schéma, et un par jour."
@@ -510,11 +555,11 @@ msgstr "Légende du code couleur santé"
 msgid "Hostname"
 msgstr "Nom d'hôte"
 
-#: app/services/inventory.py:569
+#: app/services/inventory.py:577
 msgid "ICMP ping is disabled on this instance (GUIPAM_ENABLE_PING=false)."
 msgstr "Le ping ICMP est désactivé sur cette instance (GUIPAM_ENABLE_PING=false)."
 
-#: app/api/routes.py:176 app/api/routes.py:482 app/routers/ips.py:25
+#: app/api/routes.py:176 app/api/routes.py:496 app/routers/ips.py:25
 #: app/routers/ips.py:170 app/routers/monitors.py:44 app/routers/monitors.py:69
 msgid "IP address not found."
 msgstr "Adresse IP introuvable."
@@ -572,7 +617,7 @@ msgstr "Intervalle"
 msgid "Interval (seconds)"
 msgstr "Intervalle (secondes)"
 
-#: app/services/inventory.py:576
+#: app/services/inventory.py:584
 #, python-format
 msgid "Interval must be between %(min)d and %(max)d seconds."
 msgstr "L'intervalle doit être compris entre %(min)d et %(max)d secondes."
@@ -737,6 +782,11 @@ msgstr "Cible de suivi mise à jour."
 msgid "Monitor targets"
 msgstr "Cibles de suivi"
 
+#: app/templates/partials/_reseau_form.html:34
+#: app/templates/partials/_reseau_form.html:36
+msgid "Monitoring"
+msgstr "Suivi"
+
 #: app/routers/ips.py:216
 #, python-format
 msgid "Monitoring of %s resumed."
@@ -749,7 +799,7 @@ msgid "Name"
 msgstr "Nom"
 
 #: app/routers/service_accounts.py:88 app/routers/service_accounts.py:192
-#: app/services/inventory.py:95 app/services/inventory.py:675
+#: app/services/inventory.py:103 app/services/inventory.py:715
 msgid "Name is required."
 msgstr "Le nom est requis."
 
@@ -766,7 +816,7 @@ msgstr "Réseau"
 msgid "Network settings"
 msgstr "Paramètres du réseau"
 
-#: app/routers/reseau.py:53
+#: app/routers/reseau.py:103
 msgid "Network settings saved."
 msgstr "Paramètres du réseau enregistrés."
 
@@ -844,7 +894,7 @@ msgstr "Aucune adresse enregistrée dans ce VLAN pour l'instant."
 msgid "No audit entries."
 msgstr "Aucune entrée d'audit."
 
-#: app/api/routes.py:385 app/services/inventory.py:401
+#: app/api/routes.py:399 app/services/inventory.py:409
 #, python-format
 msgid "No free address left in subnet %s."
 msgstr "Plus aucune adresse libre dans le subnet %s."
@@ -960,6 +1010,10 @@ msgstr "Vue plan"
 msgid "Port"
 msgstr "Port"
 
+#: app/templates/partials/_reseau_form.html:44
+msgid "Pre-filled when a target is created, and still editable there. Existing targets keep their interval."
+msgstr "Pré-rempli à la création d'une cible, où il reste modifiable. Les cibles existantes gardent leur intervalle."
+
 #: app/templates/audit.html:58
 msgid "Previous"
 msgstr "Précédente"
@@ -987,6 +1041,14 @@ msgstr "Compte en lecture seule : l'import n'est pas disponible."
 #: app/templates/partials/_pause_form.html:16
 msgid "Reason"
 msgstr "Raison"
+
+#: app/templates/partials/_reseau_form.html:61
+msgid "Red → dark red (time without a success)"
+msgstr "Rouge → rouge foncé (durée sans succès)"
+
+#: app/services/inventory.py:676
+msgid "Red → dark red threshold"
+msgstr "Seuil rouge → rouge foncé"
 
 #: app/templates/partials/_ip_form.html:27 app/templates/subnet.html:69
 msgid "Reserved"
@@ -1063,7 +1125,7 @@ msgstr "Préfixes racine :"
 #: app/templates/partials/_ip_form.html:64
 #: app/templates/partials/_monitor_form.html:46
 #: app/templates/partials/_pause_form.html:41
-#: app/templates/partials/_reseau_form.html:35
+#: app/templates/partials/_reseau_form.html:75
 #: app/templates/partials/_service_account_form.html:39
 #: app/templates/partials/_subnet_form.html:45
 #: app/templates/partials/_user_form.html:47
@@ -1148,12 +1210,12 @@ msgstr "Cibles"
 msgid "The account no longer has the manager role: this key can only read."
 msgstr "Le compte n'a plus le rôle manager : cette clé ne peut que lire."
 
-#: app/services/backup.py:146
+#: app/services/backup.py:149
 #, python-format
 msgid "The backup could not be restored (nothing was changed): %s"
 msgstr "La sauvegarde n'a pas pu être restaurée (rien n'a été modifié) : %s"
 
-#: app/services/inventory.py:489
+#: app/services/inventory.py:497
 msgid "The end of the pause must be in the future."
 msgstr "La fin de la pause doit être dans le futur."
 
@@ -1165,7 +1227,7 @@ msgstr "La date d'expiration doit être dans le futur."
 msgid "The file is empty."
 msgstr "Le fichier est vide."
 
-#: app/services/inventory.py:487
+#: app/services/inventory.py:495
 #, python-format
 msgid "The reason is too long (%d characters max)."
 msgstr "La raison est trop longue (%d caractères max)."
@@ -1178,17 +1240,17 @@ msgstr "Cette clé d'API est en lecture seule : action non autorisée."
 msgid "This account is read-only: give it the manager role to create read/write keys."
 msgstr "Ce compte est en lecture seule : donnez-lui le rôle manager pour créer des clés en lecture-écriture."
 
-#: app/services/backup.py:122
+#: app/services/backup.py:123
 msgid "This backup contains no active manager account: restoring it would lock you out."
 msgstr "Cette sauvegarde ne contient aucun compte manager actif : la restaurer vous enfermerait dehors."
 
-#: app/services/backup.py:101
+#: app/services/backup.py:102
 #, python-format
 msgid "This backup was made by a newer GuiPAM (format %(found)d, this version reads up to %(max)d). Update GuiPAM first."
 msgstr "Cette sauvegarde vient d'un GuiPAM plus récent (format %(found)d, cette version lit jusqu'au format %(max)d). Mettez d'abord GuiPAM à jour."
 
-#: app/routers/import_export.py:97 app/services/backup.py:95
-#: app/services/backup.py:98
+#: app/routers/import_export.py:97 app/services/backup.py:96
+#: app/services/backup.py:99
 msgid "This file is not a GuiPAM backup."
 msgstr "Ce fichier n'est pas une sauvegarde GuiPAM."
 
@@ -1220,6 +1282,10 @@ msgstr "Trop de tentatives. Réessayez dans %d secondes."
 #: app/templates/partials/_stats.html:4
 msgid "Total IPs"
 msgstr "IP totales"
+
+#: app/templates/partials/_reseau_form.html:64
+msgid "Unit"
+msgstr "Unité"
 
 #: app/templates/partials/_health_legend.html:10
 msgid "Up but aging, or down recently"
@@ -1279,7 +1345,7 @@ msgstr "L'identifiant « %s » est déjà pris."
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: app/api/routes.py:156 app/api/routes.py:409 app/routers/ips.py:40
+#: app/api/routes.py:156 app/api/routes.py:423 app/routers/ips.py:40
 #: app/routers/ips.py:68 app/routers/subnets.py:23
 msgid "VLAN not found."
 msgstr "VLAN introuvable."
@@ -1292,7 +1358,7 @@ msgstr "Tag VLAN"
 msgid "VLAN tag (1–4094, optional)"
 msgstr "Tag VLAN (1–4094, facultatif)"
 
-#: app/services/inventory.py:97
+#: app/services/inventory.py:105
 msgid "VLAN tag must be a number between 1 and 4094."
 msgstr "Le tag VLAN doit être un nombre entre 1 et 4094."
 
@@ -1347,6 +1413,10 @@ msgstr "active"
 msgid "actual state:"
 msgstr "état réel :"
 
+#: app/templates/partials/_reseau_form.html:67
+msgid "days"
+msgstr "jours"
+
 #: app/templates/partials/_monitor_row.html:7
 #: app/templates/service_accounts.html:31
 msgid "disabled"
@@ -1392,6 +1462,10 @@ msgstr "champ(s)"
 msgid "free (not recorded)"
 msgstr "libre (non enregistrée)"
 
+#: app/templates/partials/_reseau_form.html:66
+msgid "hours"
+msgstr "heures"
+
 #: app/templates/partials/_a_traiter.html:19
 msgid "last success:"
 msgstr "dernier succès :"
@@ -1401,6 +1475,10 @@ msgstr "dernier succès :"
 #: app/templates/partials/_user_form.html:38
 msgid "manager (read/write)"
 msgstr "manager (lecture/écriture)"
+
+#: app/templates/partials/_reseau_form.html:65
+msgid "minutes"
+msgstr "minutes"
 
 #: app/i18n.py:87 app/i18n.py:99 app/templates/service_accounts.html:74
 msgid "never"
@@ -1454,7 +1532,7 @@ msgstr "« %s » n'est pas une adresse IPv4 valide."
 msgid "“%s” is not a valid MAC address."
 msgstr "« %s » n'est pas une adresse MAC valide."
 
-#: app/services/inventory.py:684
+#: app/services/inventory.py:724
 #, python-format
 msgid "“%s” is not a valid network prefix."
 msgstr "« %s » n'est pas un préfixe réseau valide."

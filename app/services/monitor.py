@@ -1,7 +1,9 @@
 """Suivi dynamique : checks TCP/ICMP, code couleur santé, scheduler.
 
-Tous les seuils de santé (§7.3) sont centralisés ici, dans `health()` et
-`ip_health()`. Tout est relatif à `last_ok_at`.
+Toutes les règles de santé (§7.3) sont centralisées ici, dans `health()` et
+`ip_health()`. Elles sont relatives à chaque cible : sa fraîcheur se mesure en
+nombre de ses propres intervalles, sa panne en nombre d'échecs consécutifs.
+Seul le rouge foncé (« morte depuis longtemps ») est une durée.
 """
 
 import asyncio
@@ -9,13 +11,14 @@ import enum
 import math
 import re
 import time
+from dataclasses import dataclass, fields
 from datetime import datetime
 
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.config import get_settings
-from app.models import CheckStatus, IPAddress, MonitorTarget, Protocol, utcnow
+from app.models import RESEAU_SINGLETON_ID, CheckStatus, IPAddress, MonitorTarget, Protocol, Reseau, utcnow
 
 # « jamais de succès » ne devient rouge foncé qu'après des échecs répétés.
 DARK_RED_MIN_FAILURES = 3
@@ -42,19 +45,78 @@ SEVERITY: dict[Health, int] = {
 }
 
 
-def health(
-    target: MonitorTarget,
-    now: datetime | None = None,
-    *,
-    warn_seconds: int | None = None,
-    red_seconds: int | None = None,
-    dark_red_seconds: int | None = None,
-) -> Health:
-    """Couleur d'une cible selon la fraîcheur de son dernier succès (§7.3)."""
+# --------------------------------------------------------------- Réglages du suivi
+
+
+@dataclass(frozen=True)
+class MonitoringSettings:
+    """Réglages du suivi modifiables dans les « Paramètres du réseau ».
+
+    Chaque champ porte le même nom que sa colonne (facultative) de `reseau` et que le
+    réglage d'instance `GUIPAM_*` qui sert de valeur tant que la colonne est vide.
+    """
+
+    default_check_interval: int  # intervalle proposé pour une nouvelle cible (s)
+    health_warn_intervals: int  # vert → ambre : dernier succès plus vieux que N intervalles
+    health_red_failures: int  # ambre → rouge : N échecs consécutifs
+    health_dark_red_seconds: int  # rouge → rouge foncé : durée sans succès (s)
+
+
+MONITORING_FIELDS: tuple[str, ...] = tuple(f.name for f in fields(MonitoringSettings))
+
+# Réglages effectifs, mis en cache pour que `health()` reste synchrone et sans accès base.
+# Rafraîchi au démarrage, à chaque modification du réseau, après une restauration et à
+# chaque requête d'interface (qui charge déjà le réseau) ; None = réglages d'instance.
+_configured: MonitoringSettings | None = None
+
+
+def instance_monitoring() -> MonitoringSettings:
+    """Réglages d'instance (variables GUIPAM_*) : la valeur initiale de chaque réglage."""
     settings = get_settings()
-    warn_s = warn_seconds if warn_seconds is not None else settings.health_warn_seconds
-    red_s = red_seconds if red_seconds is not None else settings.health_red_seconds
-    dark_s = dark_red_seconds if dark_red_seconds is not None else settings.health_dark_red_seconds
+    return MonitoringSettings(**{name: getattr(settings, name) for name in MONITORING_FIELDS})
+
+
+def effective_monitoring(reseau: Reseau | None) -> MonitoringSettings:
+    """Réglages appliqués : ceux du réseau, sinon ceux de l'instance."""
+    base = instance_monitoring()
+    if reseau is None:
+        return base
+    return MonitoringSettings(
+        **{
+            name: value if (value := getattr(reseau, name, None)) is not None else getattr(base, name)
+            for name in MONITORING_FIELDS
+        }
+    )
+
+
+def configure_monitoring(reseau: Reseau | None) -> None:
+    global _configured
+    _configured = effective_monitoring(reseau) if reseau is not None else None
+
+
+async def load_monitoring(session: AsyncSession) -> None:
+    """Recharge les réglages depuis la base (démarrage, restauration)."""
+    configure_monitoring(await session.get(Reseau, RESEAU_SINGLETON_ID))
+
+
+def monitoring() -> MonitoringSettings:
+    return _configured or instance_monitoring()
+
+
+# ------------------------------------------------------------------- Code couleur
+
+
+def health(
+    target: MonitorTarget, now: datetime | None = None, *, rules: MonitoringSettings | None = None
+) -> Health:
+    """Couleur d'une cible (§7.3), jugée à son propre rythme.
+
+    - joignable : verte tant que son dernier succès a moins de `health_warn_intervals` fois son
+      intervalle (plus un battement du scheduler, qui ne la vérifie jamais pile à l'heure), ambre au-delà ;
+    - en panne : ambre, rouge à partir de `health_red_failures` échecs consécutifs, rouge foncé
+      quand le dernier succès a plus de `health_dark_red_seconds`.
+    """
+    rules = rules or monitoring()
     reference = now or utcnow()
 
     if target.last_status == CheckStatus.unknown:
@@ -68,22 +130,25 @@ def health(
 
     age = (reference - target.last_ok_at).total_seconds()
     if target.last_status == CheckStatus.up:
-        return Health.ok if age <= warn_s else Health.warn
+        fresh = rules.health_warn_intervals * target.interval_seconds + get_settings().monitor_tick_seconds
+        return Health.ok if age <= fresh else Health.warn
     # down
-    if age <= red_s:
-        return Health.warn
-    if age <= dark_s:
+    if age > rules.health_dark_red_seconds:
+        return Health.dark_red
+    if target.consecutive_failures >= rules.health_red_failures:
         return Health.red
-    return Health.dark_red
+    return Health.warn
 
 
-def ip_health(targets: list[MonitorTarget], now: datetime | None = None) -> Health | None:
+def ip_health(
+    targets: list[MonitorTarget], now: datetime | None = None, *, rules: MonitoringSettings | None = None
+) -> Health | None:
     """Santé d'une IP = la pire de ses cibles actives. None si aucune cible active."""
     active = [t for t in targets if t.enabled]
     if not active:
         return None
     reference = now or utcnow()
-    return max((health(t, reference) for t in active), key=lambda h: SEVERITY[h])
+    return max((health(t, reference, rules=rules) for t in active), key=lambda h: SEVERITY[h])
 
 
 async def check_tcp(host: str, port: int, timeout: float) -> tuple[bool, float | None]:

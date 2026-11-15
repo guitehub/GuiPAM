@@ -5,6 +5,38 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+Mise à jour sans rupture de données : une migration additive (quatre colonnes facultatives sur `reseau`)
+est appliquée au démarrage ; l'API gagne des champs sur `/network`, rien n'y change de sens pour l'existant.
+**Le calcul du code couleur change** (voir « Changed » et « Migration »).
+
+### Added
+- **Réglages du suivi dans l'interface** : Administration → Paramètres du réseau → section « Suivi »
+  (managers). On y règle l'intervalle par défaut des nouvelles cibles et les trois seuils du code couleur ;
+  le changement s'applique immédiatement, sans redémarrage, et il est journalisé. Un champ vidé revient à
+  la valeur de l'instance.
+- API : `GET /network` expose `default_check_interval`, `health_warn_intervals`, `health_red_failures` et
+  `health_dark_red_seconds` (valeurs appliquées) ; `PATCH /network` les modifie (`null` = valeur de l'instance).
+- Variables `GUIPAM_HEALTH_WARN_INTERVALS` (2) et `GUIPAM_HEALTH_RED_FAILURES` (10).
+
+### Changed
+- **Code couleur relatif à chaque cible** : il ne dépend plus d'une échelle de temps commune qu'il fallait
+  accorder aux intervalles. Vert → ambre quand le dernier succès est plus vieux que *N* fois l'intervalle
+  **de la cible** (défaut 2, plus un battement du scheduler) ; ambre → rouge après *N* **échecs consécutifs**
+  (défaut 10). Une cible vérifiée toutes les 3 minutes et une autre toutes les 30 secondes suivent donc la
+  même règle. Pour une cible à 60 s, les défauts donnent le comportement d'avant (ambre ≈ 2 min, rouge ≈ 10 min).
+- Rouge → rouge foncé reste une durée sans succès ; son défaut passe d'**1 heure à 1 semaine**.
+- Les variables d'environnement du suivi (`GUIPAM_DEFAULT_CHECK_INTERVAL`, seuils) ne sont plus que la
+  **valeur initiale** de réglages modifiables dans l'interface.
+- L'intervalle par défaut d'une cible créée sans le préciser (UI et API) est celui du réseau.
+
+### Migration
+- `GUIPAM_HEALTH_WARN_SECONDS` et `GUIPAM_HEALTH_RED_SECONDS` **ne sont plus lues** (elles peuvent rester
+  dans le `.env`, elles sont ignorées) : remplacez-les par `GUIPAM_HEALTH_WARN_INTERVALS` et
+  `GUIPAM_HEALTH_RED_FAILURES`, ou réglez les seuils dans l'interface.
+- `GUIPAM_HEALTH_DARK_RED_SECONDS` garde son sens : si votre `.env` la fixe (l'ancien exemple indiquait 3600),
+  elle continue de s'appliquer. Retirez-la ou passez-la à `604800` pour adopter le nouveau défaut d'une semaine.
+- Aucune donnée à convertir : les réglages du réseau sont vides après la mise à jour (valeurs d'instance).
+
 ## [0.3.1] — 2026-11-15
 
 Correctif d'interface sans rupture : ni migration de schéma, ni changement de l'API `/api/v1`.

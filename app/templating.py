@@ -12,7 +12,7 @@ from app.config import get_settings
 from app.i18n import format_datetime, format_relative, get_locale, gettext, ngettext
 from app.services.auth import CSRF_SESSION_KEY
 from app.services.ipam import address_prefix
-from app.services.monitor import SEVERITY, Health, health, ip_health
+from app.services.monitor import SEVERITY, Health, health, ip_health, monitoring
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -61,6 +61,7 @@ templates.env.globals["ip_last_checked"] = ip_last_checked
 templates.env.globals["app_version"] = __version__
 templates.env.globals["health"] = health
 templates.env.globals["ip_health"] = ip_health
+templates.env.globals["monitoring"] = monitoring
 templates.env.globals["Health"] = Health
 templates.env.globals["SEVERITY"] = SEVERITY
 

@@ -31,6 +31,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app import __version__
 from app.i18n import gettext as _
 from app.models import utcnow
+from app.services import monitor
 
 logger = logging.getLogger("guipam.backup")
 
@@ -138,6 +139,8 @@ async def import_data(session: AsyncSession, payload: Any) -> dict[str, int]:
             )
             counts[table.name] = len(rows)
         await session.commit()
+        # Le réseau restauré porte peut-être d'autres réglages du suivi.
+        await monitor.load_monitoring(session)
     except BackupError:
         raise
     except Exception as exc:

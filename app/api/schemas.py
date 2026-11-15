@@ -23,8 +23,10 @@ UtcDatetime = Annotated[
 STATUS_DOC = "`libre` = free, `utilisee` = in use, `reservee` = reserved."
 HEALTH_DOC = (
     "Monitoring health: `ok`, `warn` (stale or recently down), `red` (down), "
-    "`dark_red` (down for a long time), `unknown` (never checked)."
+    "`dark_red` (down for a long time), `unknown` (never checked). "
+    "Thresholds are relative to each target and set on GET /network."
 )
+MONITORING_RESET_DOC = " Send null to go back to the instance default (GUIPAM_* environment variable)."
 
 
 class Strict(BaseModel):
@@ -83,6 +85,24 @@ class NetworkOut(BaseModel):
     notes: str | None
     root_prefixes: list[str] | None = Field(description="Informational root prefixes (not enforced).")
     default_locale: str
+    default_check_interval: int = Field(
+        description="Check period (seconds) given to a new monitor target created without `interval_seconds`."
+    )
+    health_warn_intervals: int = Field(
+        description=(
+            "Green → amber: a reachable target turns `warn` when its last success is older than this many "
+            "times its own `interval_seconds` (its measurements are no longer fresh)."
+        )
+    )
+    health_red_failures: int = Field(
+        description="Amber → red: a down target turns `red` after this many consecutive failed checks."
+    )
+    health_dark_red_seconds: int = Field(
+        description=(
+            "Red → dark red: a down target turns `dark_red` when its last success is older than this many "
+            "seconds (dead service or stale entry)."
+        )
+    )
     updated_at: UtcDatetime
 
 
@@ -92,6 +112,12 @@ class NetworkUpdate(Strict):
     notes: str | None = None
     root_prefixes: list[str] | None = None
     default_locale: str | None = Field(None, description="`fr` or `en`.")
+    default_check_interval: int | None = Field(None, description="5-86400 seconds." + MONITORING_RESET_DOC)
+    health_warn_intervals: int | None = Field(None, description="1-100 intervals." + MONITORING_RESET_DOC)
+    health_red_failures: int | None = Field(None, description="1-1000 failed checks." + MONITORING_RESET_DOC)
+    health_dark_red_seconds: int | None = Field(
+        None, description="60-31622400 seconds." + MONITORING_RESET_DOC
+    )
 
 
 class Summary(BaseModel):
@@ -130,7 +156,7 @@ class MonitorCreate(Strict):
     port: int | None = Field(None, description="Required for `tcp` (1-65535); ignored for `icmp`.")
     label: str | None = Field(None, description="Free label, e.g. `ssh`, `https`.")
     interval_seconds: int | None = Field(
-        None, description="Check period, 5-86400. Defaults to the instance setting (60)."
+        None, description="Check period, 5-86400. Defaults to `default_check_interval` of GET /network."
     )
     enabled: bool = True
 

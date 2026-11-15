@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     session_max_age: int = 1209600  # 14 jours
 
     monitor_tick_seconds: int = 15
-    default_check_interval: int = 60
+    default_check_interval: int = 60  # valeur initiale, redéfinissable dans les Paramètres du réseau
     monitor_concurrency: int = 50
     tcp_timeout_seconds: float = 3.0
     enable_ping: bool = True
@@ -43,9 +43,11 @@ class Settings(BaseSettings):
     backup_keep_pre_migration: int = 5
     backup_keep_daily: int = 7
 
-    health_warn_seconds: int = 120
-    health_red_seconds: int = 600
-    health_dark_red_seconds: int = 3600
+    # Valeurs initiales du suivi : elles s'appliquent tant que les « Paramètres du réseau »
+    # (table reseau) ne les redéfinissent pas. Voir monitor.MonitoringSettings.
+    health_warn_intervals: int = 2  # vert → ambre : dernier succès plus vieux que N intervalles
+    health_red_failures: int = 10  # ambre → rouge : N échecs consécutifs
+    health_dark_red_seconds: int = 604800  # rouge → rouge foncé : durée sans succès (1 semaine)
     health_poll_seconds: int = 30
 
     @property

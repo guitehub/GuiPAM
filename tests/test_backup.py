@@ -12,8 +12,8 @@ from alembic.script import ScriptDirectory
 from sqlmodel import select
 
 from app.database import session_factory
-from app.models import IPAddress, Subnet, User
-from app.services import backup
+from app.models import RESEAU_SINGLETON_ID, IPAddress, MonitorTarget, Reseau, Subnet, User
+from app.services import backup, monitor
 from tests.conftest import ADMIN_PASSWORD, login
 
 ROOT = Path(__file__).parent.parent
@@ -71,6 +71,13 @@ class TestMigrations:
                 # v0.3 : colonnes de pause ajoutées, IP existantes non en pause.
                 assert (ip.paused_at, ip.pause_until, ip.pause_until_recovery) == (None, None, False)
                 assert not ip.is_paused
+                # v0.4 : réglages du suivi ajoutés au réseau, vides → valeurs d'instance, rien ne change.
+                reseau = await session.get(Reseau, RESEAU_SINGLETON_ID)
+                assert reseau.name == "Maison"
+                assert [getattr(reseau, f) for f in monitor.MONITORING_FIELDS] == [None] * 4
+                assert monitor.monitoring() == monitor.instance_monitoring()
+                target = (await session.exec(select(MonitorTarget))).one()
+                assert (target.port, target.interval_seconds) == (8006, 60)
                 assert (await session.exec(select(Subnet))).one().cidr == "192.168.1.0/24"
                 assert (await session.exec(select(User))).one().username == "ancien"
                 exported = await backup.export_data(session)

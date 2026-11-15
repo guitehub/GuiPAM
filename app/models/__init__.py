@@ -56,6 +56,11 @@ class Reseau(SQLModel, table=True):
     notes: str | None = None
     root_prefixes: list[str] | None = Field(default=None, sa_column=Column(JSON))
     default_locale: str = "fr"
+    # Réglages du suivi. None = valeur d'instance (variables GUIPAM_*), voir monitor.MonitoringSettings.
+    default_check_interval: int | None = None
+    health_warn_intervals: int | None = None
+    health_red_failures: int | None = None
+    health_dark_red_seconds: int | None = None
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
 

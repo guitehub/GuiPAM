@@ -48,7 +48,7 @@ from app.models import (
 )
 from app.routers.dashboard import load_dashboard
 from app.routers.subnets import _filter_ips
-from app.services import inventory, ipam
+from app.services import inventory, ipam, monitor
 from app.services.monitor import SEVERITY, Health, health, ip_health
 from app.templating import ip_last_checked
 
@@ -221,10 +221,24 @@ async def summary(principal: Reader, session: SessionDep) -> Summary:
     )
 
 
+def network_out(reseau: Reseau) -> NetworkOut:
+    """Réseau + réglages du suivi effectifs (valeur du réseau, sinon celle de l'instance)."""
+    effective = monitor.effective_monitoring(reseau)
+    return NetworkOut(
+        name=reseau.name,
+        description=reseau.description,
+        notes=reseau.notes,
+        root_prefixes=reseau.root_prefixes,
+        default_locale=reseau.default_locale,
+        updated_at=reseau.updated_at,
+        **{name: getattr(effective, name) for name in monitor.MONITORING_FIELDS},
+    )
+
+
 @router.get("/network", tags=["network"], summary="Get the network managed by this instance")
 async def get_network(principal: Reader, session: SessionDep) -> NetworkOut:
     reseau = await session.get(Reseau, RESEAU_SINGLETON_ID)
-    return NetworkOut.model_validate(reseau, from_attributes=True)
+    return network_out(reseau)
 
 
 @router.patch("/network", tags=["network"], summary="Update the network settings", responses=WRITE_ERRORS)
@@ -232,7 +246,7 @@ async def update_network(principal: Writer, session: SessionDep, body: NetworkUp
     reseau = await session.get(Reseau, RESEAU_SINGLETON_ID)
     values = {**inventory.reseau_dict(reseau), **changes(body, required=("name", "default_locale"))}
     reseau = await inventory.update_reseau(session, principal.actor, reseau, **values)
-    return NetworkOut.model_validate(reseau, from_attributes=True)
+    return network_out(reseau)
 
 
 # --------------------------------------------------------------------------- VLAN

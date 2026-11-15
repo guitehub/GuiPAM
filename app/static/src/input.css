@@ -96,3 +96,11 @@ code {
   min-width: 6rem;
   overflow-wrap: break-word;
 }
+
+/* Fenêtre modale plus haute que l'écran : son contenu défile (Basecoat borne la hauteur
+   de l'article sans faire défiler la section, le bas du formulaire sortait de l'écran).
+   Le léger padding vertical évite de rogner l'anneau de focus du premier et du dernier champ. */
+.dialog > article > section {
+  overflow-y: auto;
+  padding-block: 2px;
+}

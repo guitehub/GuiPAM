@@ -108,9 +108,22 @@ Les deux seules obligatoires :
 | `GUIPAM_SECRET_KEY` | Clé de signature des sessions. L'app **refuse de démarrer** sans clé sérieuse. |
 | `GUIPAM_ADMIN_PASSWORD` | Mot de passe du premier compte manager (créé si la base est vide). **Aucun défaut.** |
 
-Seuils du code couleur santé (relatifs au dernier succès d'une cible) :
-`GUIPAM_HEALTH_WARN_SECONDS` (vert → ambre), `GUIPAM_HEALTH_RED_SECONDS` (→ rouge),
-`GUIPAM_HEALTH_DARK_RED_SECONDS` (→ rouge foncé). Une IP affiche la pire couleur de ses cibles actives.
+### Suivi : intervalle par défaut et seuils du code couleur
+
+Ils se règlent dans l'interface — **Administration → Paramètres du réseau → Suivi** (managers) — ou par
+l'API (`PATCH /api/v1/network`), et s'appliquent immédiatement. Les variables d'environnement n'en sont
+que la **valeur initiale**, utilisée tant qu'un réglage n'a pas été redéfini (ou a été vidé).
+
+| Réglage | Variable (valeur initiale) | Défaut |
+|---|---|---|
+| Intervalle proposé pour une nouvelle cible (modifiable à sa création) | `GUIPAM_DEFAULT_CHECK_INTERVAL` | 60 s |
+| Vert → ambre : dernier succès plus vieux que *N* fois l'intervalle de la cible | `GUIPAM_HEALTH_WARN_INTERVALS` | 2 |
+| Ambre → rouge : *N* échecs consécutifs | `GUIPAM_HEALTH_RED_FAILURES` | 10 |
+| Rouge → rouge foncé : durée sans succès | `GUIPAM_HEALTH_DARK_RED_SECONDS` | 604800 (1 semaine) |
+
+Chaque cible est ainsi jugée **à son propre rythme** : une cible vérifiée toutes les 5 minutes et une autre
+toutes les 30 secondes suivent la même règle, sans seuil à réajuster. Seul le rouge foncé (« morte depuis
+longtemps, entrée à nettoyer ») est une durée. Une IP affiche la pire couleur de ses cibles actives.
 
 ## Développement local
 

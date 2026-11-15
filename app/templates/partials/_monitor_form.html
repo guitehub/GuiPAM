@@ -34,7 +34,7 @@
           <div class="grid gap-2">
             <label for="monitor-interval">{{ _("Interval (seconds)") }}</label>
             <input id="monitor-interval" name="interval_seconds" type="number" min="5" max="86400"
-                   value="{{ target.interval_seconds if target else settings.default_check_interval }}">
+                   value="{{ target.interval_seconds if target else monitoring().default_check_interval }}">
           </div>
           <label class="flex items-center gap-2 text-sm pb-2">
             <input type="checkbox" class="checkbox" name="enabled" {{ "checked" if not target or target.enabled }}>

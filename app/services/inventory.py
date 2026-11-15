@@ -33,12 +33,20 @@ from app.models import (
 )
 from app.services import audit, ipam
 from app.services.ipam import ConflictError
+from app.services import monitor
 from app.services.monitor import check_target_now
 
 Author = User | audit.Actor | None
 
 MIN_INTERVAL = 5
 MAX_INTERVAL = 86400
+# Bornes des réglages du suivi (Paramètres du réseau) : (min, max) par champ de MonitoringSettings.
+MONITORING_LIMITS: dict[str, tuple[int, int]] = {
+    "default_check_interval": (MIN_INTERVAL, MAX_INTERVAL),
+    "health_warn_intervals": (1, 100),
+    "health_red_failures": (1, 1000),
+    "health_dark_red_seconds": (60, 366 * 86400),
+}
 ALLOCATE_RETRIES = 3
 
 
@@ -569,7 +577,7 @@ def _validate_monitor(protocol: Protocol, port: int | None, interval_seconds: in
                 _("ICMP ping is disabled on this instance (GUIPAM_ENABLE_PING=false)."), "protocol"
             )
         )
-    interval = interval_seconds if interval_seconds is not None else settings.default_check_interval
+    interval = interval_seconds if interval_seconds is not None else monitor.monitoring().default_check_interval
     if not MIN_INTERVAL <= interval <= MAX_INTERVAL:
         errors.append(
             ConflictError(
@@ -656,6 +664,16 @@ def reseau_dict(reseau: Reseau) -> dict[str, Any]:
         "notes": reseau.notes,
         "root_prefixes": reseau.root_prefixes,
         "default_locale": reseau.default_locale,
+        **{name: getattr(reseau, name) for name in monitor.MONITORING_FIELDS},
+    }
+
+
+def _monitoring_labels() -> dict[str, str]:
+    return {
+        "default_check_interval": _("Default check interval"),
+        "health_warn_intervals": _("Green → amber threshold"),
+        "health_red_failures": _("Amber → red threshold"),
+        "health_dark_red_seconds": _("Red → dark red threshold"),
     }
 
 
@@ -669,8 +687,30 @@ async def update_reseau(
     notes: str | None = None,
     root_prefixes: list[str] | None = None,
     default_locale: str | None = None,
+    default_check_interval: int | None = None,
+    health_warn_intervals: int | None = None,
+    health_red_failures: int | None = None,
+    health_dark_red_seconds: int | None = None,
 ) -> Reseau:
+    """Met à jour le réseau. Réglages du suivi : None = revenir à la valeur d'instance (GUIPAM_*)."""
+    tracking = {
+        "default_check_interval": default_check_interval,
+        "health_warn_intervals": health_warn_intervals,
+        "health_red_failures": health_red_failures,
+        "health_dark_red_seconds": health_dark_red_seconds,
+    }
     errors: list[ConflictError] = []
+    labels = _monitoring_labels()
+    for field, value in tracking.items():
+        low, high = MONITORING_LIMITS[field]
+        if value is not None and not low <= value <= high:
+            errors.append(
+                ConflictError(
+                    _("%(label)s: the value must be between %(min)d and %(max)d.")
+                    % {"label": labels[field], "min": low, "max": high},
+                    field,
+                )
+            )
     if not _clean(name):
         errors.append(ConflictError(_("Name is required."), "name"))
     prefixes: list[str] = []
@@ -691,8 +731,11 @@ async def update_reseau(
     reseau.root_prefixes = prefixes or None
     if default_locale in available_locales():
         reseau.default_locale = default_locale
+    for field, value in tracking.items():
+        setattr(reseau, field, value)
     reseau.updated_at = utcnow()
     session.add(reseau)
     await audit.record(session, author, "update", "reseau", reseau.id, audit.diff(before, reseau_dict(reseau)))
     await session.commit()
+    monitor.configure_monitoring(reseau)
     return reseau

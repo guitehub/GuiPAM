@@ -33,6 +33,12 @@
 - [x] Reprise automatique au retour de l'hôte, à échéance, ou manuelle ; auditée
 - [x] Pause pilotable par l'API (`POST /ips/{id}/pause`, `/resume`, filtre `health=paused`)
 
+## v0.4 — Régler le suivi sans toucher au déploiement
+
+- [x] Réglages du suivi dans les Paramètres du réseau (intervalle par défaut, seuils) ; l'env n'est que la valeur initiale
+- [x] Code couleur relatif à chaque cible : fraîcheur en nombre d'intervalles, panne en nombre d'échecs, rouge foncé en durée
+- [x] Mêmes réglages par l'API (`GET` / `PATCH /network`)
+
 ## Continuité des données
 
 - [x] Sauvegarde complète JSON versionnée + restauration (UI et ligne de commande)

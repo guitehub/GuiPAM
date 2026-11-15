@@ -36,7 +36,7 @@ from app.routers import (
     subnets as subnets_router,
     users as users_router,
 )
-from app.services import backup, ipam
+from app.services import backup, ipam, monitor
 from app.services.auth import CSRF_SESSION_KEY, generate_csrf_token, hash_password
 from app.services.monitor import scheduler_tick
 
@@ -93,6 +93,7 @@ async def bootstrap(settings: Settings) -> None:
             name = "Mon réseau" if settings.default_locale == "fr" else "My network"
             session.add(Reseau(id=RESEAU_SINGLETON_ID, name=name, default_locale=settings.default_locale))
         await session.commit()
+        await monitor.load_monitoring(session)
 
 
 @asynccontextmanager
@@ -132,6 +133,7 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         scheduler.shutdown(wait=False)
+        monitor.configure_monitoring(None)
         await dispose_engine()
 
 
@@ -178,6 +180,8 @@ def create_app() -> FastAPI:
             pass  # moteur non initialisé (tests unitaires sans DB)
         request.state.user = user
         request.state.reseau = reseau
+        if reseau is not None:
+            monitor.configure_monitoring(reseau)
         request.state.nav_subnets = nav_subnets
         set_locale(
             negotiate_locale(
