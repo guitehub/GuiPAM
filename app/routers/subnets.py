@@ -136,11 +136,14 @@ def _filter_ips(
             continue
         if not show_free and ip.status == IPStatus.libre and not status:
             continue
-        h = ip_health(ip.monitors, now)
         if health_filter:
-            if health_filter == "none" and h is not None:
-                continue
-            if health_filter != "none" and (h is None or h.value != health_filter):
+            # Une IP en pause n'apparaît que sous le filtre « paused », pas sous sa couleur réelle.
+            if ip.is_paused:
+                shown = "paused"
+            else:
+                h = ip_health(ip.monitors, now)
+                shown = "none" if h is None else h.value
+            if shown != health_filter:
                 continue
         if q:
             needle = q.lower()

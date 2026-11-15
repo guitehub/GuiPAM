@@ -1,0 +1,46 @@
+{# Mise en pause volontaire d'une IP (ou modification d'une pause en cours). #}
+<dialog class="dialog w-full max-w-md">
+  <article>
+    <header>
+      <h2 class="text-lg font-semibold">
+        {% if ip.is_paused %}{{ _("Edit the pause of %(address)s", address=ip.address) }}{% else %}{{ _("Pause %(address)s", address=ip.address) }}{% endif %}
+      </h2>
+      <p class="text-sm text-muted-foreground">
+        {{ _("For a host that is down on purpose. Checks keep running, but it no longer shows up in “To review” nor in the down counters.") }}
+      </p>
+    </header>
+    <section>
+      {% include "partials/_form_errors.html" %}
+      <form class="form grid gap-4" hx-post="/ips/{{ ip.id }}/pause" hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid gap-2">
+          <label for="pause-reason">{{ _("Reason") }}</label>
+          <input type="text" id="pause-reason" name="reason" maxlength="200" autofocus
+                 placeholder="{{ _("e.g. powered off on purpose, under maintenance…") }}"
+                 value="{{ form.reason if form else (ip.pause_reason or "") }}">
+        </div>
+        <div class="grid gap-2">
+          <label for="pause-resume">{{ _("Resume monitoring") }}</label>
+          {% set current = form.resume if form else ("recovery" if not ip.is_paused or ip.pause_until_recovery else ("manual" if not ip.pause_until else "")) %}
+          <select id="pause-resume" name="resume" class="select w-full">
+            <option value="recovery" {{ "selected" if current == "recovery" }}>{{ _("When the host answers again (recommended)") }}</option>
+            <option value="1h" {{ "selected" if current == "1h" }}>{{ _("In 1 hour") }}</option>
+            <option value="1d" {{ "selected" if current == "1d" }}>{{ _("In 1 day") }}</option>
+            <option value="1w" {{ "selected" if current == "1w" }}>{{ _("In 1 week") }}</option>
+            <option value="1m" {{ "selected" if current == "1m" }}>{{ _("In 30 days") }}</option>
+            <option value="manual" {{ "selected" if current == "manual" }}>{{ _("Manually only") }}</option>
+            {% if current == "" %}
+              <option value="keep" selected>{{ _("Keep the current end (%(when)s)", when=ip.pause_until | relative) }}</option>
+            {% endif %}
+          </select>
+          <p class="text-xs text-muted-foreground">
+            {{ _("“When the host answers again”: as soon as one of its targets responds after having been down, so you never forget to resume it.") }}
+          </p>
+        </div>
+        <footer class="flex justify-end gap-2">
+          <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
+          <button type="submit" class="btn-primary">{{ _("Pause") if not ip.is_paused else _("Save") }}</button>
+        </footer>
+      </form>
+    </section>
+  </article>
+</dialog>

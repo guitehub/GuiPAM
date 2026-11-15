@@ -1,0 +1,37 @@
+{# Tableau de bord : IP en pause volontaire, à l'écart de « À traiter », en sourdine. #}
+{% if data.paused %}
+{% from "partials/_icons.html" import icon %}
+{% from "partials/_health_dot.html" import ip_dot %}
+{# Carte simple (pas de <details>) : le polling du tableau de bord ré-rendrait l'état replié. #}
+<div class="card mb-6 py-0 gap-0 overflow-hidden">
+  <header class="flex items-center gap-2 px-6 py-3 text-sm text-muted-foreground">
+    {{ icon("pause") }}
+    <span class="font-medium text-foreground">{{ _("Paused") }}</span>
+    <span class="badge-outline">{{ data.paused | length }}</span>
+    <span class="hidden sm:inline">— {{ _("down on purpose, not counted as problems") }}</span>
+  </header>
+  <div class="overflow-x-auto border-t border-border">
+    <table class="table w-full text-sm">
+      <tbody>
+        {% for item in data.paused %}
+        {% set ip = item.ip %}
+        <tr class="text-muted-foreground">
+          <td class="w-8">{{ ip_dot(ip, item.health) }}</td>
+          <td><a class="underline font-mono text-foreground" href="/subnets/{{ item.subnet.id }}">{{ ip.address }}</a></td>
+          <td class="text-foreground">{{ ip.hostname or ip.device_label or "—" }}</td>
+          <td class="cell-wrap">{{ ip.pause_reason or "—" }}</td>
+          <td title="{{ ip.paused_at | dt }}">{{ _("Paused %(when)s", when=ip.paused_at | relative) }}</td>
+          <td class="cell-wrap text-xs">{% include "partials/_pause_resume_label.html" %}</td>
+          <td class="text-right">
+            {% if user.role.value == "manager" %}
+              <button type="button" class="btn-sm-ghost" hx-post="/ips/{{ ip.id }}/resume"
+                      title="{{ _("Resume monitoring") }}">{{ icon("play") }} {{ _("Resume") }}</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}

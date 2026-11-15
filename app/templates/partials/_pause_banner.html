@@ -1,0 +1,20 @@
+{# Bandeau « en pause » du détail d'une IP. #}
+{% from "partials/_icons.html" import icon %}
+<div class="flex items-start justify-between gap-4 rounded-md border border-border bg-muted px-3 py-2 text-sm">
+  <div class="flex items-start gap-2">
+    <span class="mt-0.5 text-muted-foreground">{{ icon("pause") }}</span>
+    <div>
+      <p>
+        <span class="font-medium" title="{{ ip.paused_at | dt }}">{{ _("Paused %(when)s", when=ip.paused_at | relative) }}</span>
+        {% if ip.pause_reason %}— {{ ip.pause_reason }}{% endif %}
+      </p>
+      <p class="text-xs text-muted-foreground">{% include "partials/_pause_resume_label.html" %}</p>
+    </div>
+  </div>
+  {% if user.role.value == "manager" %}
+    <div class="flex gap-2 shrink-0">
+      <button type="button" class="btn-sm-ghost" hx-get="/ips/{{ ip.id }}/pause" hx-target="#modal">{{ _("Edit pause") }}</button>
+      <button type="button" class="btn-sm-outline" hx-post="/ips/{{ ip.id }}/resume">{{ icon("play") }} {{ _("Resume") }}</button>
+    </div>
+  {% endif %}
+</div>

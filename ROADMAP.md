@@ -27,6 +27,12 @@
 - [x] Audit des actions automatisées (compte + clé)
 - [x] Spécification OpenAPI + documentation interactive servies en local
 
+## v0.3 — Distinguer les vraies pannes
+
+- [x] Pause volontaire d'un hôte : toujours vérifié, hors « À traiter » et compteurs de pannes
+- [x] Reprise automatique au retour de l'hôte, à échéance, ou manuelle ; auditée
+- [x] Pause pilotable par l'API (`POST /ips/{id}/pause`, `/resume`, filtre `health=paused`)
+
 ## Continuité des données
 
 - [x] Sauvegarde complète JSON versionnée + restauration (UI et ligne de commande)

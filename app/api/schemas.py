@@ -100,7 +100,10 @@ class Summary(BaseModel):
     used: int
     reserved: int
     free: int = Field(description="Recorded addresses with status `libre` (unrecorded addresses are free too).")
-    down: int = Field(description="IP addresses whose health is `red` or `dark_red`. See GET /problems.")
+    down: int = Field(
+        description="IP addresses whose health is `red` or `dark_red`, paused ones excluded. See GET /problems."
+    )
+    paused: int = Field(0, description="IP addresses paused on purpose (see `paused` on IP addresses).")
 
 
 # ---------------------------------------------------------------------- Supervision
@@ -168,6 +171,30 @@ class IpUpdate(IpFields):
     status: IPStatus | None = Field(None, description=STATUS_DOC)
 
 
+class PauseOut(BaseModel):
+    since: UtcDatetime = Field(description="When the pause started.")
+    reason: str | None = Field(description="Free text, e.g. `powered off on purpose`.")
+    until: UtcDatetime | None = Field(description="Automatic resume at this date; null if none.")
+    until_recovery: bool = Field(
+        description="Automatic resume as soon as one enabled target answers again after having been down."
+    )
+
+
+class PauseIn(Strict):
+    reason: str | None = Field(None, description="Why the host is paused (max 200 characters).")
+    until: datetime | None = Field(
+        None,
+        description="Resume automatically at this date (ISO 8601; without timezone = UTC). Must be in the future.",
+    )
+    until_recovery: bool = Field(
+        True,
+        description=(
+            "Resume automatically when the host comes back (one enabled target answers again after "
+            "having been down). With `until` too, the first condition met wins. Both unset = manual resume."
+        ),
+    )
+
+
 class IpOut(BaseModel):
     id: int
     vlan_id: int = Field(description="`id` of the VLAN resource owning this address.")
@@ -180,8 +207,16 @@ class IpOut(BaseModel):
     location: str | None
     description: str | None
     health: Health | None = Field(
-        description=HEALTH_DOC + " Worst of the enabled monitor targets; null without any."
+        description=HEALTH_DOC
+        + " Worst of the enabled monitor targets; null without any. Real state, even while paused."
     )
+    paused: bool = Field(
+        description=(
+            "Paused on purpose (e.g. host powered off): still checked, but left out of GET /problems, "
+            "of `down` counters and of the VLAN health."
+        )
+    )
+    pause: PauseOut | None = Field(description="Pause details; null when not paused.")
     last_checked_at: UtcDatetime | None
     monitors: list[MonitorOut]
     created_at: UtcDatetime
@@ -227,7 +262,9 @@ class VlanOut(BaseModel):
     capacity: int = Field(description="Number of usable host addresses.")
     recorded_ips: int = Field(description="Addresses recorded in this VLAN, whatever their status.")
     occupancy_percent: float
-    health: Health | None = Field(description="Worst health among the VLAN addresses; null if nothing is monitored.")
+    health: Health | None = Field(
+        description="Worst health among the VLAN addresses (paused ones excluded); null if nothing is monitored."
+    )
     created_at: UtcDatetime
     updated_at: UtcDatetime
 

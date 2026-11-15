@@ -79,6 +79,7 @@
       <option value="dark_red" {{ "selected" if filters.health == "dark_red" }}>{{ _("Stale") }}</option>
       <option value="unknown" {{ "selected" if filters.health == "unknown" }}>{{ _("Never checked") }}</option>
       <option value="none" {{ "selected" if filters.health == "none" }}>{{ _("No target") }}</option>
+      <option value="paused" {{ "selected" if filters.health == "paused" }}>{{ _("Paused") }}</option>
     </select>
   </div>
   <label class="flex items-center gap-2 h-8 text-sm">

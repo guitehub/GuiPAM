@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GuiPAM VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 18:18+0100\n"
+"POT-Creation-Date: 2026-11-15 18:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -48,7 +48,7 @@ msgstr "%s est l'adresse de broadcast et ne peut pas être attribuée."
 msgid "%s is the network address and cannot be assigned."
 msgstr "%s est l'adresse réseau et ne peut pas être attribuée."
 
-#: app/services/inventory.py:464
+#: app/services/inventory.py:565
 msgid "A TCP check requires a port between 1 and 65535."
 msgstr "Un check TCP nécessite un port entre 1 et 65535."
 
@@ -101,17 +101,17 @@ msgstr "Actif"
 msgid "Active account"
 msgstr "Compte actif"
 
-#: app/templates/partials/_ip_detail.html:25
+#: app/templates/partials/_ip_detail.html:34
 msgid "Add target"
 msgstr "Ajouter une cible"
 
-#: app/templates/partials/_ip_detail.html:5
-#: app/templates/partials/_ip_form.html:16 app/templates/subnet.html:98
-#: app/templates/subnet_plan.html:35
+#: app/templates/partials/_ip_detail.html:9
+#: app/templates/partials/_ip_form.html:16 app/templates/subnet.html:99
+#: app/templates/subnet_plan.html:36
 msgid "Address"
 msgstr "Adresse"
 
-#: app/services/inventory.py:273 app/services/ipam.py:183
+#: app/services/inventory.py:275 app/services/ipam.py:183
 #, python-format
 msgid "Address %(address)s already exists in VLAN “%(name)s”."
 msgstr "L'adresse %(address)s existe déjà dans le VLAN « %(name)s »."
@@ -130,6 +130,11 @@ msgstr "Adresse %s créée."
 #, python-format
 msgid "Address %s deleted."
 msgstr "Adresse %s supprimée."
+
+#: app/routers/ips.py:208
+#, python-format
+msgid "Address %s paused."
+msgstr "Adresse %s mise en pause."
 
 #: app/routers/ips.py:132
 #, python-format
@@ -153,11 +158,11 @@ msgstr "Toutes"
 msgid "All VLANs"
 msgstr "Tous les VLAN"
 
-#: app/templates/partials/_health_legend.html:13
+#: app/templates/partials/_health_legend.html:15
 msgid "An IP shows the worst color of its active targets."
 msgstr "Une IP affiche la pire couleur de ses cibles actives."
 
-#: app/services/inventory.py:378
+#: app/services/inventory.py:380
 msgid "An allocated address cannot have the status “libre”."
 msgstr "Une adresse allouée ne peut pas avoir le statut « libre »."
 
@@ -174,13 +179,13 @@ msgstr "Demandez à un manager de le créer."
 msgid "Audit log"
 msgstr "Journal d'audit"
 
-#: app/templates/subnet_plan.html:20
+#: app/templates/subnet_plan.html:21
 msgid "Back to VLAN"
 msgstr "Retour au VLAN"
 
 #: app/templates/audit.html:5 app/templates/import_export.html:5
 #: app/templates/service_accounts.html:5 app/templates/subnet.html:5
-#: app/templates/subnet_plan.html:5 app/templates/users.html:5
+#: app/templates/subnet_plan.html:6 app/templates/users.html:5
 msgid "Breadcrumb"
 msgstr "Fil d'Ariane"
 
@@ -200,6 +205,7 @@ msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
 #: app/templates/base.html:92 app/templates/partials/_api_key_form.html:29
 #: app/templates/partials/_ip_form.html:63
 #: app/templates/partials/_monitor_form.html:45
+#: app/templates/partials/_pause_form.html:40
 #: app/templates/partials/_reseau_form.html:34
 #: app/templates/partials/_service_account_form.html:38
 #: app/templates/partials/_subnet_form.html:44
@@ -208,7 +214,7 @@ msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
 msgid "Cancel"
 msgstr "Annuler"
 
-#: app/services/inventory.py:109
+#: app/services/inventory.py:111
 #, python-format
 msgid "Cannot change CIDR: %(count)d addresses would fall outside (e.g. %(example)s)."
 msgstr "Impossible de changer le CIDR : %(count)d adresses en sortiraient (ex. %(example)s)."
@@ -229,7 +235,7 @@ msgstr "Capacité"
 msgid "Changes"
 msgstr "Modifications"
 
-#: app/templates/partials/_ip_row.html:22
+#: app/templates/partials/_ip_row.html:25
 msgid "Check all targets of this IP now"
 msgstr "Vérifier toutes les cibles de cette IP maintenant"
 
@@ -253,7 +259,7 @@ msgstr "Copier"
 msgid "Copy it now: it will never be shown again."
 msgstr "Copiez-la maintenant : elle ne sera plus jamais affichée."
 
-#: app/services/inventory.py:426
+#: app/services/inventory.py:428
 msgid "Could not allocate an address (concurrent updates). Try again."
 msgstr "Impossible d'allouer une adresse (modifications concurrentes). Réessayez."
 
@@ -266,14 +272,14 @@ msgstr "Créer"
 msgid "Create key"
 msgstr "Créer la clé"
 
-#: app/templates/partials/_ip_detail.html:12
+#: app/templates/partials/_ip_detail.html:16
 msgid "Created"
 msgstr "Créée le"
 
 #: app/templates/audit.html:6 app/templates/dashboard.html:2
 #: app/templates/import_export.html:6 app/templates/partials/_main_nav.html:15
 #: app/templates/service_accounts.html:6 app/templates/subnet.html:6
-#: app/templates/subnet_plan.html:6 app/templates/users.html:6
+#: app/templates/subnet_plan.html:7 app/templates/users.html:6
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
@@ -285,7 +291,7 @@ msgstr "Données"
 msgid "Default language"
 msgstr "Langue par défaut"
 
-#: app/templates/partials/_ip_row.html:30
+#: app/templates/partials/_ip_row.html:40
 #: app/templates/partials/_monitor_row.html:29
 #: app/templates/partials/_subnet_row.html:25
 #: app/templates/partials/_user_row.html:14
@@ -298,7 +304,7 @@ msgstr "Supprimer"
 msgid "Delete VLAN “%(name)s” and all its addresses and targets?"
 msgstr "Supprimer le VLAN « %(name)s » et toutes ses adresses et cibles ?"
 
-#: app/templates/partials/_ip_row.html:29
+#: app/templates/partials/_ip_row.html:39
 #, python-format
 msgid "Delete address %(address)s and its monitor targets?"
 msgstr "Supprimer l'adresse %(address)s et ses cibles de suivi ?"
@@ -321,12 +327,12 @@ msgstr "Supprimer l'utilisateur « %(name)s » ? Ses entrées d'audit sont conse
 #: app/templates/partials/_reseau_form.html:15
 #: app/templates/partials/_service_account_form.html:19
 #: app/templates/partials/_subnet_form.html:36
-#: app/templates/subnet_plan.html:39
+#: app/templates/subnet_plan.html:40
 msgid "Description"
 msgstr "Description"
 
-#: app/templates/partials/_ip_detail.html:8 app/templates/subnet.html:101
-#: app/templates/subnet_plan.html:38
+#: app/templates/partials/_ip_detail.html:12 app/templates/subnet.html:102
+#: app/templates/subnet_plan.html:39
 msgid "Device"
 msgstr "Appareil"
 
@@ -350,11 +356,11 @@ msgstr "Down"
 msgid "Down for a long time (stale?)"
 msgstr "Down depuis longtemps (obsolète ?)"
 
-#: app/templates/partials/_health_legend.html:11
+#: app/templates/partials/_health_legend.html:12
 msgid "Down for a long time: dead service or stale entry to clean up"
 msgstr "Down depuis longtemps : service mort ou entrée obsolète à nettoyer"
 
-#: app/templates/partials/_health_legend.html:10
+#: app/templates/partials/_health_legend.html:11
 msgid "Down for a while"
 msgstr "Down depuis un moment"
 
@@ -366,8 +372,8 @@ msgstr "Télécharger une sauvegarde complète"
 msgid "Download export.csv"
 msgstr "Télécharger export.csv"
 
-#: app/templates/dashboard.html:14 app/templates/partials/_ip_detail.html:15
-#: app/templates/partials/_ip_row.html:26
+#: app/templates/dashboard.html:14 app/templates/partials/_ip_detail.html:23
+#: app/templates/partials/_ip_row.html:36
 #: app/templates/partials/_monitor_row.html:25
 #: app/templates/partials/_subnet_row.html:21
 #: app/templates/partials/_user_row.html:10
@@ -388,10 +394,19 @@ msgstr "Modifier l'adresse %(address)s"
 msgid "Edit monitor target"
 msgstr "Modifier la cible de suivi"
 
+#: app/templates/partials/_pause_banner.html:16
+msgid "Edit pause"
+msgstr "Modifier la pause"
+
 #: app/templates/partials/_service_account_form.html:5
 #, python-format
 msgid "Edit service account “%(name)s”"
 msgstr "Modifier le compte de service « %(name)s »"
+
+#: app/templates/partials/_pause_form.html:6
+#, python-format
+msgid "Edit the pause of %(address)s"
+msgstr "Modifier la pause de %(address)s"
 
 #: app/templates/partials/_user_form.html:5
 #, python-format
@@ -422,7 +437,7 @@ msgstr "Date d'expiration (facultative)"
 msgid "Export to CSV"
 msgstr "Exporter en CSV"
 
-#: app/templates/partials/_ip_detail.html:40
+#: app/templates/partials/_ip_detail.html:49
 msgid "Failures"
 msgstr "Échecs"
 
@@ -437,6 +452,10 @@ msgstr "Fichier trop volumineux."
 #: app/templates/subnet.html:38
 msgid "First usable IP"
 msgstr "Première IP utile"
+
+#: app/templates/partials/_pause_form.html:9
+msgid "For a host that is down on purpose. Checks keep running, but it no longer shows up in “To review” nor in the down counters."
+msgstr "Pour un hôte coupé volontairement. Les vérifications continuent, mais il n'apparaît plus dans « À traiter » ni dans les compteurs de pannes."
 
 #: app/templates/partials/_ip_form.html:26 app/templates/subnet.html:68
 msgid "Free"
@@ -471,8 +490,8 @@ msgstr "Passerelle (facultative)"
 msgid "GuiPAM also keeps automatic snapshots of its database in the “backups” folder of the data volume: one before every schema migration, and one per day."
 msgstr "GuiPAM conserve aussi des instantanés automatiques de sa base dans le dossier « backups » du volume de données : un avant chaque migration de schéma, et un par jour."
 
-#: app/templates/partials/_ip_detail.html:9
-#: app/templates/partials/_ip_form.html:48 app/templates/subnet.html:102
+#: app/templates/partials/_ip_detail.html:13
+#: app/templates/partials/_ip_form.html:48 app/templates/subnet.html:103
 msgid "Hardware"
 msgstr "Matériel"
 
@@ -480,22 +499,22 @@ msgstr "Matériel"
 msgid "Health"
 msgstr "Santé"
 
-#: app/templates/partials/_health_legend.html:3
-#: app/templates/partials/_health_legend.html:6
+#: app/templates/partials/_health_legend.html:4
+#: app/templates/partials/_health_legend.html:7
 msgid "Health color legend"
 msgstr "Légende du code couleur santé"
 
-#: app/templates/partials/_ip_detail.html:7
-#: app/templates/partials/_ip_form.html:33 app/templates/subnet.html:100
-#: app/templates/subnet_plan.html:37
+#: app/templates/partials/_ip_detail.html:11
+#: app/templates/partials/_ip_form.html:33 app/templates/subnet.html:101
+#: app/templates/subnet_plan.html:38
 msgid "Hostname"
 msgstr "Nom d'hôte"
 
-#: app/services/inventory.py:468
+#: app/services/inventory.py:569
 msgid "ICMP ping is disabled on this instance (GUIPAM_ENABLE_PING=false)."
 msgstr "Le ping ICMP est désactivé sur cette instance (GUIPAM_ENABLE_PING=false)."
 
-#: app/api/routes.py:162 app/api/routes.py:461 app/routers/ips.py:25
+#: app/api/routes.py:176 app/api/routes.py:482 app/routers/ips.py:25
 #: app/routers/ips.py:170 app/routers/monitors.py:44 app/routers/monitors.py:69
 msgid "IP address not found."
 msgstr "Adresse IP introuvable."
@@ -529,7 +548,23 @@ msgstr "Import / Export"
 msgid "Import a CSV file"
 msgstr "Importer un fichier CSV"
 
-#: app/templates/partials/_ip_detail.html:36
+#: app/templates/partials/_pause_form.html:27
+msgid "In 1 day"
+msgstr "Dans 1 jour"
+
+#: app/templates/partials/_pause_form.html:26
+msgid "In 1 hour"
+msgstr "Dans 1 heure"
+
+#: app/templates/partials/_pause_form.html:28
+msgid "In 1 week"
+msgstr "Dans 1 semaine"
+
+#: app/templates/partials/_pause_form.html:29
+msgid "In 30 days"
+msgstr "Dans 30 jours"
+
+#: app/templates/partials/_ip_detail.html:45
 msgid "Interval"
 msgstr "Intervalle"
 
@@ -537,7 +572,7 @@ msgstr "Intervalle"
 msgid "Interval (seconds)"
 msgstr "Intervalle (secondes)"
 
-#: app/services/inventory.py:475
+#: app/services/inventory.py:576
 #, python-format
 msgid "Interval must be between %(min)d and %(max)d seconds."
 msgstr "L'intervalle doit être compris entre %(min)d et %(max)d secondes."
@@ -564,6 +599,11 @@ msgstr "Jeton CSRF invalide ou manquant."
 msgid "Invalid username or password."
 msgstr "Identifiant ou mot de passe invalide."
 
+#: app/templates/partials/_pause_form.html:32
+#, python-format
+msgid "Keep the current end (%(when)s)"
+msgstr "Garder la fin prévue (%(when)s)"
+
 #: app/templates/import_export.html:65
 msgid "Keep this file private: it contains password and API key fingerprints."
 msgstr "Gardez ce fichier privé : il contient les empreintes des mots de passe et des clés d'API."
@@ -587,7 +627,7 @@ msgstr "Clé « %(name)s » créée"
 msgid "Key “%s” revoked."
 msgstr "Clé « %s » révoquée."
 
-#: app/templates/partials/_ip_detail.html:35
+#: app/templates/partials/_ip_detail.html:44
 #: app/templates/partials/_monitor_form.html:29
 msgid "Label"
 msgstr "Libellé"
@@ -596,12 +636,12 @@ msgstr "Libellé"
 msgid "Language"
 msgstr "Langue"
 
-#: app/templates/subnet_plan.html:25
+#: app/templates/subnet_plan.html:26
 #, python-format
 msgid "Large subnet: only the first %(max)d addresses are shown."
 msgstr "Grand subnet : seules les %(max)d premières adresses sont affichées."
 
-#: app/templates/subnet.html:106
+#: app/templates/subnet.html:107
 msgid "Last check"
 msgstr "Dernier check"
 
@@ -609,7 +649,7 @@ msgstr "Dernier check"
 msgid "Last login"
 msgstr "Dernière connexion"
 
-#: app/templates/partials/_ip_detail.html:38
+#: app/templates/partials/_ip_detail.html:47
 msgid "Last success"
 msgstr "Dernier succès"
 
@@ -621,7 +661,7 @@ msgstr "Dernière IP utile"
 msgid "Last used"
 msgstr "Dernière utilisation"
 
-#: app/templates/partials/_ip_detail.html:39
+#: app/templates/partials/_ip_detail.html:48
 msgid "Latency"
 msgstr "Latence"
 
@@ -643,8 +683,8 @@ msgstr "Ligne %(line)d : %(error)s"
 msgid "Loading…"
 msgstr "Chargement…"
 
-#: app/templates/partials/_ip_detail.html:10
-#: app/templates/partials/_ip_form.html:53 app/templates/subnet.html:103
+#: app/templates/partials/_ip_detail.html:14
+#: app/templates/partials/_ip_form.html:53 app/templates/subnet.html:104
 msgid "Location"
 msgstr "Lieu"
 
@@ -652,7 +692,7 @@ msgstr "Lieu"
 msgid "Log out"
 msgstr "Se déconnecter"
 
-#: app/templates/partials/_ip_detail.html:11 app/templates/subnet.html:104
+#: app/templates/partials/_ip_detail.html:15 app/templates/subnet.html:105
 msgid "MAC"
 msgstr "MAC"
 
@@ -663,6 +703,14 @@ msgstr "Adresse MAC"
 #: app/templates/partials/_main_nav.html:14
 msgid "Main menu"
 msgstr "Menu principal"
+
+#: app/templates/partials/_pause_resume_label.html:9
+msgid "Manual resume."
+msgstr "Reprise manuelle."
+
+#: app/templates/partials/_pause_form.html:30
+msgid "Manually only"
+msgstr "Manuellement uniquement"
 
 #: app/api/auth.py:74
 msgid "Missing, invalid, expired or revoked API key."
@@ -677,7 +725,7 @@ msgstr "Cible de suivi ajoutée sur %s."
 msgid "Monitor target deleted."
 msgstr "Cible de suivi supprimée."
 
-#: app/api/routes.py:169 app/routers/monitors.py:19
+#: app/api/routes.py:183 app/routers/monitors.py:19
 msgid "Monitor target not found."
 msgstr "Cible de suivi introuvable."
 
@@ -685,9 +733,14 @@ msgstr "Cible de suivi introuvable."
 msgid "Monitor target updated."
 msgstr "Cible de suivi mise à jour."
 
-#: app/templates/partials/_ip_detail.html:22
+#: app/templates/partials/_ip_detail.html:31
 msgid "Monitor targets"
 msgstr "Cibles de suivi"
+
+#: app/routers/ips.py:216
+#, python-format
+msgid "Monitoring of %s resumed."
+msgstr "Suivi de %s repris."
 
 #: app/templates/dashboard.html:49 app/templates/partials/_reseau_form.html:11
 #: app/templates/partials/_service_account_form.html:14
@@ -696,7 +749,7 @@ msgid "Name"
 msgstr "Nom"
 
 #: app/routers/service_accounts.py:88 app/routers/service_accounts.py:192
-#: app/services/inventory.py:93 app/services/inventory.py:574
+#: app/services/inventory.py:95 app/services/inventory.py:675
 msgid "Name is required."
 msgstr "Le nom est requis."
 
@@ -721,7 +774,7 @@ msgstr "Paramètres du réseau enregistrés."
 msgid "Networks"
 msgstr "Réseaux"
 
-#: app/templates/partials/_health_legend.html:7 app/templates/subnet.html:80
+#: app/templates/partials/_health_legend.html:8 app/templates/subnet.html:80
 msgid "Never checked"
 msgstr "Jamais vérifié"
 
@@ -791,7 +844,7 @@ msgstr "Aucune adresse enregistrée dans ce VLAN pour l'instant."
 msgid "No audit entries."
 msgstr "Aucune entrée d'audit."
 
-#: app/api/routes.py:367 app/services/inventory.py:399
+#: app/api/routes.py:385 app/services/inventory.py:401
 #, python-format
 msgid "No free address left in subnet %s."
 msgstr "Plus aucune adresse libre dans le subnet %s."
@@ -800,11 +853,11 @@ msgstr "Plus aucune adresse libre dans le subnet %s."
 msgid "No key yet: this account cannot connect."
 msgstr "Aucune clé : ce compte ne peut pas se connecter."
 
-#: app/templates/partials/_health_legend.html:12
+#: app/templates/partials/_health_legend.html:13
 msgid "No monitor target"
 msgstr "Aucune cible de suivi"
 
-#: app/templates/partials/_ip_detail.html:52
+#: app/templates/partials/_ip_detail.html:61
 msgid "No monitor target. Add a TCP port check or an ICMP ping to track this address."
 msgstr "Aucune cible de suivi. Ajoutez un check de port TCP ou un ping ICMP pour suivre cette adresse."
 
@@ -864,12 +917,42 @@ msgstr "Le mot de passe doit contenir au moins %d caractères."
 msgid "Password of “%s” reset."
 msgstr "Mot de passe de « %s » réinitialisé."
 
-#: app/templates/subnet_plan.html:2
+#: app/templates/partials/_ip_detail.html:21
+#: app/templates/partials/_pause_form.html:41
+msgid "Pause"
+msgstr "Mettre en pause"
+
+#: app/templates/partials/_pause_form.html:6
+#, python-format
+msgid "Pause %(address)s"
+msgstr "Mettre %(address)s en pause"
+
+#: app/templates/partials/_ip_row.html:33
+msgid "Pause (host down on purpose)"
+msgstr "Mettre en pause (hôte coupé volontairement)"
+
+#: app/templates/partials/_health_dot.html:5
+#: app/templates/partials/_ip_row.html:12 app/templates/partials/_paused.html:9
+#: app/templates/subnet.html:82
+msgid "Paused"
+msgstr "En pause"
+
+#: app/templates/partials/_pause_banner.html:8
+#: app/templates/partials/_paused.html:23
+#, python-format
+msgid "Paused %(when)s"
+msgstr "Mise en pause %(when)s"
+
+#: app/templates/partials/_health_legend.html:14
+msgid "Paused on purpose: still checked, but not counted as a problem"
+msgstr "En pause volontaire : toujours vérifiée, mais pas comptée comme un problème"
+
+#: app/templates/subnet_plan.html:3
 msgid "Plan"
 msgstr "Plan"
 
-#: app/templates/subnet.html:26 app/templates/subnet_plan.html:10
-#: app/templates/subnet_plan.html:17
+#: app/templates/subnet.html:26 app/templates/subnet_plan.html:11
+#: app/templates/subnet_plan.html:18
 msgid "Plan view"
 msgstr "Vue plan"
 
@@ -901,6 +984,10 @@ msgstr "Compte en lecture seule : action non autorisée."
 msgid "Read-only account: import is not available."
 msgstr "Compte en lecture seule : l'import n'est pas disponible."
 
+#: app/templates/partials/_pause_form.html:16
+msgid "Reason"
+msgstr "Raison"
+
 #: app/templates/partials/_ip_form.html:27 app/templates/subnet.html:69
 msgid "Reserved"
 msgstr "Réservée"
@@ -924,6 +1011,31 @@ msgstr "Restaurer une sauvegarde"
 #: app/templates/import_export.html:70
 msgid "Restore this backup? ALL current data (VLANs, addresses, users, keys, audit log) will be replaced by the content of the file. You will have to log in again."
 msgstr "Restaurer cette sauvegarde ? TOUTES les données actuelles (VLAN, adresses, utilisateurs, clés, journal d'audit) seront remplacées par le contenu du fichier. Vous devrez vous reconnecter."
+
+#: app/templates/partials/_pause_banner.html:17
+#: app/templates/partials/_paused.html:28
+msgid "Resume"
+msgstr "Reprendre"
+
+#: app/templates/partials/_ip_row.html:30
+#: app/templates/partials/_pause_form.html:22
+#: app/templates/partials/_paused.html:28
+msgid "Resume monitoring"
+msgstr "Reprendre le suivi"
+
+#: app/templates/partials/_pause_resume_label.html:5
+#, python-format
+msgid "Resumes %(when)s."
+msgstr "Reprise %(when)s."
+
+#: app/templates/partials/_pause_resume_label.html:3
+#, python-format
+msgid "Resumes when the host answers again, at the latest %(when)s."
+msgstr "Reprise quand l'hôte répondra de nouveau, au plus tard %(when)s."
+
+#: app/templates/partials/_pause_resume_label.html:7
+msgid "Resumes when the host answers again."
+msgstr "Reprise quand l'hôte répondra de nouveau."
 
 #: app/templates/service_accounts.html:81
 msgid "Revoke"
@@ -950,6 +1062,7 @@ msgstr "Préfixes racine :"
 
 #: app/templates/partials/_ip_form.html:64
 #: app/templates/partials/_monitor_form.html:46
+#: app/templates/partials/_pause_form.html:41
 #: app/templates/partials/_reseau_form.html:35
 #: app/templates/partials/_service_account_form.html:39
 #: app/templates/partials/_subnet_form.html:45
@@ -994,7 +1107,7 @@ msgstr "Les comptes de service permettent à des scripts, des playbooks et des a
 msgid "Show details"
 msgstr "Afficher le détail"
 
-#: app/templates/subnet.html:86
+#: app/templates/subnet.html:87
 msgid "Show free IPs"
 msgstr "Afficher les IP libres"
 
@@ -1011,10 +1124,10 @@ msgstr "Obsolète"
 msgid "State"
 msgstr "État"
 
-#: app/templates/partials/_ip_detail.html:6
-#: app/templates/partials/_ip_detail.html:37
+#: app/templates/partials/_ip_detail.html:10
+#: app/templates/partials/_ip_detail.html:46
 #: app/templates/partials/_ip_form.html:23 app/templates/subnet.html:64
-#: app/templates/subnet.html:99 app/templates/subnet_plan.html:36
+#: app/templates/subnet.html:100 app/templates/subnet_plan.html:37
 msgid "Status"
 msgstr "Statut"
 
@@ -1023,11 +1136,11 @@ msgstr "Statut"
 msgid "Subnet %(cidr)s is full (%(capacity)d usable addresses)."
 msgstr "Le subnet %(cidr)s est plein (%(capacity)d adresses utilisables)."
 
-#: app/templates/partials/_ip_detail.html:34
+#: app/templates/partials/_ip_detail.html:43
 msgid "Target"
 msgstr "Cible"
 
-#: app/templates/subnet.html:105
+#: app/templates/subnet.html:106
 msgid "Targets"
 msgstr "Cibles"
 
@@ -1040,6 +1153,10 @@ msgstr "Le compte n'a plus le rôle manager : cette clé ne peut que lire."
 msgid "The backup could not be restored (nothing was changed): %s"
 msgstr "La sauvegarde n'a pas pu être restaurée (rien n'a été modifié) : %s"
 
+#: app/services/inventory.py:489
+msgid "The end of the pause must be in the future."
+msgstr "La fin de la pause doit être dans le futur."
+
 #: app/routers/service_accounts.py:205
 msgid "The expiry date must be in the future."
 msgstr "La date d'expiration doit être dans le futur."
@@ -1047,6 +1164,11 @@ msgstr "La date d'expiration doit être dans le futur."
 #: app/services/csv_io.py:113
 msgid "The file is empty."
 msgstr "Le fichier est vide."
+
+#: app/services/inventory.py:487
+#, python-format
+msgid "The reason is too long (%d characters max)."
+msgstr "La raison est trop longue (%d caractères max)."
 
 #: app/api/auth.py:86
 msgid "This API key is read-only: action not allowed."
@@ -1099,11 +1221,11 @@ msgstr "Trop de tentatives. Réessayez dans %d secondes."
 msgid "Total IPs"
 msgstr "IP totales"
 
-#: app/templates/partials/_health_legend.html:9
+#: app/templates/partials/_health_legend.html:10
 msgid "Up but aging, or down recently"
 msgstr "Up mais vieillissant, ou down récemment"
 
-#: app/templates/partials/_health_legend.html:8
+#: app/templates/partials/_health_legend.html:9
 msgid "Up, recent success"
 msgstr "Up, succès récent"
 
@@ -1157,7 +1279,7 @@ msgstr "L'identifiant « %s » est déjà pris."
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: app/api/routes.py:142 app/api/routes.py:391 app/routers/ips.py:40
+#: app/api/routes.py:156 app/api/routes.py:409 app/routers/ips.py:40
 #: app/routers/ips.py:68 app/routers/subnets.py:23
 msgid "VLAN not found."
 msgstr "VLAN introuvable."
@@ -1170,7 +1292,7 @@ msgstr "Tag VLAN"
 msgid "VLAN tag (1–4094, optional)"
 msgstr "Tag VLAN (1–4094, facultatif)"
 
-#: app/services/inventory.py:95
+#: app/services/inventory.py:97
 msgid "VLAN tag must be a number between 1 and 4094."
 msgstr "Le tag VLAN doit être un nombre entre 1 et 4094."
 
@@ -1205,6 +1327,10 @@ msgstr "Vieillissant"
 msgid "When"
 msgstr "Quand"
 
+#: app/templates/partials/_pause_form.html:25
+msgid "When the host answers again (recommended)"
+msgstr "Quand l'hôte répond de nouveau (recommandé)"
+
 #: app/templates/audit.html:44
 msgid "Who"
 msgstr "Qui"
@@ -1217,10 +1343,18 @@ msgstr "Votre compte ne peut rien modifier."
 msgid "active"
 msgstr "active"
 
+#: app/templates/partials/_health_dot.html:5
+msgid "actual state:"
+msgstr "état réel :"
+
 #: app/templates/partials/_monitor_row.html:7
 #: app/templates/service_accounts.html:31
 msgid "disabled"
 msgstr "désactivé"
+
+#: app/templates/partials/_paused.html:11
+msgid "down on purpose, not counted as problems"
+msgstr "coupés volontairement, non comptés comme problèmes"
 
 #: app/templates/partials/_ip_form.html:49
 msgid "e.g. Dell R730, Zyxel GS1200…"
@@ -1233,6 +1367,10 @@ msgstr "ex. interface d'admin HTTPS"
 #: app/templates/partials/_ip_form.html:43
 msgid "e.g. NAS, printer, hypervisor…"
 msgstr "ex. NAS, imprimante, hyperviseur…"
+
+#: app/templates/partials/_pause_form.html:18
+msgid "e.g. powered off on purpose, under maintenance…"
+msgstr "ex. éteint volontairement, en maintenance…"
 
 #: app/templates/partials/_ip_form.html:54
 msgid "e.g. server room, office 2…"
@@ -1250,7 +1388,7 @@ msgstr "expirée"
 msgid "field(s)"
 msgstr "champ(s)"
 
-#: app/templates/subnet_plan.html:56
+#: app/templates/subnet_plan.html:57
 msgid "free (not recorded)"
 msgstr "libre (non enregistrée)"
 
@@ -1280,7 +1418,7 @@ msgstr "lecture seule"
 msgid "read/write"
 msgstr "lecture-écriture"
 
-#: app/templates/subnet_plan.html:18
+#: app/templates/subnet_plan.html:19
 msgid "recorded"
 msgstr "enregistrées"
 
@@ -1292,7 +1430,7 @@ msgstr "révoquée"
 msgid "unknown"
 msgstr "inconnu"
 
-#: app/templates/subnet_plan.html:18
+#: app/templates/subnet_plan.html:19
 msgid "usable addresses"
 msgstr "adresses utilisables"
 
@@ -1316,10 +1454,14 @@ msgstr "« %s » n'est pas une adresse IPv4 valide."
 msgid "“%s” is not a valid MAC address."
 msgstr "« %s » n'est pas une adresse MAC valide."
 
-#: app/services/inventory.py:583
+#: app/services/inventory.py:684
 #, python-format
 msgid "“%s” is not a valid network prefix."
 msgstr "« %s » n'est pas un préfixe réseau valide."
+
+#: app/templates/partials/_pause_form.html:36
+msgid "“When the host answers again”: as soon as one of its targets responds after having been down, so you never forget to resume it."
+msgstr "« Quand l'hôte répond de nouveau » : dès qu'une de ses cibles répond après avoir été en panne. Impossible d'oublier de reprendre le suivi."
 
 #: app/templates/users.html:39
 msgid "“manager” = read/write. “user” = read-only. The last active manager can be neither demoted nor deleted."

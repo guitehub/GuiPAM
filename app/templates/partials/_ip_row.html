@@ -1,5 +1,5 @@
 {% from "partials/_icons.html" import icon %}
-<tr id="ip-{{ ip.id }}">
+<tr id="ip-{{ ip.id }}" {% if ip.is_paused %}class="text-muted-foreground"{% endif %}>
   {% include "partials/_health_cell.html" %}
   <td class="font-mono">
     <button type="button" class="underline decoration-dotted"
@@ -7,7 +7,10 @@
             onclick="document.getElementById('ip-detail-tr-{{ ip.id }}').classList.toggle('hidden')"
             title="{{ _("Show details") }}">{{ ip.address }}</button>
   </td>
-  <td><span class="{{ ip.status | status_css }}">{{ ip.status | status_label }}</span></td>
+  <td class="whitespace-nowrap">
+    <span class="{{ ip.status | status_css }}">{{ ip.status | status_label }}</span>
+    {% if ip.is_paused %}<span class="badge-outline" title="{{ ip.pause_reason or _("Paused") }}">{{ _("Paused") }}</span>{% endif %}
+  </td>
   <td>{{ ip.hostname or "—" }}</td>
   <td class="cell-wrap">{{ ip.device_label or "—" }}</td>
   <td class="cell-wrap hidden lg:table-cell">{{ ip.hardware or "—" }}</td>
@@ -22,6 +25,13 @@
               title="{{ _("Check all targets of this IP now") }}" aria-label="{{ _("Check all targets of this IP now") }}">{{ icon("refresh") }}</button>
     {% endif %}
     {% if user.role.value == "manager" %}
+      {% if ip.is_paused %}
+        <button type="button" class="btn-sm-icon-ghost" hx-post="/ips/{{ ip.id }}/resume"
+                title="{{ _("Resume monitoring") }}" aria-label="{{ _("Resume monitoring") }}">{{ icon("play") }}</button>
+      {% else %}
+        <button type="button" class="btn-sm-icon-ghost" hx-get="/ips/{{ ip.id }}/pause" hx-target="#modal"
+                title="{{ _("Pause (host down on purpose)") }}" aria-label="{{ _("Pause (host down on purpose)") }}">{{ icon("pause") }}</button>
+      {% endif %}
       <button type="button" class="btn-sm-icon-ghost" hx-get="/ips/{{ ip.id }}/edit" hx-target="#modal"
               title="{{ _("Edit") }}" aria-label="{{ _("Edit") }}">{{ icon("pencil") }}</button>
       <button type="button" class="btn-sm-icon-ghost text-destructive"

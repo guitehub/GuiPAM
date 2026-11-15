@@ -1,0 +1,9 @@
+{# Pastille de santé d'une IP : icône pause (avec l'état réel en infobulle) si elle est en pause. #}
+{% from "partials/_icons.html" import icon %}
+{% macro ip_dot(ip, h) -%}
+  {% if ip.is_paused -%}
+    <span class="health-paused" title="{{ _("Paused") }}{% if ip.pause_reason %} — {{ ip.pause_reason }}{% endif %} · {{ _("actual state:") }} {{ h | health_label }}">{{ icon("pause", "size-3 fill-current") }}</span>
+  {%- else -%}
+    <span class="health-dot {{ h | health_css }}" title="{{ h | health_label }}"></span>
+  {%- endif %}
+{%- endmacro %}

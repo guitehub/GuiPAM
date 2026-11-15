@@ -68,6 +68,9 @@ class TestMigrations:
             async with session_factory()() as session:
                 ip = (await session.exec(select(IPAddress))).one()
                 assert (ip.address, ip.hostname, ip.hardware) == ("192.168.1.32", "pve", None)
+                # v0.3 : colonnes de pause ajoutées, IP existantes non en pause.
+                assert (ip.paused_at, ip.pause_until, ip.pause_until_recovery) == (None, None, False)
+                assert not ip.is_paused
                 assert (await session.exec(select(Subnet))).one().cidr == "192.168.1.0/24"
                 assert (await session.exec(select(User))).one().username == "ancien"
                 exported = await backup.export_data(session)

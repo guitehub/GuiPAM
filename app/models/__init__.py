@@ -98,8 +98,21 @@ class IPAddress(SQLModel, table=True):
     location: str | None = None
     description: str | None = None
     status: IPStatus = Field(default=IPStatus.utilisee)
+    # Pause volontaire (hôte éteint exprès) : les checks continuent, mais l'IP sort
+    # de « À traiter » et des compteurs de pannes. paused_at = None → pas en pause.
+    paused_at: datetime | None = None
+    pause_reason: str | None = None
+    pause_until: datetime | None = None  # reprise automatique à cette date (UTC)
+    pause_until_recovery: bool = Field(default=False, sa_column_kwargs={"server_default": "0"})
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
+
+    @property
+    def is_paused(self) -> bool:
+        """En pause maintenant (une échéance dépassée compte comme reprise, avant même le scheduler)."""
+        if self.paused_at is None:
+            return False
+        return self.pause_until is None or self.pause_until > utcnow()
 
     subnet: Subnet = Relationship(back_populates="ips")
     monitors: list["MonitorTarget"] = Relationship(

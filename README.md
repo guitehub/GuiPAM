@@ -9,6 +9,9 @@ ou probablement mortes.
 - **Détection de conflits** : CIDR invalides, chevauchements de VLAN, IP hors subnet, doublons, passerelle hors subnet, capacité.
 - **Suivi dynamique** : checks TCP (connexion) ou ICMP (ping) par cible, code couleur par fraîcheur du
   dernier succès (vert → ambre → rouge → rouge foncé « entrée à nettoyer »), rafraîchissement automatique.
+- **Pause volontaire** : un hôte éteint exprès (NAS coupé, machine en maintenance) se met en pause. Il reste
+  vérifié mais sort de « À traiter » et des compteurs de pannes ; la pause se lève toute seule quand l'hôte
+  répond de nouveau, après une durée choisie, ou à la main.
 - **Rôles** : `manager` (lecture/écriture) et `user` (lecture seule), journal d'audit de toute mutation.
 - **API JSON** pour les scripts, Ansible et les agents IA : comptes de service, clés d'accès en lecture seule
   ou lecture-écriture, allocation de la prochaine IP libre, spécification OpenAPI intégrée.
@@ -176,6 +179,9 @@ curl -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
      http://guipam.lan:8080/api/v1/vlans/3/allocate
 # Ce qui est en panne
 curl -H "Authorization: Bearer $KEY" http://guipam.lan:8080/api/v1/problems
+# NAS éteint exprès : pause jusqu'à ce qu'il réponde de nouveau (hors /problems d'ici là)
+curl -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+     -d '{"reason": "éteint volontairement"}' http://guipam.lan:8080/api/v1/ips/12/pause
 ```
 
 - **Documentation** : `/api/v1/docs` (interactive, servie en local) et `/api/v1/openapi.json`

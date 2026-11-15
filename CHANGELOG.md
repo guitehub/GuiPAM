@@ -5,6 +5,22 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+Mise à jour sans rupture : une migration additive (quatre colonnes facultatives sur `ip_address`) est
+appliquée au démarrage ; l'API gagne des champs et des routes, rien n'y change de sens pour l'existant.
+
+### Added
+- **Pause volontaire d'un hôte** (bouton ⏸ dans la grille et le détail de l'IP, managers) : pour une machine
+  éteinte exprès. Elle reste vérifiée, mais sort du panneau « À traiter », du compteur de pannes et de la
+  santé de son VLAN. Raison facultative ; reprise **quand l'hôte répond de nouveau** (par défaut : dès
+  qu'une cible répond après avoir été en panne), après 1 h / 1 jour / 1 semaine / 30 jours, ou à la main.
+  Pause et reprises (manuelles ou automatiques, avec leur cause) sont journalisées.
+- Tableau de bord : carte « En pause » discrète (raison, depuis quand, reprise prévue, bouton Reprendre).
+- Grille des IP : pictogramme pause à la place de la pastille (état réel en infobulle), badge « En pause »,
+  filtre santé « En pause » ; légende complétée.
+- API : champs `paused` et `pause` sur les adresses, `POST /ips/{id}/pause` et `POST /ips/{id}/resume`,
+  filtre `health=paused`, compteur `paused` dans `/summary`. Les adresses en pause sont exclues de
+  `/problems`, de `down` et de la santé des VLAN ; leur champ `health` reste l'état réel.
+
 ## [0.2.1] — 2026-11-15
 
 Mise à jour d'interface sans rupture : ni migration de schéma, ni changement de l'API `/api/v1`.

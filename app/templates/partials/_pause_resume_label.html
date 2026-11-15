@@ -1,0 +1,10 @@
+{# Quand la pause de `ip` se lèvera, en clair. #}
+{%- if ip.pause_until and ip.pause_until_recovery -%}
+  {{ _("Resumes when the host answers again, at the latest %(when)s.", when=ip.pause_until | relative) }}
+{%- elif ip.pause_until -%}
+  <span title="{{ ip.pause_until | dt }}">{{ _("Resumes %(when)s.", when=ip.pause_until | relative) }}</span>
+{%- elif ip.pause_until_recovery -%}
+  {{ _("Resumes when the host answers again.") }}
+{%- else -%}
+  {{ _("Manual resume.") }}
+{%- endif -%}

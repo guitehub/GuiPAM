@@ -10,6 +10,8 @@ rien écrire.
 """
 
 import ipaddress
+from collections.abc import Iterable
+from datetime import datetime, timedelta
 from typing import Any
 
 from sqlalchemy.exc import IntegrityError
@@ -441,6 +443,105 @@ async def check_ip(session: AsyncSession, author: Author, ip_id: int) -> IPAddre
     await audit.record(session, author, "check", "ip", ip.id)
     await session.commit()
     return (await session.exec(statement.execution_options(populate_existing=True))).first()
+
+
+# -------------------------------------------------------------------------- Pause
+
+# Durées proposées par l'UI (l'API accepte une date quelconque).
+PAUSE_DURATIONS: dict[str, timedelta] = {
+    "1h": timedelta(hours=1),
+    "1d": timedelta(days=1),
+    "1w": timedelta(weeks=1),
+    "1m": timedelta(days=30),
+}
+PAUSE_REASON_MAX = 200
+
+
+def pause_dict(ip: IPAddress) -> dict[str, Any]:
+    return {
+        "paused_at": ip.paused_at.isoformat() if ip.paused_at else None,
+        "pause_reason": ip.pause_reason,
+        "pause_until": ip.pause_until.isoformat() if ip.pause_until else None,
+        "pause_until_recovery": ip.pause_until_recovery,
+    }
+
+
+async def pause_ip(
+    session: AsyncSession,
+    author: Author,
+    ip: IPAddress,
+    *,
+    reason: str | None = None,
+    until: datetime | None = None,
+    until_recovery: bool = False,
+) -> IPAddress:
+    """Met une IP en pause volontaire (ou modifie une pause en cours).
+
+    Les checks continuent ; l'IP sort de « À traiter » et des compteurs de pannes.
+    Reprise : à `until` (UTC naïf), au retour de l'hôte si `until_recovery`, la
+    première des deux qui arrive ; sans aucune des deux, reprise manuelle.
+    """
+    errors: list[ConflictError] = []
+    reason = _clean(reason)
+    if reason and len(reason) > PAUSE_REASON_MAX:
+        errors.append(ConflictError(_("The reason is too long (%d characters max).") % PAUSE_REASON_MAX, "reason"))
+    if until is not None and until <= utcnow():
+        errors.append(ConflictError(_("The end of the pause must be in the future."), "until"))
+    if errors:
+        raise ValidationFailed(errors)
+    before = pause_dict(ip)
+    if ip.paused_at is None:
+        ip.paused_at = utcnow()
+    ip.pause_reason = reason
+    ip.pause_until = until
+    ip.pause_until_recovery = until_recovery
+    session.add(ip)
+    await audit.record(session, author, "pause", "ip", ip.id, audit.diff(before, pause_dict(ip)))
+    await session.commit()
+    return ip
+
+
+def _clear_pause(ip: IPAddress) -> dict[str, Any]:
+    before = pause_dict(ip)
+    ip.paused_at = None
+    ip.pause_reason = None
+    ip.pause_until = None
+    ip.pause_until_recovery = False
+    return before
+
+
+async def resume_ip(session: AsyncSession, author: Author, ip: IPAddress) -> IPAddress:
+    """Lève la pause : l'IP redevient suivie normalement (sans effet si elle n'est pas en pause)."""
+    if ip.paused_at is None:
+        return ip
+    before = _clear_pause(ip)
+    session.add(ip)
+    await audit.record(session, author, "resume", "ip", ip.id, audit.diff(before, pause_dict(ip)))
+    await session.commit()
+    return ip
+
+
+async def resume_due_pauses(session: AsyncSession, recovered_ip_ids: Iterable[int] = ()) -> int:
+    """Reprises automatiques (auteur « système ») : échéance dépassée, ou hôte en pause
+    « jusqu'au retour » dont une cible vient de répondre à nouveau. Commit laissé à l'appelant."""
+    now = utcnow()
+    recovered = set(recovered_ip_ids)
+    paused = (await session.exec(select(IPAddress).where(IPAddress.paused_at != None))).all()  # noqa: E711
+    count = 0
+    for ip in paused:
+        expired = ip.pause_until is not None and ip.pause_until <= now
+        came_back = ip.pause_until_recovery and ip.id in recovered
+        if not (expired or came_back):
+            continue
+        before = _clear_pause(ip)
+        session.add(ip)
+        await audit.record(
+            session, None, "resume", "ip", ip.id,
+            # Cause de la reprise, au format {before, after} du journal comme les autres champs.
+            {**audit.diff(before, pause_dict(ip)), "trigger": {"before": None, "after": "expired" if expired else "recovered"}},
+        )
+        count += 1
+    return count
 
 
 # ------------------------------------------------------------------------- Cibles

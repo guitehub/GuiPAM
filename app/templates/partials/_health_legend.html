@@ -1,3 +1,4 @@
+{% from "partials/_icons.html" import icon %}
 <div x-data="{open: false}" class="relative">
   <button type="button" class="btn-sm-icon-ghost" @click="open = !open" @click.outside="open = false"
           title="{{ _("Health color legend") }}" aria-label="{{ _("Health color legend") }}">?</button>
@@ -10,6 +11,7 @@
     <p class="flex items-center gap-2"><span class="health-dot health-red"></span> {{ _("Down for a while") }}</p>
     <p class="flex items-center gap-2"><span class="health-dot health-dark-red"></span> {{ _("Down for a long time: dead service or stale entry to clean up") }}</p>
     <p class="flex items-center gap-2"><span class="health-dot health-none"></span> {{ _("No monitor target") }}</p>
+    <p class="flex items-center gap-2"><span class="health-paused">{{ icon("pause", "size-3 fill-current") }}</span> {{ _("Paused on purpose: still checked, but not counted as a problem") }}</p>
     <p class="text-muted-foreground">{{ _("An IP shows the worst color of its active targets.") }}</p>
   </div>
 </div>

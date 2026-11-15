@@ -140,7 +140,10 @@ async def run_check(target: MonitorTarget, host: str) -> tuple[bool, float | Non
     return await check_icmp(host, settings.tcp_timeout_seconds)
 
 
-def apply_result(target: MonitorTarget, ok: bool, latency_ms: float | None) -> None:
+def apply_result(target: MonitorTarget, ok: bool, latency_ms: float | None) -> bool:
+    """Enregistre un résultat. Retourne True si la cible revient (était `down`, répond à nouveau) :
+    c'est le signal de reprise des pauses « jusqu'au retour »."""
+    recovered = ok and target.last_status == CheckStatus.down
     now = utcnow()
     target.last_checked_at = now
     target.latency_ms = latency_ms
@@ -151,14 +154,19 @@ def apply_result(target: MonitorTarget, ok: bool, latency_ms: float | None) -> N
     else:
         target.last_status = CheckStatus.down
         target.consecutive_failures += 1
+    return recovered
 
 
 async def check_target_now(session: AsyncSession, target: MonitorTarget) -> MonitorTarget:
     """Check immédiat d'une cible (bouton « Vérifier »)."""
+    from app.services.inventory import resume_due_pauses  # import local : inventory importe ce module
+
     ip = await session.get(IPAddress, target.ip_id)
     ok, latency = await run_check(target, ip.address)
-    apply_result(target, ok, latency)
+    recovered = apply_result(target, ok, latency)
     session.add(target)
+    if recovered:
+        await resume_due_pauses(session, recovered_ip_ids={target.ip_id})
     await session.commit()
     await session.refresh(target)
     return target
@@ -173,6 +181,8 @@ async def run_due_checks(session: AsyncSession) -> int:
         .join(IPAddress, MonitorTarget.ip_id == IPAddress.id)  # type: ignore[arg-type]
         .where(MonitorTarget.enabled == True)  # noqa: E712
     )
+    from app.services.inventory import resume_due_pauses  # import local : inventory importe ce module
+
     rows = result.all()
     due = [
         (target, address)
@@ -180,18 +190,20 @@ async def run_due_checks(session: AsyncSession) -> int:
         if target.last_checked_at is None
         or (now - target.last_checked_at).total_seconds() >= target.interval_seconds
     ]
-    if not due:
-        return 0
-
+    recovered: set[int] = set()
     semaphore = asyncio.Semaphore(settings.monitor_concurrency)
 
     async def _one(target: MonitorTarget, address: str) -> None:
         async with semaphore:
             ok, latency = await run_check(target, address)
-        apply_result(target, ok, latency)
+        if apply_result(target, ok, latency):
+            recovered.add(target.ip_id)
         session.add(target)
 
-    await asyncio.gather(*(_one(t, a) for t, a in due))
+    if due:
+        await asyncio.gather(*(_one(t, a) for t, a in due))
+    # Échéances de pause dépassées + hôtes en pause « jusqu'au retour » qui répondent à nouveau.
+    await resume_due_pauses(session, recovered_ip_ids=recovered)
     await session.commit()
     return len(due)
 

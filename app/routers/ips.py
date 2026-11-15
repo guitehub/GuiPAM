@@ -9,7 +9,7 @@ from sqlmodel import select
 from app.deps import CurrentUser, ManagerUser, SessionDep, csrf_protect
 from app.flash import flash
 from app.i18n import gettext as _
-from app.models import IPAddress, IPStatus, Subnet
+from app.models import IPAddress, IPStatus, Subnet, utcnow
 from app.services import inventory
 from app.templating import hx_refresh, render
 
@@ -169,3 +169,49 @@ async def check_ip(request: Request, user: CurrentUser, session: SessionDep, ip_
     if ip is None:
         raise HTTPException(status_code=404, detail=_("IP address not found."))
     return render(request, "partials/_ip_row.html", {"ip": ip})
+
+
+# -------------------------------------------------------------------------- Pause
+
+
+@router.get("/ips/{ip_id}/pause")
+async def pause_form(request: Request, user: ManagerUser, session: SessionDep, ip_id: int):
+    ip = await _get_ip(session, ip_id, with_monitors=False)
+    return render(request, "partials/_pause_form.html", {"ip": ip, "form": None, "errors": []})
+
+
+@router.post("/ips/{ip_id}/pause")
+async def pause_ip(
+    request: Request,
+    user: ManagerUser,
+    session: SessionDep,
+    ip_id: int,
+    reason: Annotated[str, Form()] = "",
+    resume: Annotated[str, Form()] = "recovery",
+):
+    ip = await _get_ip(session, ip_id, with_monitors=False)
+    if resume == "keep" and ip.is_paused:
+        until, until_recovery = ip.pause_until, ip.pause_until_recovery
+    elif resume in inventory.PAUSE_DURATIONS:
+        until, until_recovery = utcnow() + inventory.PAUSE_DURATIONS[resume], False
+    else:
+        until, until_recovery = None, resume != "manual"
+    try:
+        await inventory.pause_ip(session, user, ip, reason=reason, until=until, until_recovery=until_recovery)
+    except inventory.ValidationFailed as exc:
+        return render(
+            request,
+            "partials/_pause_form.html",
+            {"ip": ip, "form": {"reason": reason, "resume": resume}, "errors": exc.messages, "error_fields": exc.fields},
+            status_code=422,
+        )
+    flash(request, _("Address %s paused.") % ip.address)
+    return hx_refresh()
+
+
+@router.post("/ips/{ip_id}/resume")
+async def resume_ip(request: Request, user: ManagerUser, session: SessionDep, ip_id: int):
+    ip = await _get_ip(session, ip_id, with_monitors=False)
+    await inventory.resume_ip(session, user, ip)
+    flash(request, _("Monitoring of %s resumed.") % ip.address)
+    return hx_refresh()

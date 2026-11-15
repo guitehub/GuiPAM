@@ -1,6 +1,7 @@
 """Routes de l'API v1. Toute la logique métier est dans `app/services/inventory.py`."""
 
 import ipaddress
+from datetime import UTC
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Query, Response
@@ -24,6 +25,8 @@ from app.api.schemas import (
     NetworkUpdate,
     NextFree,
     Page,
+    PauseIn,
+    PauseOut,
     Problem,
     Summary,
     VlanCreate,
@@ -93,6 +96,15 @@ def ip_out(ip: IPAddress) -> IpOut:
         location=ip.location,
         description=ip.description,
         health=ip_health(ip.monitors),
+        paused=ip.is_paused,
+        pause=PauseOut(
+            since=ip.paused_at,
+            reason=ip.pause_reason,
+            until=ip.pause_until,
+            until_recovery=ip.pause_until_recovery,
+        )
+        if ip.is_paused
+        else None,
         last_checked_at=ip_last_checked(ip),
         monitors=[monitor_out(t) for t in ip.monitors],
         created_at=ip.created_at,
@@ -104,6 +116,8 @@ def vlan_out(subnet: Subnet, ips: list[IPAddress]) -> VlanOut:
     stats = ipam.subnet_stats(subnet, len(ips))
     worst: Health | None = None
     for ip in ips:
+        if ip.is_paused:
+            continue
         h = ip_health(ip.monitors)
         if h is not None and (worst is None or SEVERITY[h] > SEVERITY[worst]):
             worst = h
@@ -203,6 +217,7 @@ async def summary(principal: Reader, session: SessionDep) -> Summary:
         reserved=data.reserved,
         free=data.free,
         down=data.red_count,
+        paused=len(data.paused),
     )
 
 
@@ -284,8 +299,11 @@ StatusFilter = Annotated[IPStatus | None, Query(description="Filter by status.")
 HealthFilter = Annotated[
     str | None,
     Query(
-        pattern="^(ok|unknown|warn|red|dark_red|none)$",
-        description="Filter by health; `none` = addresses without any enabled monitor target.",
+        pattern="^(ok|unknown|warn|red|dark_red|none|paused)$",
+        description=(
+            "Filter by health; `none` = addresses without any enabled monitor target; `paused` = paused "
+            "addresses (which match no other value)."
+        ),
     ),
 ]
 SearchFilter = Annotated[
@@ -432,7 +450,10 @@ async def delete_ip(principal: Writer, session: SessionDep, ip_id: int) -> Respo
     "/problems",
     tags=["monitoring"],
     summary="What is down right now",
-    description="IP addresses whose health is `red` or `dark_red`, worst first (same as the dashboard panel).",
+    description=(
+        "IP addresses whose health is `red` or `dark_red`, worst first (same as the dashboard panel). "
+        "Addresses paused on purpose are left out."
+    ),
 )
 async def list_problems(principal: Reader, session: SessionDep) -> list[Problem]:
     _summaries, attention, _data = await load_dashboard(session)
@@ -460,6 +481,40 @@ async def check_ip(principal: Reader, session: SessionDep, ip_id: int) -> IpOut:
     if ip is None:
         raise not_found(_("IP address not found."))
     return ip_out(ip)
+
+
+@router.post(
+    "/ips/{ip_id}/pause",
+    tags=["monitoring"],
+    summary="Pause an IP on purpose (host powered off, maintenance…)",
+    description=(
+        "Checks keep running, but the address leaves GET /problems, the `down` counters and the VLAN health. "
+        "Calling it on a paused address updates the pause (start date kept)."
+    ),
+    responses={**WRITE_ERRORS, **NOT_FOUND},
+)
+async def pause_ip(principal: Writer, session: SessionDep, ip_id: int, body: PauseIn) -> IpOut:
+    ip = await load_ip(session, ip_id)
+    until = body.until
+    if until is not None and until.tzinfo is not None:
+        until = until.astimezone(UTC).replace(tzinfo=None)
+    await inventory.pause_ip(
+        session, principal.actor, ip, reason=body.reason, until=until, until_recovery=body.until_recovery
+    )
+    return ip_out(await load_ip(session, ip_id))
+
+
+@router.post(
+    "/ips/{ip_id}/resume",
+    tags=["monitoring"],
+    summary="End the pause of an IP",
+    description="No effect if the address is not paused.",
+    responses={**WRITE_ERRORS, **NOT_FOUND},
+)
+async def resume_ip(principal: Writer, session: SessionDep, ip_id: int) -> IpOut:
+    ip = await load_ip(session, ip_id)
+    await inventory.resume_ip(session, principal.actor, ip)
+    return ip_out(await load_ip(session, ip_id))
 
 
 @router.post(

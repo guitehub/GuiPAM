@@ -58,3 +58,13 @@
 .health-badge .health-dot { width: 0.5rem; height: 0.5rem; }
 
 [x-cloak] { display: none !important; }
+
+/* IP en pause volontaire : pictogramme neutre à la place de la pastille. */
+.health-paused {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--fg-soft);
+}

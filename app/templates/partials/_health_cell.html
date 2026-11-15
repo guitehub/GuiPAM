@@ -1,5 +1,6 @@
+{% from "partials/_health_dot.html" import ip_dot %}
 {% set h = ip_health(ip.monitors) %}
 <td class="w-8" id="health-cell-{{ ip.id }}"
     hx-get="/ips/{{ ip.id }}/health" hx-trigger="every {{ settings.health_poll_seconds }}s" hx-swap="outerHTML">
-  <span class="health-dot {{ h | health_css }}" title="{{ h | health_label }}"></span>
+  {{ ip_dot(ip, h) }}
 </td>

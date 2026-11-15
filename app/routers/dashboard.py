@@ -1,6 +1,6 @@
 """Tableau de bord : infos réseau, stats, panneau « à traiter », liste des VLAN."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
@@ -33,12 +33,20 @@ class Attention:
 
 
 @dataclass
+class Paused:
+    ip: IPAddress
+    subnet: Subnet
+    health: Health | None  # état réel, les checks continuant pendant la pause
+
+
+@dataclass
 class DashboardData:
     total: int = 0
     used: int = 0
     free: int = 0
     reserved: int = 0
-    red_count: int = 0
+    red_count: int = 0  # pannes à traiter (IP en pause exclues)
+    paused: list[Paused] = field(default_factory=list)
 
 
 async def load_dashboard(session: SessionDep) -> tuple[list[SubnetSummary], list[Attention], DashboardData]:
@@ -64,6 +72,10 @@ async def load_dashboard(session: SessionDep) -> tuple[list[SubnetSummary], list
             else:
                 data.reserved += 1
             h = ip_health(ip.monitors, now)
+            if ip.is_paused:
+                # Pause volontaire : ni « à traiter », ni pire état du VLAN.
+                data.paused.append(Paused(ip=ip, subnet=subnet, health=h))
+                continue
             if h is not None and (worst is None or SEVERITY[h] > SEVERITY[worst]):
                 worst = h
             if h in (Health.red, Health.dark_red):
@@ -82,6 +94,7 @@ async def load_dashboard(session: SessionDep) -> tuple[list[SubnetSummary], list
         )
 
     attention.sort(key=lambda a: (-SEVERITY[a.health], a.last_ok_at or utcnow(), a.ip.address_int))
+    data.paused.sort(key=lambda p: (ipam.network_sort_key(p.subnet.cidr), p.ip.address_int))
     return summaries, attention, data
 
 

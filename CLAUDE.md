@@ -1,13 +1,13 @@
 # GuiPAM — notes pour Claude Code
 
 IPAM auto-hébergé mono-réseau avec suivi dynamique (checks TCP/ICMP, code couleur santé).
-Cahier des charges v2 implémenté en v0.1.0 ; v0.2.0 ajoute l'API JSON `/api/v1` et les comptes de service.
+Cahier des charges v2 implémenté en v0.1.0 ; v0.2.0 ajoute l'API JSON `/api/v1` et les comptes de service ; v0.3.0 la pause volontaire des hôtes.
 Specs clés : voir README.md et ROADMAP.md.
 
 ## Commandes
 
 ```bash
-.venv/bin/pytest tests/ -q                 # 106 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu)
+.venv/bin/pytest tests/ -q                 # 117 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause)
 make css                                   # recompile app/static/app.css (binaire Tailwind standalone)
 PATH="$PWD/.venv/bin:$PATH" make i18n      # extraction + régénération du .po fr + compilation .mo (le Makefile appelle `python`, absent hors venv)
 .venv/bin/python -m app.main               # serveur dev (env GUIPAM_* requis, voir .env.example)
@@ -28,6 +28,11 @@ Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `G
   Erreurs au format `{"error": {code, message, details}}`. Les descriptions des schémas sont la doc lue par
   les agents : les soigner. L'auteur d'une action API est un `audit.Actor` (compte + clé).
 - **Clés d'API** : seul le SHA-256 est stocké ; la clé en clair n'existe que dans la réponse de création.
+- **Pause volontaire** (`IPAddress.paused_at` …, propriété `is_paused`) : l'IP reste vérifiée, `health` reste
+  l'état réel ; c'est l'**affichage** qui l'écarte (À traiter, compteurs, santé VLAN, `/problems`, filtres où elle
+  n'apparaît que sous `paused`). Mutations dans `inventory.pause_ip/resume_ip` ; reprises auto dans
+  `inventory.resume_due_pauses` (appelée par le scheduler et les checks manuels), déclenchées par l'échéance ou
+  par un **retour** (`apply_result` renvoie True sur une transition down → up, pas sur un premier succès).
 - **Seuils santé** centralisés dans `app/services/monitor.py` : `health()` / `ip_health()` (= pire cible active).
   Gravité : ok < unknown < warn < red < dark_red.
 - **Migrations Alembic appliquées au démarrage** (lifespan, via thread) ; env.py sync (pas d'async nécessaire).
