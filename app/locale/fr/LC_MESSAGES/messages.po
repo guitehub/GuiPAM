@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GuiPAM VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 23:42+0100\n"
+"POT-Creation-Date: 2026-11-16 00:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -86,7 +86,7 @@ msgstr "Une clé en lecture-écriture nécessite un compte de service au rôle m
 msgid "A service account named “%s” already exists."
 msgstr "Un compte de service nommé « %s » existe déjà."
 
-#: app/templates/partials/_main_nav.html:75
+#: app/templates/partials/_admin_menu.html:31
 #: app/templates/service_accounts.html:19
 msgid "API documentation"
 msgstr "Documentation de l'API"
@@ -95,8 +95,8 @@ msgstr "Documentation de l'API"
 msgid "API key not found."
 msgstr "Clé d'API introuvable."
 
+#: app/templates/partials/_admin_menu.html:24
 #: app/templates/partials/_api_key_form.html:14
-#: app/templates/partials/_main_nav.html:68
 #: app/templates/service_accounts.html:51
 msgid "Access"
 msgstr "Accès"
@@ -162,7 +162,7 @@ msgstr "Adresse %s mise à jour."
 msgid "Addresses whose targets no longer respond, worst first. Fix them or clean up stale entries."
 msgstr "Adresses dont les cibles ne répondent plus, les pires d'abord. Réparez-les ou nettoyez les entrées obsolètes."
 
-#: app/templates/partials/_main_nav.html:54
+#: app/templates/partials/_admin_menu.html:10
 msgid "Administration"
 msgstr "Administration"
 
@@ -171,7 +171,7 @@ msgstr "Administration"
 msgid "All"
 msgstr "Toutes"
 
-#: app/templates/partials/_main_nav.html:42
+#: app/templates/partials/_main_nav.html:37
 msgid "All VLANs"
 msgstr "Tous les VLAN"
 
@@ -191,7 +191,7 @@ msgstr "Une IP affiche la pire couleur de ses cibles actives."
 msgid "An allocated address cannot have the status “libre”."
 msgstr "Une adresse allouée ne peut pas avoir le statut « libre »."
 
-#: app/templates/base.html:88
+#: app/templates/base.html:89
 msgid "Are you sure?"
 msgstr "Confirmer ?"
 
@@ -200,7 +200,7 @@ msgid "Ask a manager to create it."
 msgstr "Demandez à un manager de le créer."
 
 #: app/templates/audit.html:2 app/templates/audit.html:8
-#: app/templates/audit.html:13 app/templates/partials/_main_nav.html:65
+#: app/templates/audit.html:13 app/templates/partials/_admin_menu.html:21
 msgid "Audit log"
 msgstr "Journal d'audit"
 
@@ -227,7 +227,7 @@ msgstr "CIDR"
 msgid "CIDR %(cidr)s overlaps VLAN “%(name)s” (%(other)s)."
 msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
 
-#: app/templates/base.html:92 app/templates/partials/_api_key_form.html:29
+#: app/templates/base.html:93 app/templates/partials/_api_key_form.html:29
 #: app/templates/partials/_ip_form.html:63
 #: app/templates/partials/_monitor_form.html:45
 #: app/templates/partials/_pause_form.html:40
@@ -268,7 +268,7 @@ msgstr "Vérifier toutes les cibles de cette IP maintenant"
 msgid "Check now"
 msgstr "Vérifier maintenant"
 
-#: app/templates/base.html:93
+#: app/templates/base.html:94
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -302,13 +302,13 @@ msgid "Created"
 msgstr "Créée le"
 
 #: app/templates/audit.html:6 app/templates/dashboard.html:2
-#: app/templates/import_export.html:6 app/templates/partials/_main_nav.html:15
+#: app/templates/import_export.html:6 app/templates/partials/_main_nav.html:10
 #: app/templates/service_accounts.html:6 app/templates/subnet.html:6
 #: app/templates/subnet_plan.html:7 app/templates/users.html:6
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: app/templates/partials/_main_nav.html:64
+#: app/templates/partials/_admin_menu.html:20
 msgid "Data"
 msgstr "Données"
 
@@ -585,7 +585,8 @@ msgid "Import"
 msgstr "Importer"
 
 #: app/templates/import_export.html:2 app/templates/import_export.html:8
-#: app/templates/import_export.html:14 app/templates/partials/_main_nav.html:66
+#: app/templates/import_export.html:14
+#: app/templates/partials/_admin_menu.html:22
 msgid "Import / Export"
 msgstr "Import / Export"
 
@@ -745,7 +746,7 @@ msgstr "MAC"
 msgid "MAC address"
 msgstr "Adresse MAC"
 
-#: app/templates/partials/_main_nav.html:14
+#: app/templates/partials/_main_nav.html:9
 msgid "Main menu"
 msgstr "Menu principal"
 
@@ -807,11 +808,11 @@ msgstr "Le nom est requis."
 msgid "Netmask"
 msgstr "Masque"
 
-#: app/templates/partials/_main_nav.html:59 app/templates/subnet.html:34
+#: app/templates/partials/_admin_menu.html:15 app/templates/subnet.html:34
 msgid "Network"
 msgstr "Réseau"
 
-#: app/templates/partials/_main_nav.html:61
+#: app/templates/partials/_admin_menu.html:17
 #: app/templates/partials/_reseau_form.html:4
 msgid "Network settings"
 msgstr "Paramètres du réseau"
@@ -820,7 +821,7 @@ msgstr "Paramètres du réseau"
 msgid "Network settings saved."
 msgstr "Paramètres du réseau enregistrés."
 
-#: app/templates/partials/_main_nav.html:21
+#: app/templates/partials/_main_nav.html:16
 msgid "Networks"
 msgstr "Réseaux"
 
@@ -838,7 +839,7 @@ msgid "New IP in %(name)s"
 msgstr "Nouvelle IP dans %(name)s"
 
 #: app/templates/dashboard.html:37 app/templates/dashboard.html:71
-#: app/templates/partials/_main_nav.html:45
+#: app/templates/partials/_main_nav.html:40
 #: app/templates/partials/_subnet_form.html:4
 msgid "New VLAN"
 msgstr "Nouveau VLAN"
@@ -874,7 +875,7 @@ msgstr "Suivante"
 msgid "No IP address column found in the file."
 msgstr "Aucune colonne d'adresse IP trouvée dans le fichier."
 
-#: app/templates/partials/_main_nav.html:39
+#: app/templates/partials/_main_nav.html:34
 msgid "No VLAN yet."
 msgstr "Aucun VLAN pour l'instant."
 
@@ -1155,7 +1156,7 @@ msgstr "Compte de service « %s » supprimé (ses clés ne fonctionnent plus)."
 msgid "Service account “%s” updated."
 msgstr "Compte de service « %s » mis à jour."
 
-#: app/templates/partials/_main_nav.html:71
+#: app/templates/partials/_admin_menu.html:27
 #: app/templates/service_accounts.html:2 app/templates/service_accounts.html:8
 #: app/templates/service_accounts.html:14
 msgid "Service accounts"
@@ -1340,7 +1341,7 @@ msgstr "L'identifiant est requis."
 msgid "Username “%s” is already taken."
 msgstr "L'identifiant « %s » est déjà pris."
 
-#: app/templates/partials/_main_nav.html:70 app/templates/users.html:2
+#: app/templates/partials/_admin_menu.html:26 app/templates/users.html:2
 #: app/templates/users.html:8 app/templates/users.html:14
 msgid "Users"
 msgstr "Utilisateurs"

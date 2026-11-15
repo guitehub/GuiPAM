@@ -1,0 +1,6 @@
+{# Entrée de menu déroulant (lien), partagée par la navigation principale et le menu Administration. #}
+{% macro menu_item(href, label, active=false) -%}
+  <a href="{{ href }}" role="menuitem"
+     class="flex items-center gap-2 rounded-sm px-2 py-1.5 hover:bg-accent {{ 'bg-accent font-medium' if active }}"
+     {% if active %}aria-current="page"{% endif %}>{{ label }}</a>
+{%- endmacro %}

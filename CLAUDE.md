@@ -8,7 +8,7 @@ Specs clés : voir README.md et ROADMAP.md.
 ## Commandes
 
 ```bash
-.venv/bin/pytest tests/ -q                 # 138 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause, réglages du suivi)
+.venv/bin/pytest tests/ -q                 # 139 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause, réglages du suivi)
 make css                                   # recompile app/static/app.css (binaire Tailwind standalone)
 PATH="$PWD/.venv/bin:$PATH" make i18n      # extraction + régénération du .po fr + compilation .mo (le Makefile appelle `python`, absent hors venv)
 .venv/bin/python -m app.main               # serveur dev (env GUIPAM_* requis, voir .env.example)

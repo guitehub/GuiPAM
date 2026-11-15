@@ -28,6 +28,8 @@ est appliquée au démarrage ; l'API gagne des champs sur `/network`, rien n'y c
 - Les variables d'environnement du suivi (`GUIPAM_DEFAULT_CHECK_INTERVAL`, seuils) ne sont plus que la
   **valeur initiale** de réglages modifiables dans l'interface.
 - L'intervalle par défaut d'une cible créée sans le préciser (UI et API) est celui du réseau.
+- Menu **Administration** déplacé tout à droite de l'en-tête, après le menu utilisateur.
+- Fenêtres modales : le contenu défile quand il dépasse la hauteur de l'écran.
 
 ### Migration
 - `GUIPAM_HEALTH_WARN_SECONDS` et `GUIPAM_HEALTH_RED_SECONDS` **ne sont plus lues** (elles peuvent rester
