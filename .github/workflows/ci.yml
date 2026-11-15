@@ -15,17 +15,19 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
       - run: pip install -e ".[dev]"
+      # Les catalogues .mo sont générés (gitignorés) : les tests i18n en ont besoin.
+      - run: pybabel compile -d app/locale -D messages
       - run: pytest tests/ -q
 
   docker-build:
     # Vérifie que l'image se construit (sans la publier).
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: docker build -t guipam:ci .
