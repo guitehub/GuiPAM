@@ -14,6 +14,8 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   `GUIPAM_BACKUP_KEEP_DAILY` (0 = désactivé).
 - GuiPAM refuse de démarrer sur une base plus récente que son code, au lieu de risquer de l'abîmer.
 - **Politique de compatibilité** documentée dans le README.
+- Nouvelle IP : le début de l'adresse est pré-rempli depuis le CIDR du VLAN (`192.168.1.` pour un /24),
+  il ne reste que la partie hôte à saisir.
 
 ### Changed
 - **Style** : l'interface reprend guitestyle, le style du Hub de la Guite (couleurs, polices, clair/sombre).

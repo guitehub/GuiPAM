@@ -78,6 +78,12 @@ document.addEventListener("htmx:afterSwap", (event) => {
   if (dialog && !dialog.open) {
     dialog.showModal();
     dialog.addEventListener("close", () => { event.detail.target.innerHTML = ""; }, { once: true });
+    // Champ pré-rempli à compléter (ex. début d'adresse IP) : curseur après le préfixe.
+    const prefilled = dialog.querySelector("[data-caret-end]");
+    if (prefilled) {
+      prefilled.focus();
+      prefilled.setSelectionRange(prefilled.value.length, prefilled.value.length);
+    }
   }
 });
 

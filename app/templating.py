@@ -11,6 +11,7 @@ from app import __version__
 from app.config import get_settings
 from app.i18n import format_datetime, format_relative, get_locale, gettext, ngettext
 from app.services.auth import CSRF_SESSION_KEY
+from app.services.ipam import address_prefix
 from app.services.monitor import SEVERITY, Health, health, ip_health
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -40,6 +41,7 @@ templates.env.install_gettext_callables(gettext, ngettext, newstyle=True)  # typ
 
 templates.env.filters["relative"] = format_relative
 templates.env.filters["dt"] = format_datetime
+templates.env.filters["address_prefix"] = address_prefix
 templates.env.filters["health_css"] = lambda h: HEALTH_CSS.get(h, "health-none")
 templates.env.filters["health_label"] = lambda h: gettext(HEALTH_LABELS.get(h, "No monitor target"))
 

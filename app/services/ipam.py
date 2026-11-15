@@ -102,6 +102,21 @@ def validate_subnet(
     return network
 
 
+def address_prefix(cidr: str) -> str:
+    """Octets communs à toutes les adresses du subnet, prêts à compléter : « 192.168.1. ».
+
+    Seuls les octets entièrement fixés par le masque sont repris (/24 → 3 octets,
+    /16 à /23 → 2, /8 à /15 → 1, en dessous → rien).
+    """
+    try:
+        network = ipaddress.ip_network(cidr)
+    except ValueError:
+        return ""
+    fixed = min(network.prefixlen // 8, 3)
+    octets = str(network.network_address).split(".")[:fixed]
+    return ".".join(octets) + "." if octets else ""
+
+
 def subnet_capacity(network: ipaddress.IPv4Network) -> int:
     """Nombre d'hôtes utilisables (RFC 3021 pour /31, hôte unique pour /32)."""
     if network.prefixlen >= 31:

@@ -137,3 +137,19 @@ class TestPlan:
         assert len(entries) == 6
         assert [e.address for e in entries] == [f"192.168.10.{i}" for i in range(1, 7)]
         assert entries[2].ip is not None and entries[0].ip is None
+
+
+class TestPrefixeAdresse:
+    def test_octets_fixes_par_le_masque(self):
+        cases = {
+            "192.168.1.0/24": "192.168.1.",
+            "192.168.1.128/26": "192.168.1.",
+            "10.20.0.0/16": "10.20.",
+            "172.16.4.0/22": "172.16.",
+            "10.0.0.0/8": "10.",
+            "8.0.0.0/5": "",
+            "192.168.1.7/32": "192.168.1.",
+            "n'importe quoi": "",
+        }
+        for cidr, expected in cases.items():
+            assert ipam.address_prefix(cidr) == expected, cidr
