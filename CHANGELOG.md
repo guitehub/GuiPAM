@@ -5,24 +5,6 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
-### Added
-- **Sauvegarde complète JSON** (page Import / Export, managers) et **restauration**, aussi en ligne de
-  commande (`python -m app.backup export|import`). Format versionné (`format_version`), relisible par
-  toutes les versions futures : c'est le chemin de migration garanti entre versions majeures.
-- **Instantanés automatiques** de la base dans `data/backups/` : un avant chaque migration de schéma
-  (5 conservés), un par jour (7 conservés). Réglables par `GUIPAM_BACKUP_KEEP_PRE_MIGRATION` et
-  `GUIPAM_BACKUP_KEEP_DAILY` (0 = désactivé).
-- GuiPAM refuse de démarrer sur une base plus récente que son code, au lieu de risquer de l'abîmer.
-- **Politique de compatibilité** documentée dans le README.
-- Nouvelle IP : le début de l'adresse est pré-rempli depuis le CIDR du VLAN (`192.168.1.` pour un /24),
-  il ne reste que la partie hôte à saisir.
-
-### Changed
-- **Style** : l'interface reprend guitestyle, le style du Hub de la Guite (couleurs, polices, clair/sombre).
-  Les jetons sont une copie locale figée (`app/static/vendor/guitestyle/tokens.css`, v1.0.0, mise à jour
-  par `make guitestyle VERSION=x.y.z`) ; les composants Basecoat sont branchés dessus.
-- Formulaires : une saisie refusée ne vide plus la modale ; l'erreur s'affiche et le champ fautif passe en rouge.
-
 ## [0.2.0] — 2026-11-15
 
 Mise à jour sans rupture : la migration Alembic est appliquée au démarrage (deux nouvelles tables,
@@ -43,8 +25,22 @@ trois colonnes facultatives sur le journal d'audit) ; données et interface exis
 - Champs « Matériel » et « Lieu » sur les adresses IP : formulaire, détail, colonnes de la grille,
   recherche plein texte, export/import CSV (alias `matériel`, `lieu`, `emplacement`, `site`…),
   migration Alembic automatique au démarrage.
+- **Sauvegarde complète JSON** (page Import / Export, managers) et **restauration**, aussi en ligne de
+  commande (`python -m app.backup export|import`). Format versionné (`format_version`), relisible par
+  toutes les versions futures : c'est le chemin de migration garanti entre versions majeures.
+- **Instantanés automatiques** de la base dans `data/backups/` : un avant chaque migration de schéma
+  (5 conservés), un par jour (7 conservés). Réglables par `GUIPAM_BACKUP_KEEP_PRE_MIGRATION` et
+  `GUIPAM_BACKUP_KEEP_DAILY` (0 = désactivé).
+- GuiPAM refuse de démarrer sur une base plus récente que son code, au lieu de risquer de l'abîmer.
+- **Politique de compatibilité** documentée dans le README.
+- Nouvelle IP : le début de l'adresse est pré-rempli depuis le CIDR du VLAN (`192.168.1.` pour un /24),
+  il ne reste que la partie hôte à saisir.
 
 ### Changed
+- **Style** : l'interface reprend guitestyle, le style du Hub de la Guite (couleurs, polices, clair/sombre).
+  Les jetons sont une copie locale figée (`app/static/vendor/guitestyle/tokens.css`, v1.0.0, mise à jour
+  par `make guitestyle VERSION=x.y.z`) ; les composants Basecoat sont branchés dessus.
+- Formulaires : une saisie refusée ne vide plus la modale ; l'erreur s'affiche et le champ fautif passe en rouge.
 - Les règles de validation et d'audit des VLAN, IP, cibles et du réseau sont regroupées dans
   `app/services/inventory.py`, appelé à la fois par l'UI et par l'API (comportement de l'UI inchangé).
 
