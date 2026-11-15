@@ -5,6 +5,10 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [0.4.1] — 2026-11-16
+
+Retouche d'interface sans rupture : ni migration de schéma, ni changement de l'API `/api/v1`.
+
 ### Changed
 - Détail d'une IP : le statut « up » d'une cible s'affiche en **vert** (couleur de santé) et non plus dans la
   couleur de marque : c'est une information d'état, pas un élément de design.
