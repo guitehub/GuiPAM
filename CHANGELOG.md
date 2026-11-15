@@ -5,6 +5,8 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-11-16
+
 Mise à jour sans rupture de données : une migration additive (quatre colonnes facultatives sur `reseau`)
 est appliquée au démarrage ; l'API gagne des champs sur `/network`, rien n'y change de sens pour l'existant.
 **Le calcul du code couleur change** (voir « Changed » et « Migration »).
