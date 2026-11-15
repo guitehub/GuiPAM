@@ -5,6 +5,10 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+### Interne
+- Build reproductible : version de Tailwind figée (v4.3.5) dans le Dockerfile et le Makefile, au lieu de `latest`.
+- Intégration continue GitHub Actions : tests et construction de l'image Docker à chaque push, tag et pull request.
+
 ## [0.2.0] — 2026-11-15
 
 Mise à jour sans rupture : la migration Alembic est appliquée au démarrage (deux nouvelles tables,

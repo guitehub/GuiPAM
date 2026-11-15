@@ -1,7 +1,9 @@
 # Cibles de développement GuiPAM (le build Docker n'en dépend pas).
 
-TAILWIND := .cache/tailwindcss
-TW_URL := https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+# Version figée, alignée avec ARG TAILWIND_VERSION du Dockerfile.
+TAILWIND_VERSION := v4.3.5
+TAILWIND := .cache/tailwindcss-$(TAILWIND_VERSION)
+TW_URL := https://github.com/tailwindlabs/tailwindcss/releases/download/$(TAILWIND_VERSION)/tailwindcss-linux-x64
 
 # Version figée de guitestyle (le style du Hub de la Guite). Mise à jour :
 #   make guitestyle VERSION=x.y.z && make css
@@ -12,7 +14,7 @@ GUITESTYLE_URL := https://cdn.jsdelivr.net/gh/guitehub/guitehub.github.io@guites
 
 $(TAILWIND):
 	mkdir -p .cache
-	curl -sSL -o $(TAILWIND) $(TW_URL)
+	curl -sSfL -o $(TAILWIND) $(TW_URL)
 	chmod +x $(TAILWIND)
 
 css: $(TAILWIND)

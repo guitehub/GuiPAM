@@ -2,6 +2,9 @@
 FROM python:3.12-slim AS assets
 
 ARG TARGETARCH=amd64
+# Version figée : un même tag Git doit toujours produire la même image.
+# Garder alignée avec TAILWIND_VERSION du Makefile.
+ARG TAILWIND_VERSION=v4.3.5
 WORKDIR /build
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
@@ -13,8 +16,8 @@ RUN case "$TARGETARCH" in \
         arm64) TW_ARCH=arm64 ;; \
         *) echo "Architecture non prise en charge : $TARGETARCH" && exit 1 ;; \
     esac \
-    && curl -sSL -o /usr/local/bin/tailwindcss \
-        "https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-${TW_ARCH}" \
+    && curl -sSfL -o /usr/local/bin/tailwindcss \
+        "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-${TW_ARCH}" \
     && chmod +x /usr/local/bin/tailwindcss
 
 RUN pip install --no-cache-dir babel
