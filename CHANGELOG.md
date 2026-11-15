@@ -5,6 +5,10 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-11-15
+
+Mise à jour d'interface sans rupture : ni migration de schéma, ni changement de l'API `/api/v1`.
+
 ### Changed
 - Barre de navigation réorganisée : **Tableau de bord**, menu **Réseaux** (accès direct à chaque VLAN,
   VLAN courant mis en évidence, « Tous les VLAN », « Nouveau VLAN » pour les managers) et menu
