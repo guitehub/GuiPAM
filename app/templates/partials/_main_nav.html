@@ -15,9 +15,9 @@
   <a href="/" class="btn-sm-ghost {{ 'bg-accent' if path == '/' }}" {% if path == "/" %}aria-current="page"{% endif %}>{{ _("Dashboard") }}</a>
 
   {# ---- Réseaux : un accès direct à chaque VLAN ---- #}
-  <div x-data="{open: false}" class="relative" @keydown.escape="open = false">
+  <div x-data="{open: false}" class="relative" @click.outside="open = false" @keydown.escape="open = false">
     <button type="button" class="btn-sm-ghost {{ 'bg-accent' if in_networks }}" aria-haspopup="menu"
-            :aria-expanded="open" @click="open = !open" @click.outside="open = false">
+            :aria-expanded="open" @click="open = !open">
       {{ _("Networks") }} <span aria-hidden="true" class="text-xs text-muted-foreground">▾</span>
     </button>
     <div x-show="open" x-cloak x-transition.opacity role="menu"
@@ -48,9 +48,9 @@
   </div>
 
   {# ---- Administration : réglages, données, accès ---- #}
-  <div x-data="{open: false}" class="relative" @keydown.escape="open = false">
+  <div x-data="{open: false}" class="relative" @click.outside="open = false" @keydown.escape="open = false">
     <button type="button" class="btn-sm-ghost {{ 'bg-accent' if in_admin }}" aria-haspopup="menu"
-            :aria-expanded="open" @click="open = !open" @click.outside="open = false">
+            :aria-expanded="open" @click="open = !open">
       {{ _("Administration") }} <span aria-hidden="true" class="text-xs text-muted-foreground">▾</span>
     </button>
     <div x-show="open" x-cloak x-transition.opacity role="menu"

@@ -1,6 +1,6 @@
 {% from "partials/_icons.html" import icon %}
-<div x-data="{open: false}" class="relative">
-  <button type="button" class="btn-sm-icon-ghost" @click="open = !open" @click.outside="open = false"
+<div x-data="{open: false}" class="relative" @click.outside="open = false" @keydown.escape="open = false">
+  <button type="button" class="btn-sm-icon-ghost" @click="open = !open"
           title="{{ _("Health color legend") }}" aria-label="{{ _("Health color legend") }}">?</button>
   <div x-show="open" x-cloak x-transition.opacity
        class="absolute right-0 mt-1 w-72 rounded-md border border-border bg-popover p-3 shadow-md z-50 text-xs space-y-2">
