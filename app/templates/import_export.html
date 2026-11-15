@@ -49,4 +49,37 @@
     </section>
   </div>
 </div>
+
+{% if manager %}
+<div class="card mt-6">
+  <header>
+    <h2 class="font-semibold">{{ _("Full backup") }}</h2>
+    <p class="text-sm text-muted-foreground">
+      {{ _("Everything in one JSON file: network, VLANs, addresses, monitor targets, users, service accounts and audit log. This is the guaranteed way to move your data to another instance or across a major version.") }}
+    </p>
+  </header>
+  <section class="grid md:grid-cols-2 gap-6">
+    <div class="grid gap-2 content-start">
+      <a href="/backup.json" class="btn-outline justify-self-start">{{ _("Download a full backup") }}</a>
+      <p class="text-xs text-muted-foreground">
+        {{ _("Keep this file private: it contains password and API key fingerprints.") }}
+      </p>
+    </div>
+    <div>
+      <form hx-post="/restore" hx-target="#restore-report" hx-swap="innerHTML" hx-encoding="multipart/form-data"
+            hx-confirm="{{ _("Restore this backup? ALL current data (VLANs, addresses, users, keys, audit log) will be replaced by the content of the file. You will have to log in again.") }}"
+            class="form grid gap-4">
+        <input type="file" name="file" accept=".json,application/json" required class="input">
+        <button type="submit" class="btn-destructive justify-self-start">{{ _("Restore a backup") }}</button>
+      </form>
+      <div id="restore-report" class="mt-4"></div>
+    </div>
+  </section>
+  <footer>
+    <p class="text-xs text-muted-foreground">
+      {{ _("GuiPAM also keeps automatic snapshots of its database in the “backups” folder of the data volume: one before every schema migration, and one per day.") }}
+    </p>
+  </footer>
+</div>
+{% endif %}
 {% endblock %}

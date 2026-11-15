@@ -2,7 +2,13 @@
   {% for entry in entries %}
   <tr>
     <td class="whitespace-nowrap text-muted-foreground" title="{{ entry.ts | dt }}">{{ entry.ts | relative }}</td>
-    <td class="font-medium">{{ entry.username }}</td>
+    <td class="font-medium">
+      {{ entry.username }}
+      {% if entry.api_key_id %}
+        <span class="badge-secondary" title="{{ _("Done through the API with key “%(key)s”", key=entry.api_key_label or entry.api_key_id) }}">API</span>
+        <div class="text-xs font-normal text-muted-foreground">{{ entry.api_key_label }}</div>
+      {% endif %}
+    </td>
     <td><span class="badge-outline">{{ entry.action }}</span></td>
     <td class="text-muted-foreground">{{ entry.entity_type }}{% if entry.entity_id %} #{{ entry.entity_id }}{% endif %}</td>
     <td>

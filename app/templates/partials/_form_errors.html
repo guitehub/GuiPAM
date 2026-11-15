@@ -1,3 +1,5 @@
+{# Toujours présent : sur une erreur 422, app.js ne remplace que ce bloc (la saisie est conservée). #}
+<div data-form-errors data-error-fields="{{ (error_fields or []) | join(" ") }}">
 {% if errors %}
 <div class="alert-destructive mb-4" role="alert">
   <section>
@@ -7,3 +9,4 @@
   </section>
 </div>
 {% endif %}
+</div>

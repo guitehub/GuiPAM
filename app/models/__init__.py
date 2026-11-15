@@ -40,6 +40,11 @@ class Role(str, enum.Enum):
     user = "user"
 
 
+class KeyScope(str, enum.Enum):
+    read = "read"
+    write = "write"
+
+
 class Reseau(SQLModel, table=True):
     """Singleton (id=1) : le réseau géré par cette instance."""
 
@@ -143,6 +148,51 @@ class AuditLog(SQLModel, table=True):
     username: str
     ts: datetime = Field(default_factory=utcnow, index=True)
     action: str  # create / update / delete / login / check / import / export
-    entity_type: str  # reseau / subnet / ip / monitor / user
+    entity_type: str  # reseau / subnet / ip / monitor / user / service_account / api_key
     entity_id: int | None = None
     changes: dict | None = Field(default=None, sa_column=Column(JSON))
+    # Renseignés quand l'action vient de l'API : `username` porte alors le nom du
+    # compte de service. Dénormalisé : la trace survit à la suppression de la clé.
+    service_account_id: int | None = None
+    api_key_id: int | None = None
+    api_key_label: str | None = None
+
+
+class ServiceAccount(SQLModel, table=True):
+    """Identité non humaine (script, Ansible, agent IA) : s'authentifie par clé d'API."""
+
+    __tablename__ = "service_account"
+
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(unique=True, index=True)
+    description: str | None = None
+    # Même sémantique que les utilisateurs : seul un compte `manager` peut porter
+    # une clé en écriture.
+    role: Role = Field(default=Role.user)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=utcnow)
+
+    keys: list["ApiKey"] = Relationship(
+        back_populates="account",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": "ApiKey.id"},
+    )
+
+
+class ApiKey(SQLModel, table=True):
+    """Clé d'API : seul le SHA-256 est stocké, le secret n'est montré qu'à la création."""
+
+    __tablename__ = "api_key"
+
+    id: int | None = Field(default=None, primary_key=True)
+    service_account_id: int = Field(foreign_key="service_account.id", index=True)
+    name: str
+    prefix: str = Field(unique=True, index=True)  # partie publique, identifie la clé
+    key_hash: str
+    scope: KeyScope = Field(default=KeyScope.read)
+    expires_at: datetime | None = None
+    revoked_at: datetime | None = None
+    last_used_at: datetime | None = None
+    created_at: datetime = Field(default_factory=utcnow)
+    created_by: str | None = None
+
+    account: ServiceAccount = Relationship(back_populates="keys")

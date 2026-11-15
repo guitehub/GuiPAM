@@ -1,12 +1,13 @@
 # GuiPAM — notes pour Claude Code
 
 IPAM auto-hébergé mono-réseau avec suivi dynamique (checks TCP/ICMP, code couleur santé).
-Cahier des charges v2 intégralement implémenté en v0.1.0. Specs clés : voir README.md et ROADMAP.md.
+Cahier des charges v2 implémenté en v0.1.0 ; v0.2.0 ajoute l'API JSON `/api/v1` et les comptes de service.
+Specs clés : voir README.md et ROADMAP.md.
 
 ## Commandes
 
 ```bash
-.venv/bin/pytest tests/ -q                 # 69 tests (conflits, santé, TCP réel, CSV, i18n, autz)
+.venv/bin/pytest tests/ -q                 # 102 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde)
 make css                                   # recompile app/static/app.css (binaire Tailwind standalone)
 make i18n                                  # extraction + régénération du .po fr + compilation .mo
 .venv/bin/python -m app.main               # serveur dev (env GUIPAM_* requis, voir .env.example)
@@ -19,10 +20,19 @@ Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `G
 
 - **Un seul module de modèles** `app/models/__init__.py` (évite les cycles). Dates : UTC naïf via `utcnow()`.
 - **Règles de conflit IPAM** centralisées dans `app/services/ipam.py` (`ConflictError` porte un message localisé).
+- **Mutations VLAN / IP / cibles / réseau** : uniquement via `app/services/inventory.py` (validation + audit
+  + commit, lève `ValidationFailed`). L'UI et l'API l'appellent toutes les deux : ne jamais réécrire une
+  règle dans un router, sinon UI et API divergent.
+- **API** : sous-application FastAPI montée sur `/api/v1` (`app/api/`), authentifiée par clé de compte de
+  service (`Authorization: Bearer`), sans session ni CSRF. Écriture = clé `write` ET compte `manager`.
+  Erreurs au format `{"error": {code, message, details}}`. Les descriptions des schémas sont la doc lue par
+  les agents : les soigner. L'auteur d'une action API est un `audit.Actor` (compte + clé).
+- **Clés d'API** : seul le SHA-256 est stocké ; la clé en clair n'existe que dans la réponse de création.
 - **Seuils santé** centralisés dans `app/services/monitor.py` : `health()` / `ip_health()` (= pire cible active).
   Gravité : ok < unknown < warn < red < dark_red.
 - **Migrations Alembic appliquées au démarrage** (lifespan, via thread) ; env.py sync (pas d'async nécessaire).
-- **Contrat formulaires HTMX** : erreur → 422 + partial re-rendu dans `#modal` ; succès → 204 + `HX-Refresh`
+- **Contrat formulaires HTMX** : erreur → 422 + partial re-rendu, dont `app.js` ne reprend que le bloc
+  `[data-form-errors]` (saisie conservée, champs de `error_fields` en rouge via `aria-invalid`) ; succès → 204 + `HX-Refresh`
   + toast flashé en session (`app/flash.py`). Les vrais swaps partiels : pastilles santé (polling),
   filtres (tbody), bouton « Vérifier » (ligne), détail IP (accordéon).
 - **CSRF** : dépendance `csrf_protect` sur chaque router mutateur ; jeton dans header HTMX
@@ -37,6 +47,20 @@ Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `G
 - Nouvelle chaîne = ajouter la traduction dans `scripts/gen_fr_po.py` (dict `FR`) puis `make i18n`.
   Le script échoue listant les chaînes manquantes : c'est le garde-fou.
 
+## Style : guitestyle
+
+- Couleurs et polices viennent de **guitestyle** (jetons du Hub de la Guite), copie figée committée dans
+  `app/static/vendor/guitestyle/tokens.css` — ne pas l'éditer ; mise à jour : `make guitestyle VERSION=x.y.z && make css`.
+- `app/static/src/input.css` branche les variables Basecoat sur les jetons (`--primary` → `--accent`,
+  `--background` → `--bg`, `--muted-foreground` → `--fg-soft`…). **Ne jamais écrire de couleur en dur** dans les
+  templates ou le CSS : passer par une variable (exceptions assumées : pastilles santé de `health.css`, `--destructive`).
+- Piège de noms : `--accent` et `--border` existent chez Basecoat ET guitestyle. Les jetons sont réimportés
+  après Basecoat dans `input.css` pour gagner ; le « accent » de Basecoat (fond de survol) passe par
+  `--color-accent` → `--bg-soft`. La classe `bg-accent` reste donc un gris de survol, pas la couleur de marque
+  (pour la marque : `bg-primary` / `text-primary`).
+- Mode sombre : toujours poser **les deux** marqueurs sur `<html>` — `data-theme="light|dark"` (guitestyle) et
+  la classe `.dark` (Basecoat/Tailwind `dark:`). Fait par le script anti-FOUC de `base.html` et la bascule de `app.js`.
+
 ## Pièges UI connus (déjà mordu)
 
 - **Basecoat ne style que `input[type=…]` explicites** : toujours mettre `type="text"` (etc.) sur les inputs.
@@ -45,8 +69,36 @@ Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `G
 - `app/static/app.css` est **généré** (gitignoré) : après modification de templates avec de nouvelles
   classes Tailwind, relancer `make css`.
 
+## Continuité des données — règles impératives
+
+L'instance est en usage réel. Engagement publié dans le README (« Politique de compatibilité ») :
+aucune mise à jour ne perd de données, et une version majeure est toujours migrable.
+
+- **Schéma** : toute évolution = une **nouvelle** révision Alembic **additive** (table nouvelle, colonne
+  nullable ou avec défaut). Ni renommage, ni suppression, ni changement de type hors version majeure.
+  Une révision déjà committée n'est **jamais** modifiée ni supprimée.
+- **Rupture** (schéma non additif, changement cassant de `/api/v1`) : interdite hors version **majeure**.
+  Avant de l'écrire : prévenir l'utilisateur et obtenir son accord. Elle doit livrer dans le même commit
+  son chemin de migration (migration Alembic qui convertit les données, sinon upgrader d'export) et son
+  entrée CHANGELOG « Migration ». Pas de chemin de migration = pas de rupture.
+- **Sauvegarde JSON** (`app/services/backup.py`) : dump générique de toutes les tables, `FORMAT_VERSION`.
+  Changement additif → rien à faire (colonne absente = défaut, inconnue = ignorée). Changement non additif →
+  incrémenter `FORMAT_VERSION` **et** ajouter l'upgrader `UPGRADERS[n]` (ancien → nouveau). Ne jamais retirer
+  un upgrader : toute version doit relire tous les anciens exports.
+- **Nouvelle table** : elle est sauvegardée automatiquement (dump générique) ; vérifier seulement qu'elle a
+  une clé primaire et que ses colonnes obligatoires ont un défaut.
+- **Tests garde-fous** (`tests/test_backup.py`) : migration d'une base v0.1.0 peuplée, aller-retour
+  export/import, tolérance d'un export plus ancien. Ne pas les affaiblir ; à chaque version publiée qui change
+  le schéma, étendre le test de migration (données dans les nouvelles tables).
+- Instantanés SQLite automatiques dans `<data>/backups` (avant migration, quotidien) : filet de sécurité,
+  pas une excuse pour une migration risquée.
+
 ## Vérification
 
 Toujours vérifier en réel (pas seulement pytest) : lancer le serveur, dérouler login → création → check.
-Docker indisponible sur cette machine WSL : le Dockerfile/compose n'ont **jamais été buildés** — à valider
-sur une machine avec Docker au premier changement de packaging.
+Pas de `python3-venv` sur ce poste : créer le venv avec `~/.local/bin/virtualenv .venv`.
+Docker est disponible sur ce poste : l'image se build et démarre (validé le 2026-11-15, v0.2.0).
+Le port 8080 y est pris par Nextcloud → conteneur de test sur un autre port :
+`docker build -t guipam:test . && docker run -d --name guipam-test -p 127.0.0.1:8081:8080 -v guipam-test-data:/data
+--cap-add NET_RAW -e GUIPAM_SECRET_KEY=… -e GUIPAM_ADMIN_PASSWORD=… -e GUIPAM_SECURE_COOKIES=false guipam:test`.
+Le `docker-compose.yml` (port 8080) n'a pas été lancé ici.

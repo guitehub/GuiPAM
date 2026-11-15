@@ -10,7 +10,7 @@ from app.deps import CurrentUser, ManagerUser, SessionDep, csrf_protect
 from app.flash import flash
 from app.i18n import gettext as _
 from app.models import IPAddress, IPStatus, MonitorTarget, Subnet, utcnow
-from app.services import audit, ipam
+from app.services import inventory, ipam
 from app.services.monitor import SEVERITY, Health, ip_health
 from app.templating import hx_refresh, render
 
@@ -24,57 +24,15 @@ async def _get_subnet(session: SessionDep, subnet_id: int) -> Subnet:
     return subnet
 
 
-def _subnet_dict(subnet: Subnet) -> dict:
-    return {
-        "name": subnet.name,
-        "description": subnet.description,
-        "vlan_id": subnet.vlan_id,
-        "cidr": subnet.cidr,
-        "gateway": subnet.gateway,
-        "notes": subnet.notes,
-    }
-
-
-def _parse_vlan_id(raw: str, errors: list[str]) -> int | None:
+def _parse_vlan_id(raw: str) -> int | None:
+    """Tag saisi dans le formulaire ; une valeur non numérique devient 0 (hors plage → refusée)."""
     value = raw.strip()
     if not value:
         return None
     try:
-        vlan_id = int(value)
+        return int(value)
     except ValueError:
-        errors.append(_("VLAN tag must be a number between 1 and 4094."))
-        return None
-    if not 1 <= vlan_id <= 4094:
-        errors.append(_("VLAN tag must be a number between 1 and 4094."))
-        return None
-    return vlan_id
-
-
-async def _validate_subnet_form(
-    session: SessionDep,
-    name: str,
-    vlan_id_raw: str,
-    cidr: str,
-    gateway: str,
-    exclude_id: int | None = None,
-) -> tuple[dict, list[str]]:
-    errors: list[str] = []
-    if not name.strip():
-        errors.append(_("Name is required."))
-    vlan_id = _parse_vlan_id(vlan_id_raw, errors)
-    existing = list((await session.exec(select(Subnet))).all())
-    network = None
-    try:
-        network = ipam.validate_subnet(cidr, gateway or None, existing, exclude_id=exclude_id)
-    except ipam.ConflictError as exc:
-        errors.append(exc.message)
-    values = {
-        "name": name.strip(),
-        "vlan_id": vlan_id,
-        "cidr": str(network) if network else cidr.strip(),
-        "gateway": gateway.strip() or None,
-    }
-    return values, errors
+        return 0
 
 
 @router.get("/subnets/new")
@@ -100,23 +58,21 @@ async def create_subnet(
     gateway: Annotated[str, Form()] = "",
     notes: Annotated[str, Form()] = "",
 ):
-    values, errors = await _validate_subnet_form(session, name, vlan_id, cidr, gateway)
-    if errors:
-        return render(
-            request, "partials/_subnet_form.html", {"subnet": None, "errors": errors}, status_code=422
+    try:
+        subnet = await inventory.create_subnet(
+            session,
+            user,
+            name=name,
+            cidr=cidr,
+            vlan_id=_parse_vlan_id(vlan_id),
+            gateway=gateway,
+            description=description,
+            notes=notes,
         )
-    subnet = Subnet(
-        name=values["name"],
-        description=description.strip() or None,
-        vlan_id=values["vlan_id"],
-        cidr=values["cidr"],
-        gateway=values["gateway"],
-        notes=notes.strip() or None,
-    )
-    session.add(subnet)
-    await session.flush()
-    await audit.record(session, user, "create", "subnet", subnet.id, audit.diff({}, _subnet_dict(subnet)))
-    await session.commit()
+    except inventory.ValidationFailed as exc:
+        return render(
+            request, "partials/_subnet_form.html", {"subnet": None, "errors": exc.messages, "error_fields": exc.fields}, status_code=422
+        )
     flash(request, _("VLAN “%s” created.") % subnet.name)
     return hx_refresh()
 
@@ -135,37 +91,22 @@ async def update_subnet(
     notes: Annotated[str, Form()] = "",
 ):
     subnet = await _get_subnet(session, subnet_id)
-    values, errors = await _validate_subnet_form(
-        session, name, vlan_id, cidr, gateway, exclude_id=subnet_id
-    )
-    if not errors and values["cidr"] != subnet.cidr:
-        # Changement de CIDR : toutes les IP existantes doivent rester dedans.
-        result = await session.exec(select(IPAddress).where(IPAddress.subnet_id == subnet_id))
-        import ipaddress as ipa
-
-        network = ipa.ip_network(values["cidr"])
-        outside = [ip.address for ip in result.all() if ipa.ip_address(ip.address) not in network]
-        if outside:
-            errors.append(
-                _("Cannot change CIDR: %(count)d addresses would fall outside (e.g. %(example)s).")
-                % {"count": len(outside), "example": outside[0]}
-            )
-    if errors:
-        return render(
-            request, "partials/_subnet_form.html", {"subnet": subnet, "errors": errors}, status_code=422
+    try:
+        subnet = await inventory.update_subnet(
+            session,
+            user,
+            subnet,
+            name=name,
+            cidr=cidr,
+            vlan_id=_parse_vlan_id(vlan_id),
+            gateway=gateway,
+            description=description,
+            notes=notes,
         )
-
-    before = _subnet_dict(subnet)
-    subnet.name = values["name"]
-    subnet.description = description.strip() or None
-    subnet.vlan_id = values["vlan_id"]
-    subnet.cidr = values["cidr"]
-    subnet.gateway = values["gateway"]
-    subnet.notes = notes.strip() or None
-    subnet.updated_at = utcnow()
-    session.add(subnet)
-    await audit.record(session, user, "update", "subnet", subnet.id, audit.diff(before, _subnet_dict(subnet)))
-    await session.commit()
+    except inventory.ValidationFailed as exc:
+        return render(
+            request, "partials/_subnet_form.html", {"subnet": subnet, "errors": exc.messages, "error_fields": exc.fields}, status_code=422
+        )
     flash(request, _("VLAN “%s” updated.") % subnet.name)
     return hx_refresh()
 
@@ -173,11 +114,8 @@ async def update_subnet(
 @router.delete("/subnets/{subnet_id}")
 async def delete_subnet(request: Request, user: ManagerUser, session: SessionDep, subnet_id: int):
     subnet = await _get_subnet(session, subnet_id)
-    before = _subnet_dict(subnet)
     name = subnet.name
-    await session.delete(subnet)  # cascade : IP + cibles
-    await audit.record(session, user, "delete", "subnet", subnet_id, audit.diff(before, {}))
-    await session.commit()
+    await inventory.delete_subnet(session, user, subnet)
     flash(request, _("VLAN “%s” deleted (with its addresses and targets).") % name)
     response = hx_refresh()
     response.headers["HX-Redirect"] = "/"

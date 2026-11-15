@@ -20,6 +20,11 @@ def test_env(tmp_path, monkeypatch):
     monkeypatch.setenv("GUIPAM_SECURE_COOKIES", "false")
     monkeypatch.setenv("GUIPAM_MONITOR_TICK_SECONDS", "3600")
     config_module.get_settings.cache_clear()
+    # L'anti-brute-force est en mémoire et global : sans remise à zéro, un test qui
+    # verrouille « admin » ferait échouer les connexions des tests suivants.
+    from app.services.auth import login_rate_limiter
+
+    login_rate_limiter._states.clear()
     yield
     config_module.get_settings.cache_clear()
 

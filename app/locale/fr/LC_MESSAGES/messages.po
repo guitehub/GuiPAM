@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GuiPAM VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-07-07 17:50+0200\n"
+"POT-Creation-Date: 2026-11-15 15:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -48,7 +48,7 @@ msgstr "%s est l'adresse de broadcast et ne peut pas être attribuée."
 msgid "%s is the network address and cannot be assigned."
 msgstr "%s est l'adresse réseau et ne peut pas être attribuée."
 
-#: app/routers/monitors.py:52
+#: app/services/inventory.py:464
 msgid "A TCP check requires a port between 1 and 65535."
 msgstr "Un check TCP nécessite un port entre 1 et 65535."
 
@@ -59,6 +59,32 @@ msgstr "Un check de port TCP, ou un ping ICMP si aucun port n'est pertinent."
 #: app/templates/partials/_subnet_form.html:5
 msgid "A VLAN is a named subnet. The 802.1Q tag is optional."
 msgstr "Un VLAN est un subnet nommé. Le tag 802.1Q est facultatif."
+
+#: app/routers/service_accounts.py:195
+msgid "A read/write key requires a service account with the manager role."
+msgstr "Une clé en lecture-écriture nécessite un compte de service au rôle manager."
+
+#: app/routers/service_accounts.py:92
+#, python-format
+msgid "A service account named “%s” already exists."
+msgstr "Un compte de service nommé « %s » existe déjà."
+
+#: app/templates/base.html:47
+msgid "API"
+msgstr "API"
+
+#: app/templates/service_accounts.html:19
+msgid "API documentation"
+msgstr "Documentation de l'API"
+
+#: app/routers/service_accounts.py:239
+msgid "API key not found."
+msgstr "Clé d'API introuvable."
+
+#: app/templates/partials/_api_key_form.html:14
+#: app/templates/service_accounts.html:51
+msgid "Access"
+msgstr "Accès"
 
 #: app/templates/login.html:8
 msgid "Access to GuiPAM requires an account. No self-registration."
@@ -72,6 +98,7 @@ msgstr "Action"
 msgid "Active"
 msgstr "Actif"
 
+#: app/templates/partials/_service_account_form.html:34
 #: app/templates/partials/_user_form.html:43
 msgid "Active account"
 msgstr "Compte actif"
@@ -86,7 +113,7 @@ msgstr "Ajouter une cible"
 msgid "Address"
 msgstr "Adresse"
 
-#: app/services/ipam.py:159
+#: app/services/inventory.py:273 app/services/ipam.py:159
 #, python-format
 msgid "Address %(address)s already exists in VLAN “%(name)s”."
 msgstr "L'adresse %(address)s existe déjà dans le VLAN « %(name)s »."
@@ -96,17 +123,17 @@ msgstr "L'adresse %(address)s existe déjà dans le VLAN « %(name)s »."
 msgid "Address %(address)s is outside subnet %(cidr)s."
 msgstr "L'adresse %(address)s est hors du subnet %(cidr)s."
 
-#: app/routers/ips.py:132
+#: app/routers/ips.py:90
 #, python-format
 msgid "Address %s created."
 msgstr "Adresse %s créée."
 
-#: app/routers/ips.py:187
+#: app/routers/ips.py:141
 #, python-format
 msgid "Address %s deleted."
 msgstr "Adresse %s supprimée."
 
-#: app/routers/ips.py:175
+#: app/routers/ips.py:132
 #, python-format
 msgid "Address %s updated."
 msgstr "Adresse %s mise à jour."
@@ -124,7 +151,11 @@ msgstr "Toutes"
 msgid "An IP shows the worst color of its active targets."
 msgstr "Une IP affiche la pire couleur de ses cibles actives."
 
-#: app/templates/base.html:91
+#: app/services/inventory.py:378
+msgid "An allocated address cannot have the status “libre”."
+msgstr "Une adresse allouée ne peut pas avoir le statut « libre »."
+
+#: app/templates/base.html:94
 msgid "Are you sure?"
 msgstr "Confirmer ?"
 
@@ -133,7 +164,7 @@ msgid "Ask a manager to create it."
 msgstr "Demandez à un manager de le créer."
 
 #: app/templates/audit.html:2 app/templates/audit.html:8
-#: app/templates/audit.html:13 app/templates/base.html:41
+#: app/templates/audit.html:13 app/templates/base.html:43
 msgid "Audit log"
 msgstr "Journal d'audit"
 
@@ -142,8 +173,8 @@ msgid "Back to VLAN"
 msgstr "Retour au VLAN"
 
 #: app/templates/audit.html:5 app/templates/import_export.html:5
-#: app/templates/subnet.html:5 app/templates/subnet_plan.html:5
-#: app/templates/users.html:5
+#: app/templates/service_accounts.html:5 app/templates/subnet.html:5
+#: app/templates/subnet_plan.html:5 app/templates/users.html:5
 msgid "Breadcrumb"
 msgstr "Fil d'Ariane"
 
@@ -160,16 +191,18 @@ msgstr "CIDR"
 msgid "CIDR %(cidr)s overlaps VLAN “%(name)s” (%(other)s)."
 msgstr "Le CIDR %(cidr)s chevauche le VLAN « %(name)s » (%(other)s)."
 
-#: app/templates/base.html:95 app/templates/partials/_ip_form.html:61
+#: app/templates/base.html:98 app/templates/partials/_api_key_form.html:29
+#: app/templates/partials/_ip_form.html:61
 #: app/templates/partials/_monitor_form.html:45
 #: app/templates/partials/_reseau_form.html:34
+#: app/templates/partials/_service_account_form.html:38
 #: app/templates/partials/_subnet_form.html:44
 #: app/templates/partials/_user_form.html:28
 #: app/templates/partials/_user_form.html:46
 msgid "Cancel"
 msgstr "Annuler"
 
-#: app/routers/subnets.py:150
+#: app/services/inventory.py:109
 #, python-format
 msgid "Cannot change CIDR: %(count)d addresses would fall outside (e.g. %(example)s)."
 msgstr "Impossible de changer le CIDR : %(count)d adresses en sortiraient (ex. %(example)s)."
@@ -200,22 +233,43 @@ msgstr "Vérifier"
 msgid "Check all targets of this IP now"
 msgstr "Vérifier toutes les cibles de cette IP maintenant"
 
-#: app/templates/base.html:96
+#: app/templates/base.html:99
 msgid "Confirm"
 msgstr "Confirmer"
 
+#: app/templates/partials/_api_key_created.html:13
+msgid "Copied"
+msgstr "Copié"
+
+#: app/templates/partials/_api_key_created.html:13
+msgid "Copy"
+msgstr "Copier"
+
+#: app/templates/partials/_api_key_created.html:5
+msgid "Copy it now: it will never be shown again."
+msgstr "Copiez-la maintenant : elle ne sera plus jamais affichée."
+
+#: app/services/inventory.py:426
+msgid "Could not allocate an address (concurrent updates). Try again."
+msgstr "Impossible d'allouer une adresse (modifications concurrentes). Réessayez."
+
+#: app/templates/partials/_service_account_form.html:39
 #: app/templates/partials/_user_form.html:29
 msgid "Create"
 msgstr "Créer"
+
+#: app/templates/partials/_api_key_form.html:30
+msgid "Create key"
+msgstr "Créer la clé"
 
 #: app/templates/partials/_ip_detail.html:12
 msgid "Created"
 msgstr "Créée le"
 
-#: app/templates/audit.html:6 app/templates/base.html:40
+#: app/templates/audit.html:6 app/templates/base.html:42
 #: app/templates/dashboard.html:2 app/templates/import_export.html:6
-#: app/templates/subnet.html:6 app/templates/subnet_plan.html:6
-#: app/templates/users.html:6
+#: app/templates/service_accounts.html:6 app/templates/subnet.html:6
+#: app/templates/subnet_plan.html:6 app/templates/users.html:6
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
@@ -227,6 +281,7 @@ msgstr "Langue par défaut"
 #: app/templates/partials/_monitor_row.html:27
 #: app/templates/partials/_subnet_row.html:23
 #: app/templates/partials/_user_row.html:14
+#: app/templates/service_accounts.html:41
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -240,6 +295,11 @@ msgstr "Supprimer le VLAN « %(name)s » et toutes ses adresses et cibles ?"
 msgid "Delete address %(address)s and its monitor targets?"
 msgstr "Supprimer l'adresse %(address)s et ses cibles de suivi ?"
 
+#: app/templates/service_accounts.html:40
+#, python-format
+msgid "Delete service account “%(name)s”? All its keys stop working immediately. Audit entries are kept."
+msgstr "Supprimer le compte de service « %(name)s » ? Toutes ses clés cessent de fonctionner immédiatement. Les entrées d'audit sont conservées."
+
 #: app/templates/partials/_monitor_row.html:27
 msgid "Delete this monitor target?"
 msgstr "Supprimer cette cible de suivi ?"
@@ -251,6 +311,7 @@ msgstr "Supprimer l'utilisateur « %(name)s » ? Ses entrées d'audit sont conse
 
 #: app/templates/partials/_ip_form.html:57
 #: app/templates/partials/_reseau_form.html:15
+#: app/templates/partials/_service_account_form.html:19
 #: app/templates/partials/_subnet_form.html:36
 #: app/templates/subnet_plan.html:39
 msgid "Description"
@@ -264,6 +325,15 @@ msgstr "Appareil"
 #: app/templates/partials/_ip_form.html:40
 msgid "Device label"
 msgstr "Libellé d'appareil"
+
+#: app/templates/partials/_audit_rows.html:8
+#, python-format
+msgid "Done through the API with key “%(key)s”"
+msgstr "Fait via l'API avec la clé « %(key)s »"
+
+#: app/templates/partials/_api_key_created.html:21
+msgid "Done, I saved it"
+msgstr "C'est fait, je l'ai enregistrée"
 
 #: app/templates/subnet.html:78
 msgid "Down"
@@ -280,6 +350,10 @@ msgstr "Down depuis longtemps : service mort ou entrée obsolète à nettoyer"
 msgid "Down for a while"
 msgstr "Down depuis un moment"
 
+#: app/templates/import_export.html:63
+msgid "Download a full backup"
+msgstr "Télécharger une sauvegarde complète"
+
 #: app/templates/import_export.html:48
 msgid "Download export.csv"
 msgstr "Télécharger export.csv"
@@ -288,7 +362,8 @@ msgstr "Télécharger export.csv"
 #: app/templates/partials/_ip_row.html:24
 #: app/templates/partials/_monitor_row.html:24
 #: app/templates/partials/_subnet_row.html:19
-#: app/templates/partials/_user_row.html:10 app/templates/subnet.html:28
+#: app/templates/partials/_user_row.html:10
+#: app/templates/service_accounts.html:37 app/templates/subnet.html:28
 msgid "Edit"
 msgstr "Modifier"
 
@@ -305,6 +380,11 @@ msgstr "Modifier l'adresse %(address)s"
 msgid "Edit monitor target"
 msgstr "Modifier la cible de suivi"
 
+#: app/templates/partials/_service_account_form.html:5
+#, python-format
+msgid "Edit service account “%(name)s”"
+msgstr "Modifier le compte de service « %(name)s »"
+
 #: app/templates/partials/_user_form.html:5
 #, python-format
 msgid "Edit user “%(name)s”"
@@ -318,6 +398,18 @@ msgstr "Activée"
 msgid "Entity"
 msgstr "Entité"
 
+#: app/templates/import_export.html:58
+msgid "Everything in one JSON file: network, VLANs, addresses, monitor targets, users, service accounts and audit log. This is the guaranteed way to move your data to another instance or across a major version."
+msgstr "Tout dans un seul fichier JSON : réseau, VLAN, adresses, cibles de suivi, utilisateurs, comptes de service et journal d'audit. C'est le moyen garanti de déplacer vos données vers une autre instance ou de franchir une version majeure."
+
+#: app/templates/service_accounts.html:53
+msgid "Expires"
+msgstr "Expire"
+
+#: app/templates/partials/_api_key_form.html:24
+msgid "Expiry date (optional)"
+msgstr "Date d'expiration (facultative)"
+
 #: app/templates/import_export.html:42
 msgid "Export to CSV"
 msgstr "Exporter en CSV"
@@ -326,9 +418,13 @@ msgstr "Exporter en CSV"
 msgid "Failures"
 msgstr "Échecs"
 
-#: app/routers/import_export.py:32
+#: app/routers/import_export.py:35
 msgid "File is too large (5 MB max)."
 msgstr "Fichier trop volumineux (5 Mo max)."
+
+#: app/routers/import_export.py:93
+msgid "File is too large."
+msgstr "Fichier trop volumineux."
 
 #: app/templates/subnet.html:38
 msgid "First usable IP"
@@ -338,6 +434,10 @@ msgstr "Première IP utile"
 #: app/templates/partials/_stats.html:12 app/templates/subnet.html:68
 msgid "Free"
 msgstr "Libres"
+
+#: app/templates/import_export.html:56
+msgid "Full backup"
+msgstr "Sauvegarde complète"
 
 #: app/templates/import_export.html:44
 msgid "Full export of all addresses, in a format that can be re-imported as is (backup or migration)."
@@ -355,6 +455,10 @@ msgstr "La passerelle %(gateway)s est hors du subnet %(cidr)s."
 #: app/templates/partials/_subnet_form.html:30
 msgid "Gateway (optional)"
 msgstr "Passerelle (facultative)"
+
+#: app/templates/import_export.html:80
+msgid "GuiPAM also keeps automatic snapshots of its database in the “backups” folder of the data volume: one before every schema migration, and one per day."
+msgstr "GuiPAM conserve aussi des instantanés automatiques de sa base dans le dossier « backups » du volume de données : un avant chaque migration de schéma, et un par jour."
 
 #: app/templates/partials/_ip_detail.html:9
 #: app/templates/partials/_ip_form.html:46 app/templates/subnet.html:100
@@ -376,11 +480,12 @@ msgstr "Légende du code couleur santé"
 msgid "Hostname"
 msgstr "Nom d'hôte"
 
-#: app/routers/monitors.py:55
+#: app/services/inventory.py:468
 msgid "ICMP ping is disabled on this instance (GUIPAM_ENABLE_PING=false)."
 msgstr "Le ping ICMP est désactivé sur cette instance (GUIPAM_ENABLE_PING=false)."
 
-#: app/routers/ips.py:27 app/routers/monitors.py:72 app/routers/monitors.py:97
+#: app/api/routes.py:162 app/api/routes.py:461 app/routers/ips.py:25
+#: app/routers/ips.py:170 app/routers/monitors.py:44 app/routers/monitors.py:69
 msgid "IP address not found."
 msgstr "Adresse IP introuvable."
 
@@ -396,11 +501,15 @@ msgstr "IP, hôte, libellé, MAC…"
 msgid "IPs"
 msgstr "IP"
 
+#: app/templates/service_accounts.html:50
+msgid "Identifier"
+msgstr "Identifiant"
+
 #: app/templates/import_export.html:29
 msgid "Import"
 msgstr "Importer"
 
-#: app/templates/base.html:42 app/templates/import_export.html:2
+#: app/templates/base.html:44 app/templates/import_export.html:2
 #: app/templates/import_export.html:8 app/templates/import_export.html:14
 msgid "Import / Export"
 msgstr "Import / Export"
@@ -417,7 +526,7 @@ msgstr "Intervalle"
 msgid "Interval (seconds)"
 msgstr "Intervalle (secondes)"
 
-#: app/routers/monitors.py:62
+#: app/services/inventory.py:475
 #, python-format
 msgid "Interval must be between %(min)d and %(max)d seconds."
 msgstr "L'intervalle doit être compris entre %(min)d et %(max)d secondes."
@@ -432,6 +541,10 @@ msgstr "CIDR invalide : « %(value)s » a des bits d'hôte non nuls (l'adresse r
 msgid "Invalid CIDR: “%s” is not a valid IPv4 network."
 msgstr "CIDR invalide : « %s » n'est pas un réseau IPv4 valide."
 
+#: app/routers/service_accounts.py:202
+msgid "Invalid expiry date."
+msgstr "Date d'expiration invalide."
+
 #: app/deps.py:67
 msgid "Invalid or missing CSRF token."
 msgstr "Jeton CSRF invalide ou manquant."
@@ -440,12 +553,35 @@ msgstr "Jeton CSRF invalide ou manquant."
 msgid "Invalid username or password."
 msgstr "Identifiant ou mot de passe invalide."
 
+#: app/templates/import_export.html:65
+msgid "Keep this file private: it contains password and API key fingerprints."
+msgstr "Gardez ce fichier privé : il contient les empreintes des mots de passe et des clés d'API."
+
+#: app/templates/partials/_api_key_created.html:10
+#: app/templates/service_accounts.html:49
+msgid "Key"
+msgstr "Clé"
+
+#: app/templates/partials/_api_key_form.html:10
+msgid "Key name"
+msgstr "Nom de la clé"
+
+#: app/templates/partials/_api_key_created.html:4
+#, python-format
+msgid "Key “%(name)s” created"
+msgstr "Clé « %(name)s » créée"
+
+#: app/routers/service_accounts.py:246
+#, python-format
+msgid "Key “%s” revoked."
+msgstr "Clé « %s » révoquée."
+
 #: app/templates/partials/_ip_detail.html:35
 #: app/templates/partials/_monitor_form.html:29
 msgid "Label"
 msgstr "Libellé"
 
-#: app/templates/base.html:59
+#: app/templates/base.html:62
 msgid "Language"
 msgstr "Langue"
 
@@ -470,9 +606,21 @@ msgstr "Dernier succès"
 msgid "Last usable IP"
 msgstr "Dernière IP utile"
 
+#: app/templates/service_accounts.html:54
+msgid "Last used"
+msgstr "Dernière utilisation"
+
 #: app/templates/partials/_ip_detail.html:39
 msgid "Latency"
 msgstr "Latence"
+
+#: app/templates/service_accounts.html:102
+msgid "Least privilege: keys are read-only by default. A read/write key requires an account with the manager role. Every API action is recorded in the audit log with the account and the key used."
+msgstr "Moindre privilège : les clés sont en lecture seule par défaut. Une clé en lecture-écriture nécessite un compte au rôle manager. Chaque action faite via l'API est tracée dans le journal d'audit avec le compte et la clé utilisés."
+
+#: app/templates/partials/_api_key_form.html:26
+msgid "Leave empty for a key that never expires."
+msgstr "Laissez vide pour une clé qui n'expire jamais."
 
 #: app/services/csv_io.py:136 app/services/csv_io.py:143
 #: app/services/csv_io.py:157
@@ -489,7 +637,7 @@ msgstr "Chargement…"
 msgid "Location"
 msgstr "Lieu"
 
-#: app/templates/base.html:67
+#: app/templates/base.html:70
 msgid "Log out"
 msgstr "Se déconnecter"
 
@@ -501,20 +649,24 @@ msgstr "MAC"
 msgid "MAC address"
 msgstr "Adresse MAC"
 
-#: app/routers/monitors.py:118
+#: app/api/auth.py:74
+msgid "Missing, invalid, expired or revoked API key."
+msgstr "Clé d'API absente, invalide, expirée ou révoquée."
+
+#: app/routers/monitors.py:86
 #, python-format
 msgid "Monitor target added on %s."
 msgstr "Cible de suivi ajoutée sur %s."
 
-#: app/routers/monitors.py:164
+#: app/routers/monitors.py:128
 msgid "Monitor target deleted."
 msgstr "Cible de suivi supprimée."
 
-#: app/routers/monitors.py:25
+#: app/api/routes.py:169 app/routers/monitors.py:19
 msgid "Monitor target not found."
 msgstr "Cible de suivi introuvable."
 
-#: app/routers/monitors.py:153
+#: app/routers/monitors.py:120
 msgid "Monitor target updated."
 msgstr "Cible de suivi mise à jour."
 
@@ -523,11 +675,13 @@ msgid "Monitor targets"
 msgstr "Cibles de suivi"
 
 #: app/templates/dashboard.html:49 app/templates/partials/_reseau_form.html:11
+#: app/templates/partials/_service_account_form.html:14
 #: app/templates/partials/_subnet_form.html:14
 msgid "Name"
 msgstr "Nom"
 
-#: app/routers/reseau.py:53 app/routers/subnets.py:63
+#: app/routers/service_accounts.py:88 app/routers/service_accounts.py:192
+#: app/services/inventory.py:93 app/services/inventory.py:574
 msgid "Name is required."
 msgstr "Le nom est requis."
 
@@ -543,7 +697,7 @@ msgstr "Réseau"
 msgid "Network settings"
 msgstr "Paramètres du réseau"
 
-#: app/routers/reseau.py:90
+#: app/routers/reseau.py:53
 msgid "Network settings saved."
 msgstr "Paramètres du réseau enregistrés."
 
@@ -565,10 +719,24 @@ msgstr "Nouvelle IP dans %(name)s"
 msgid "New VLAN"
 msgstr "Nouveau VLAN"
 
+#: app/templates/service_accounts.html:36
+msgid "New key"
+msgstr "Nouvelle clé"
+
+#: app/templates/partials/_api_key_form.html:4
+#, python-format
+msgid "New key for “%(name)s”"
+msgstr "Nouvelle clé pour « %(name)s »"
+
 #: app/templates/partials/_monitor_form.html:5
 #, python-format
 msgid "New monitor target on %(address)s"
 msgstr "Nouvelle cible de suivi sur %(address)s"
+
+#: app/templates/partials/_service_account_form.html:5
+#: app/templates/service_accounts.html:15
+msgid "New service account"
+msgstr "Nouveau compte de service"
 
 #: app/templates/partials/_user_form.html:5 app/templates/users.html:15
 msgid "New user"
@@ -594,9 +762,18 @@ msgstr "Aucune adresse ne correspond à ces filtres."
 msgid "No address recorded in this VLAN yet."
 msgstr "Aucune adresse enregistrée dans ce VLAN pour l'instant."
 
-#: app/templates/partials/_audit_rows.html:18
+#: app/templates/partials/_audit_rows.html:24
 msgid "No audit entries."
 msgstr "Aucune entrée d'audit."
+
+#: app/api/routes.py:367 app/services/inventory.py:399
+#, python-format
+msgid "No free address left in subnet %s."
+msgstr "Plus aucune adresse libre dans le subnet %s."
+
+#: app/templates/service_accounts.html:87
+msgid "No key yet: this account cannot connect."
+msgstr "Aucune clé : ce compte ne peut pas se connecter."
 
 #: app/templates/partials/_health_legend.html:12
 msgid "No monitor target"
@@ -605,6 +782,10 @@ msgstr "Aucune cible de suivi"
 #: app/templates/partials/_ip_detail.html:52
 msgid "No monitor target. Add a TCP port check or an ICMP ping to track this address."
 msgstr "Aucune cible de suivi. Ajoutez un check de port TCP ou un ping ICMP pour suivre cette adresse."
+
+#: app/templates/service_accounts.html:96
+msgid "No service account yet. Create one, then give it a key."
+msgstr "Aucun compte de service. Créez-en un, puis donnez-lui une clé."
 
 #: app/templates/subnet.html:81
 msgid "No target"
@@ -626,6 +807,14 @@ msgstr "Occupation"
 #: app/services/ipam.py:45 app/services/ipam.py:58
 msgid "Only IPv4 is supported in this version."
 msgstr "Seul IPv4 est pris en charge dans cette version."
+
+#: app/templates/partials/_service_account_form.html:29
+msgid "Only a manager account can hold read/write keys."
+msgstr "Seul un compte manager peut porter des clés en lecture-écriture."
+
+#: app/templates/service_accounts.html:20
+msgid "OpenAPI specification"
+msgstr "Spécification OpenAPI"
 
 #: app/templates/audit.html:60
 #, python-format
@@ -671,7 +860,11 @@ msgstr "Précédente"
 msgid "Protocol"
 msgstr "Protocole"
 
-#: app/templates/base.html:37
+#: app/templates/partials/_api_key_created.html:17
+msgid "Quick test:"
+msgstr "Test rapide :"
+
+#: app/templates/base.html:39
 msgid "Read-only"
 msgstr "Lecture seule"
 
@@ -696,6 +889,24 @@ msgstr "Réinitialiser le mot de passe"
 msgid "Reset password (8 characters minimum)"
 msgstr "Réinitialiser le mot de passe (8 caractères minimum)"
 
+#: app/templates/import_export.html:73
+msgid "Restore a backup"
+msgstr "Restaurer une sauvegarde"
+
+#: app/templates/import_export.html:70
+msgid "Restore this backup? ALL current data (VLANs, addresses, users, keys, audit log) will be replaced by the content of the file. You will have to log in again."
+msgstr "Restaurer cette sauvegarde ? TOUTES les données actuelles (VLAN, adresses, utilisateurs, clés, journal d'audit) seront remplacées par le contenu du fichier. Vous devrez vous reconnecter."
+
+#: app/templates/service_accounts.html:81
+msgid "Revoke"
+msgstr "Révoquer"
+
+#: app/templates/service_accounts.html:80
+#, python-format
+msgid "Revoke key “%(name)s”? Tools using it lose access immediately. This cannot be undone."
+msgstr "Révoquer la clé « %(name)s » ? Les outils qui l'utilisent perdent l'accès immédiatement. Action irréversible."
+
+#: app/templates/partials/_service_account_form.html:24
 #: app/templates/partials/_user_form.html:21
 #: app/templates/partials/_user_form.html:35 app/templates/users.html:24
 msgid "Role"
@@ -712,6 +923,7 @@ msgstr "Préfixes racine :"
 #: app/templates/partials/_ip_form.html:62
 #: app/templates/partials/_monitor_form.html:46
 #: app/templates/partials/_reseau_form.html:35
+#: app/templates/partials/_service_account_form.html:39
 #: app/templates/partials/_subnet_form.html:45
 #: app/templates/partials/_user_form.html:47
 msgid "Save"
@@ -720,6 +932,34 @@ msgstr "Enregistrer"
 #: app/templates/subnet.html:59
 msgid "Search"
 msgstr "Recherche"
+
+#: app/routers/service_accounts.py:28
+msgid "Service account not found."
+msgstr "Compte de service introuvable."
+
+#: app/routers/service_accounts.py:121
+#, python-format
+msgid "Service account “%s” created. Add a key to use it."
+msgstr "Compte de service « %s » créé. Ajoutez-lui une clé pour l'utiliser."
+
+#: app/routers/service_accounts.py:168
+#, python-format
+msgid "Service account “%s” deleted (its keys no longer work)."
+msgstr "Compte de service « %s » supprimé (ses clés ne fonctionnent plus)."
+
+#: app/routers/service_accounts.py:156
+#, python-format
+msgid "Service account “%s” updated."
+msgstr "Compte de service « %s » mis à jour."
+
+#: app/templates/service_accounts.html:2 app/templates/service_accounts.html:8
+#: app/templates/service_accounts.html:14
+msgid "Service accounts"
+msgstr "Comptes de service"
+
+#: app/templates/service_accounts.html:18
+msgid "Service accounts let scripts, playbooks and AI agents use GuiPAM through its JSON API, with an access key."
+msgstr "Les comptes de service permettent à des scripts, des playbooks et des agents IA d'utiliser GuiPAM via son API JSON, avec une clé d'accès."
 
 #: app/templates/partials/_ip_row.html:7
 msgid "Show details"
@@ -738,6 +978,10 @@ msgstr "Se connecter"
 msgid "Stale"
 msgstr "Obsolète"
 
+#: app/templates/service_accounts.html:52
+msgid "State"
+msgstr "État"
+
 #: app/templates/partials/_ip_detail.html:6
 #: app/templates/partials/_ip_detail.html:37
 #: app/templates/partials/_ip_form.html:21 app/templates/subnet.html:64
@@ -754,9 +998,44 @@ msgstr "Le subnet %(cidr)s est plein (%(capacity)d adresses utilisables)."
 msgid "Targets"
 msgstr "Cibles"
 
+#: app/templates/service_accounts.html:66
+msgid "The account no longer has the manager role: this key can only read."
+msgstr "Le compte n'a plus le rôle manager : cette clé ne peut que lire."
+
+#: app/services/backup.py:146
+#, python-format
+msgid "The backup could not be restored (nothing was changed): %s"
+msgstr "La sauvegarde n'a pas pu être restaurée (rien n'a été modifié) : %s"
+
+#: app/routers/service_accounts.py:205
+msgid "The expiry date must be in the future."
+msgstr "La date d'expiration doit être dans le futur."
+
 #: app/services/csv_io.py:113
 msgid "The file is empty."
 msgstr "Le fichier est vide."
+
+#: app/api/auth.py:86
+msgid "This API key is read-only: action not allowed."
+msgstr "Cette clé d'API est en lecture seule : action non autorisée."
+
+#: app/templates/partials/_api_key_form.html:20
+msgid "This account is read-only: give it the manager role to create read/write keys."
+msgstr "Ce compte est en lecture seule : donnez-lui le rôle manager pour créer des clés en lecture-écriture."
+
+#: app/services/backup.py:122
+msgid "This backup contains no active manager account: restoring it would lock you out."
+msgstr "Cette sauvegarde ne contient aucun compte manager actif : la restaurer vous enfermerait dehors."
+
+#: app/services/backup.py:101
+#, python-format
+msgid "This backup was made by a newer GuiPAM (format %(found)d, this version reads up to %(max)d). Update GuiPAM first."
+msgstr "Cette sauvegarde vient d'un GuiPAM plus récent (format %(found)d, cette version lit jusqu'au format %(max)d). Mettez d'abord GuiPAM à jour."
+
+#: app/routers/import_export.py:97 app/services/backup.py:95
+#: app/services/backup.py:98
+msgid "This file is not a GuiPAM backup."
+msgstr "Ce fichier n'est pas une sauvegarde GuiPAM."
 
 #: app/templates/partials/_reseau_form.html:5
 msgid "This instance manages a single network. Root prefixes are informative only."
@@ -770,7 +1049,7 @@ msgstr "À traiter"
 msgid "To review (red)"
 msgstr "À traiter (rouges)"
 
-#: app/templates/base.html:48
+#: app/templates/base.html:51
 msgid "Toggle light/dark theme"
 msgstr "Basculer le thème clair/sombre"
 
@@ -837,12 +1116,13 @@ msgstr "L'identifiant est requis."
 msgid "Username “%s” is already taken."
 msgstr "L'identifiant « %s » est déjà pris."
 
-#: app/templates/base.html:44 app/templates/users.html:2
+#: app/templates/base.html:46 app/templates/users.html:2
 #: app/templates/users.html:8 app/templates/users.html:14
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: app/routers/ips.py:79 app/routers/ips.py:107 app/routers/subnets.py:23
+#: app/api/routes.py:142 app/api/routes.py:391 app/routers/ips.py:40
+#: app/routers/ips.py:68 app/routers/subnets.py:23
 msgid "VLAN not found."
 msgstr "VLAN introuvable."
 
@@ -854,21 +1134,21 @@ msgstr "Tag VLAN"
 msgid "VLAN tag (1–4094, optional)"
 msgstr "Tag VLAN (1–4094, facultatif)"
 
-#: app/routers/subnets.py:45 app/routers/subnets.py:48
+#: app/services/inventory.py:95
 msgid "VLAN tag must be a number between 1 and 4094."
 msgstr "Le tag VLAN doit être un nombre entre 1 et 4094."
 
-#: app/routers/subnets.py:120
+#: app/routers/subnets.py:76
 #, python-format
 msgid "VLAN “%s” created."
 msgstr "VLAN « %s » créé."
 
-#: app/routers/subnets.py:181
+#: app/routers/subnets.py:119
 #, python-format
 msgid "VLAN “%s” deleted (with its addresses and targets)."
 msgstr "VLAN « %s » supprimé (avec ses adresses et ses cibles)."
 
-#: app/routers/subnets.py:169
+#: app/routers/subnets.py:110
 #, python-format
 msgid "VLAN “%s” updated."
 msgstr "VLAN « %s » mis à jour."
@@ -893,13 +1173,18 @@ msgstr "Quand"
 msgid "Who"
 msgstr "Qui"
 
-#: app/templates/base.html:37
+#: app/templates/base.html:39
 msgid "Your account cannot modify anything."
 msgstr "Votre compte ne peut rien modifier."
 
+#: app/templates/service_accounts.html:70
+msgid "active"
+msgstr "active"
+
 #: app/templates/partials/_monitor_row.html:6
+#: app/templates/service_accounts.html:31
 msgid "disabled"
-msgstr "désactivée"
+msgstr "désactivé"
 
 #: app/templates/partials/_ip_form.html:47
 msgid "e.g. Dell R730, Zyxel GS1200…"
@@ -917,7 +1202,15 @@ msgstr "ex. NAS, imprimante, hyperviseur…"
 msgid "e.g. server room, office 2…"
 msgstr "ex. salle serveur, bureau 2…"
 
-#: app/templates/partials/_audit_rows.html:11
+#: app/templates/partials/_api_key_form.html:11
+msgid "e.g. the tool or host using it"
+msgstr "ex. l'outil ou la machine qui l'utilise"
+
+#: app/templates/service_accounts.html:71
+msgid "expired"
+msgstr "expirée"
+
+#: app/templates/partials/_audit_rows.html:17
 msgid "field(s)"
 msgstr "champ(s)"
 
@@ -929,18 +1222,35 @@ msgstr "libre (non enregistrée)"
 msgid "last success:"
 msgstr "dernier succès :"
 
+#: app/templates/partials/_service_account_form.html:27
 #: app/templates/partials/_user_form.html:24
 #: app/templates/partials/_user_form.html:38
 msgid "manager (read/write)"
 msgstr "manager (lecture/écriture)"
 
-#: app/i18n.py:87 app/i18n.py:99
+#: app/i18n.py:87 app/i18n.py:99 app/templates/service_accounts.html:74
 msgid "never"
 msgstr "jamais"
+
+#: app/templates/partials/_api_key_form.html:16
+#: app/templates/service_accounts.html:30
+#: app/templates/service_accounts.html:66
+#: app/templates/service_accounts.html:67
+msgid "read-only"
+msgstr "lecture seule"
+
+#: app/templates/partials/_api_key_form.html:17
+#: app/templates/service_accounts.html:65
+msgid "read/write"
+msgstr "lecture-écriture"
 
 #: app/templates/subnet_plan.html:18
 msgid "recorded"
 msgstr "enregistrées"
+
+#: app/templates/service_accounts.html:72
+msgid "revoked"
+msgstr "révoquée"
 
 #: app/templates/partials/_monitor_row.html:13
 msgid "unknown"
@@ -950,6 +1260,7 @@ msgstr "inconnu"
 msgid "usable addresses"
 msgstr "adresses utilisables"
 
+#: app/templates/partials/_service_account_form.html:26
 #: app/templates/partials/_user_form.html:23
 #: app/templates/partials/_user_form.html:37
 msgid "user (read-only)"
@@ -969,7 +1280,7 @@ msgstr "« %s » n'est pas une adresse IPv4 valide."
 msgid "“%s” is not a valid MAC address."
 msgstr "« %s » n'est pas une adresse MAC valide."
 
-#: app/routers/reseau.py:29
+#: app/services/inventory.py:583
 #, python-format
 msgid "“%s” is not a valid network prefix."
 msgstr "« %s » n'est pas un préfixe réseau valide."

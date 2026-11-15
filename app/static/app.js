@@ -6,14 +6,47 @@ document.addEventListener("click", (event) => {
   if (!toggle) return;
   const root = document.documentElement;
   const dark = root.classList.toggle("dark");
+  root.dataset.theme = dark ? "dark" : "light"; // guitestyle suit data-theme, Basecoat la classe
   localStorage.setItem("guipam-theme", dark ? "dark" : "light");
 });
 
-/* HTMX : accepter les swaps sur 422 (contrat des formulaires re-rendus avec erreurs). */
+/* Formulaire refusé (422) : on garde la modale et tout ce qui a été saisi. Seul le
+   bloc d'erreurs est remplacé, et les champs fautifs passent en rouge. */
+function showFormErrors(event) {
+  const target = event.detail.target;
+  const current = target.querySelector && target.querySelector("[data-form-errors]");
+  if (target.id !== "modal" || !current) return false;
+  const doc = new DOMParser().parseFromString(event.detail.xhr.responseText, "text/html");
+  const incoming = doc.querySelector("[data-form-errors]");
+  if (!incoming) return false;
+  current.replaceWith(document.importNode(incoming, true));
+  target.querySelectorAll("[aria-invalid]").forEach((el) => el.removeAttribute("aria-invalid"));
+  const source = event.detail.requestConfig && event.detail.requestConfig.elt;
+  const form = (source && source.closest && source.closest("form")) || target;
+  const fields = (incoming.dataset.errorFields || "").split(" ").filter(Boolean);
+  let first = null;
+  fields.forEach((name) => {
+    const field = form.querySelector('[name="' + name + '"]');
+    if (!field) return;
+    field.setAttribute("aria-invalid", "true");
+    first = first || field;
+  });
+  if (first) first.focus();
+  else target.querySelector("[data-form-errors]").scrollIntoView({ block: "nearest" });
+  return true;
+}
+
 document.addEventListener("htmx:beforeSwap", (event) => {
-  if (event.detail.xhr.status === 422) {
-    event.detail.shouldSwap = true;
-    event.detail.isError = false;
+  if (event.detail.xhr.status !== 422) return;
+  event.detail.isError = false;
+  // Repli : re-rendu complet du partial (contrat d'origine) si le bloc est introuvable.
+  event.detail.shouldSwap = !showFormErrors(event);
+});
+
+/* Un champ corrigé n'est plus signalé en rouge. */
+document.addEventListener("input", (event) => {
+  if (event.target.getAttribute && event.target.getAttribute("aria-invalid")) {
+    event.target.removeAttribute("aria-invalid");
   }
 });
 

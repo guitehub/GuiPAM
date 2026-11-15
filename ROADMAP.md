@@ -19,13 +19,29 @@
 - [x] Docker multi-stage (Tailwind standalone, .mo compilés), HEALTHCHECK, volume unique `/data`
 - [x] Tests pytest : conflits, transitions de santé, check TCP réel, CSV, i18n, autorisations
 
-## v0.2 — Backlog
+## v0.2 — Piloter l'IPAM depuis des machines
 
+- [x] Comptes de service + clés d'API (lecture seule / lecture-écriture, affichage unique, révocation, expiration)
+- [x] API JSON `/api/v1` : VLAN, IP, supervision, pannes, audit ; mêmes règles métier que l'UI
+- [x] Allocation atomique de la prochaine IP libre
+- [x] Audit des actions automatisées (compte + clé)
+- [x] Spécification OpenAPI + documentation interactive servies en local
+
+## Continuité des données
+
+- [x] Sauvegarde complète JSON versionnée + restauration (UI et ligne de commande)
+- [x] Instantanés automatiques (avant migration, quotidiens)
+- [x] Politique de compatibilité + tests garde-fous de migration
+
+## Backlog
+
+- [ ] API : limitation du nombre de requêtes
+- [ ] API : droits plus fins (clé limitée à un VLAN, par exemple)
+- [ ] Serveur MCP intégré
 - [ ] Notifications quand une cible tombe (webhook générique, e-mail SMTP)
 - [ ] Historique des checks + sparkline par cible
 - [ ] IPv6
 - [ ] Scan de subnet (découverte) pour pré-remplir les IP vivantes
-- [ ] Tokens d'API (accès programmatique read-only puis read-write)
 - [ ] Vue plan avancée (heatmap compacte, regroupement des plages libres)
 - [ ] Catalogue `en` complet relu + autres langues communautaires
 - [ ] Changement de mot de passe par l'utilisateur lui-même (profil)

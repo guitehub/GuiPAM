@@ -14,7 +14,7 @@ router = APIRouter()
 PAGE_SIZE = 50
 
 ACTIONS = ["create", "update", "delete", "login", "check", "import", "export"]
-ENTITY_TYPES = ["reseau", "subnet", "ip", "monitor", "user"]
+ENTITY_TYPES = ["reseau", "subnet", "ip", "monitor", "user", "service_account", "api_key", "backup"]
 
 
 @router.get("/audit")

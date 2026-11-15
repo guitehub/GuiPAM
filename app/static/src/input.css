@@ -5,3 +5,61 @@
 
 @source "../../templates";
 @source "../app.js";
+
+/* ---------------------------------------------------------------- guitestyle
+   Le style du Hub de la Guite (copie figée dans vendor/guitestyle, voir
+   `make guitestyle`). Basecoat garde ses composants ; on branche seulement ses
+   variables sur les jetons guitestyle. Aucune couleur n'est écrite ici : le
+   clair et le sombre viennent des jetons.
+
+   Deux noms existent des deux côtés : `--border` (même rôle) et `--accent`
+   (guitestyle : couleur de marque ; Basecoat : fond de survol discret).
+   On réimporte donc les jetons APRÈS Basecoat pour qu'ils gagnent sur ces deux
+   noms, et le « accent » de Basecoat est redirigé plus bas via `--color-accent`. */
+@import "../vendor/guitestyle/tokens.css";
+
+:root,
+.dark {
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--bg);
+  --card-foreground: var(--fg);
+  --popover: var(--bg);
+  --popover-foreground: var(--fg);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-fg);
+  --secondary: var(--bg-soft);
+  --secondary-foreground: var(--fg);
+  --muted: var(--bg-soft);
+  --muted-foreground: var(--fg-soft);
+  --input: var(--border);
+  --ring: var(--accent);
+  --scrollbar-thumb: var(--fg-faint);
+}
+
+@theme {
+  /* Le « accent » de Basecoat (survol des boutons fantômes, menus) reste neutre. */
+  --color-accent: var(--bg-soft);
+  --color-accent-foreground: var(--fg);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+}
+
+::selection {
+  background: var(--sel);
+}
+
+pre,
+code {
+  background-color: var(--code-bg);
+}
+
+::placeholder {
+  color: var(--fg-faint);
+}
+
+/* Champ refusé par le serveur (posé par app.js sur une erreur 422). */
+#modal :is(input, select, textarea)[aria-invalid="true"] {
+  border-color: var(--color-destructive);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-destructive) 25%, transparent);
+}

@@ -6,14 +6,16 @@
   <title>{% block title %}GuiPAM{% endblock %} — {{ reseau.name if reseau else "GuiPAM" }}</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
   <script>
-    // Anti-FOUC : applique le thème avant le premier rendu.
+    // Anti-FOUC : applique le thème avant le premier rendu. Les deux marqueurs sont
+    // toujours posés ensemble : data-theme pour guitestyle, classe .dark pour Basecoat/Tailwind.
     (function () {
       const stored = localStorage.getItem("guipam-theme");
-      if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-        document.documentElement.classList.add("dark");
-      }
+      const dark = stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      document.documentElement.classList.toggle("dark", dark);
     })();
   </script>
+  <link rel="stylesheet" href="/static/vendor/guitestyle/tokens.css">
   <link rel="stylesheet" href="/static/app.css">
   <link rel="stylesheet" href="/static/health.css">
   <script src="/static/vendor/htmx.min.js"></script>
@@ -42,6 +44,7 @@
           <a href="/import" class="btn-sm-ghost">{{ _("Import / Export") }}</a>
           {% if user.role.value == "manager" %}
             <a href="/users" class="btn-sm-ghost">{{ _("Users") }}</a>
+            <a href="/service-accounts" class="btn-sm-ghost">{{ _("API") }}</a>
           {% endif %}
           {% include "partials/_health_legend.html" %}
           <button type="button" class="btn-sm-icon-ghost" data-theme-toggle

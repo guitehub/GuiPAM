@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     tcp_timeout_seconds: float = 3.0
     enable_ping: bool = True
 
+    # Instantanés SQLite conservés dans <dossier de la base>/backups (0 = désactivé).
+    backup_keep_pre_migration: int = 5
+    backup_keep_daily: int = 7
+
     health_warn_seconds: int = 120
     health_red_seconds: int = 600
     health_dark_red_seconds: int = 3600

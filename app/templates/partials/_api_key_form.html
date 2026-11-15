@@ -1,0 +1,35 @@
+<dialog class="dialog w-full max-w-md">
+  <article>
+    <header>
+      <h2 class="text-lg font-semibold">{{ _("New key for “%(name)s”", name=account.name) }}</h2>
+    </header>
+    <section>
+      {% include "partials/_form_errors.html" %}
+      <form class="form grid gap-4" hx-post="/service-accounts/{{ account.id }}/keys" hx-target="#modal" hx-swap="innerHTML">
+        <div class="grid gap-2">
+          <label for="key-name">{{ _("Key name") }} *</label>
+          <input type="text" id="key-name" name="name" required autocomplete="off" placeholder="{{ _("e.g. the tool or host using it") }}">
+        </div>
+        <div class="grid gap-2">
+          <label for="key-scope">{{ _("Access") }}</label>
+          <select id="key-scope" name="scope" class="select">
+            <option value="read" selected>{{ _("read-only") }}</option>
+            {% if account.role.value == "manager" %}<option value="write">{{ _("read/write") }}</option>{% endif %}
+          </select>
+          {% if account.role.value != "manager" %}
+          <p class="text-xs text-muted-foreground">{{ _("This account is read-only: give it the manager role to create read/write keys.") }}</p>
+          {% endif %}
+        </div>
+        <div class="grid gap-2">
+          <label for="key-expires">{{ _("Expiry date (optional)") }}</label>
+          <input type="date" id="key-expires" name="expires_on">
+          <p class="text-xs text-muted-foreground">{{ _("Leave empty for a key that never expires.") }}</p>
+        </div>
+        <footer class="flex justify-end gap-2">
+          <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">{{ _("Cancel") }}</button>
+          <button type="submit" class="btn-primary">{{ _("Create key") }}</button>
+        </footer>
+      </form>
+    </section>
+  </article>
+</dialog>

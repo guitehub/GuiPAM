@@ -1,0 +1,25 @@
+<dialog class="dialog w-full max-w-xl" onclose="location.reload()">
+  <article>
+    <header>
+      <h2 class="text-lg font-semibold">{{ _("Key “%(name)s” created", name=key.name) }}</h2>
+      <p class="text-sm text-destructive font-medium">{{ _("Copy it now: it will never be shown again.") }}</p>
+    </header>
+    <section class="grid gap-4" x-data="{copied: false}">
+      <div class="flex gap-2">
+        <input type="text" readonly x-ref="key" class="flex-1 font-mono text-xs" value="{{ raw_key }}"
+               aria-label="{{ _("Key") }}" onfocus="this.select()">
+        <button type="button" class="btn-outline"
+                @click="$refs.key.select(); (navigator.clipboard ? navigator.clipboard.writeText($refs.key.value) : Promise.reject()).catch(() => document.execCommand('copy')); copied = true">
+          <span x-show="!copied">{{ _("Copy") }}</span><span x-show="copied" x-cloak>✓ {{ _("Copied") }}</span>
+        </button>
+      </div>
+      <div class="grid gap-1">
+        <p class="text-xs text-muted-foreground">{{ _("Quick test:") }}</p>
+        <pre class="text-xs bg-muted rounded p-2 overflow-x-auto">curl -H "Authorization: Bearer {{ raw_key }}" {{ base_url }}/api/v1/whoami</pre>
+      </div>
+      <footer class="flex justify-end">
+        <button type="button" class="btn-primary" onclick="this.closest('dialog').close()">{{ _("Done, I saved it") }}</button>
+      </footer>
+    </section>
+  </article>
+</dialog>
