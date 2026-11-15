@@ -5,6 +5,15 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-11-15
+
+Correctif d'interface sans rupture : ni migration de schéma, ni changement de l'API `/api/v1`.
+
+### Fixed
+- Menu utilisateur : le sélecteur de langue se refermait dès qu'on cliquait dessus, rendant impossible le
+  passage à une autre langue. Un clic à l'intérieur d'un menu déroulant (utilisateur, Réseaux,
+  Administration, légende santé) ne le ferme plus ; Échap ferme désormais chacun d'eux.
+
 ## [0.3.0] — 2026-11-15
 
 Mise à jour sans rupture : une migration additive (quatre colonnes facultatives sur `ip_address`) est
