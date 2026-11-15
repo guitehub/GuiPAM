@@ -47,3 +47,32 @@ def test_apply_result_up_puis_down():
     assert target.consecutive_failures == 1
     apply_result(target, ok=False, latency_ms=None)
     assert target.consecutive_failures == 2
+
+
+async def test_badge_d_etat_aux_couleurs_de_sante(client):
+    """« up » en vert (couleur de santé, pas la couleur de marque), « down » en rouge, jamais vérifié en neutre."""
+    from sqlmodel import select
+
+    from app.database import session_factory
+    from tests.conftest import ADMIN_PASSWORD, login
+
+    csrf = await login(client, "admin", ADMIN_PASSWORD)
+    h = {"X-CSRF-Token": csrf}
+    await client.post("/subnets", data={"name": "LAN", "cidr": "192.168.1.0/24"}, headers=h)
+    await client.post("/subnets/1/ips", data={"address": "192.168.1.10"}, headers=h)
+    for port in ("22", "80", "443"):
+        await client.post("/ips/1/monitors", data={"protocol": "tcp", "port": port}, headers=h)
+    async with session_factory()() as session:
+        targets = (await session.exec(select(MonitorTarget).order_by(MonitorTarget.port))).all()  # type: ignore[arg-type]
+        apply_result(targets[0], ok=True, latency_ms=1.0)
+        apply_result(targets[1], ok=False, latency_ms=None)
+        session.add_all(targets)
+        await session.commit()
+
+    page = (await client.get("/ips/1")).text
+    assert '<span class="badge status-up">up</span>' in page
+    assert '<span class="badge-destructive">down</span>' in page
+    assert '<span class="badge-outline">inconnu</span>' in page
+    assert 'badge-primary">up<' not in page
+    css = (await client.get("/static/health.css")).text
+    assert ".badge.status-up" in css and "var(--health-ok)" in css

@@ -7,6 +7,7 @@
   --health-red: #ef4444;       /* rouge : down depuis un moment */
   --health-dark-red: #7f1d1d;  /* rouge foncé : down / stale, à nettoyer */
   --health-none: transparent;  /* aucune cible */
+  --health-ok-contrast: #052e16;  /* texte posé sur un fond vert (lisible en clair comme en sombre) */
 }
 
 .dark {
@@ -56,6 +57,15 @@
 .health-badge.health-dark-red { color: var(--health-dark-red); background: transparent; }
 .health-badge.health-none     { color: var(--health-unknown); border-style: dashed; background: transparent; }
 .health-badge .health-dot { width: 0.5rem; height: 0.5rem; }
+
+/* État brut d'une cible (résultat du dernier check) : information de santé, donc aux couleurs
+   de santé et non à la couleur de marque. S'utilise avec la classe Basecoat `badge`.
+   Le « down » garde `badge-destructive`, déjà rouge. */
+.badge.status-up {
+  background-color: var(--health-ok);
+  border-color: transparent;
+  color: var(--health-ok-contrast);
+}
 
 [x-cloak] { display: none !important; }
 

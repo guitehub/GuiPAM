@@ -9,7 +9,7 @@
   <td class="cell-wrap">{{ target.label or "—" }}</td>
   <td class="text-xs">{{ target.interval_seconds }}s</td>
   <td class="text-xs">
-    {% if target.last_status.value == "up" %}<span class="badge-primary">up</span>
+    {% if target.last_status.value == "up" %}<span class="badge status-up">up</span>
     {% elif target.last_status.value == "down" %}<span class="badge-destructive">down</span>
     {% else %}<span class="badge-outline">{{ _("unknown") }}</span>{% endif %}
   </td>

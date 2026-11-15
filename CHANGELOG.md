@@ -5,6 +5,10 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+### Changed
+- Détail d'une IP : le statut « up » d'une cible s'affiche en **vert** (couleur de santé) et non plus dans la
+  couleur de marque : c'est une information d'état, pas un élément de design.
+
 ## [0.4.0] — 2026-11-16
 
 Mise à jour sans rupture de données : une migration additive (quatre colonnes facultatives sur `reseau`)
