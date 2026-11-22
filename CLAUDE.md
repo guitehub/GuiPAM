@@ -3,20 +3,21 @@
 IPAM auto-hébergé mono-réseau avec suivi dynamique (checks TCP/ICMP, code couleur santé).
 Cahier des charges v2 implémenté en v0.1.0 ; v0.2.0 ajoute l'API JSON `/api/v1` et les comptes de service ; v0.3.0 la pause volontaire des hôtes ;
 v0.4.0 les réglages du suivi dans l'interface et le code couleur relatif à chaque cible ;
-v0.5.0 la case « Rester connecté ».
+v0.5.0 la case « Rester connecté » ; v0.6.0 le HTTPS natif (certificat auto-signé persistant, empreintes).
 Specs clés : voir README.md et ROADMAP.md.
 
 ## Commandes
 
 ```bash
-.venv/bin/pytest tests/ -q                 # 148 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause, réglages du suivi, sessions)
+.venv/bin/pytest tests/ -q                 # ~200 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause, réglages du suivi, sessions, TLS, écouteurs réels)
 make css                                   # recompile app/static/app.css (binaire Tailwind standalone)
 PATH="$PWD/.venv/bin:$PATH" make i18n      # extraction + régénération du .po fr + compilation .mo (le Makefile appelle `python`, absent hors venv)
-.venv/bin/python -m app.main               # serveur dev (env GUIPAM_* requis, voir .env.example)
+.venv/bin/python -m app.server             # serveur dev : https://localhost:8443 + redirection :8080 (env GUIPAM_* requis, voir .env.example)
+.venv/bin/python -m app.tls show           # empreintes du certificat servi (lecture seule)
 ```
 
-Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `GUIPAM_ADMIN_PASSWORD`,
-`GUIPAM_SECURE_COOKIES=false` (hors TLS). L'app refuse de démarrer sans les deux premiers.
+Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `GUIPAM_ADMIN_PASSWORD`.
+L'app refuse de démarrer sans les deux premiers. HTTP seul : `GUIPAM_TLS=off GUIPAM_SECURE_COOKIES=false`.
 
 ## Architecture (décisions non évidentes)
 
@@ -52,6 +53,17 @@ Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `G
 - **CSRF** : dépendance `csrf_protect` sur chaque router mutateur ; jeton dans header HTMX
   (`hx-headers` sur `<body>`) ou champ `csrf_token` des formulaires classiques.
 - **bcrypt en direct** (pas passlib), mot de passe tronqué à 72 octets.
+- **TLS natif** (`app/tls.py`) : certificat fourni (`GUIPAM_TLS_CERTFILE/KEYFILE`) sinon auto-signé dans
+  `<dossier de la base>/tls/`. **La clé n'est jamais régénérée** (réémission, renouvellement) : l'épingle SPKI des
+  clients en dépend. La réémission ne dépend que de `GUIPAM_TLS_SANS`, pas du nom d'hôte (il change à chaque
+  recréation de conteneur ; celui de l'émission est noté dans le CN). `tls.current()` = certificat retenu par le
+  processus (interface, API) ; `tls.refresh()` (scheduler, quotidien) recharge à chaud les `SSLContext` enregistrés.
+- **Lanceur** `app/server.py` (`python -m app.server`, CMD de l'image) : plusieurs `uvicorn.Server` dans une boucle ;
+  seul le premier (HTTPS, ou HTTP en TLS off) exécute le lifespan, le second démarre après lui sur le même objet app.
+  Signaux gérés par le lanceur (la capture d'uvicorn est neutralisée, sinon un SIGTERM n'arrête qu'un écouteur).
+  `X-Forwarded-*` lus seulement par l'écouteur `proxy` (et HTTP en TLS off), depuis `GUIPAM_TRUSTED_PROXIES` :
+  ne jamais activer `proxy_headers` sur l'écouteur HTTPS. Le lifespan appelle `tls.prepare` si rien ne l'a fait
+  (tests, `uvicorn app.main:app`).
 - **Session** : middleware maison `app/session.py` (format de cookie Starlette conservé). Durée selon la clé
   `remember` de la session : cookie de navigateur + `GUIPAM_SESSION_MAX_AGE` d'inactivité, ou persistant
   `GUIPAM_REMEMBER_MAX_AGE`. Ouvrir/fermer une session : `services.auth.start_login` / `end_login` ; l'empreinte
@@ -128,8 +140,9 @@ Pas de `python3-venv` sur ce poste : créer le venv avec `~/.local/bin/virtualen
 Captures d'écran (revue UI) : Playwright + Chromium dans un venv jetable ; les bibliothèques manquantes
 s'obtiennent sans sudo : `apt-get download libnspr4 libnss3 libasound2t64`, `dpkg-deb -x` dans un dossier,
 puis `LD_LIBRARY_PATH=<dossier>/usr/lib/x86_64-linux-gnu`. Mesurer `scrollWidth` vs `clientWidth` du tableau.
-Docker est disponible sur ce poste : l'image se build et démarre (validé le 2026-11-15, v0.2.0).
-Le port 8080 y est pris par Nextcloud → conteneur de test sur un autre port :
-`docker build -t guipam:test . && docker run -d --name guipam-test -p 127.0.0.1:8081:8080 -v guipam-test-data:/data
---cap-add NET_RAW -e GUIPAM_SECRET_KEY=… -e GUIPAM_ADMIN_PASSWORD=… -e GUIPAM_SECURE_COOKIES=false guipam:test`.
-Le `docker-compose.yml` (port 8080) n'a pas été lancé ici.
+Docker est disponible sur ce poste : l'image se build et démarre (validé le 2026-11-22, v0.6.0, les trois modes HTTP
+`healthy`, empreinte stable à la recréation, connexion via Caddy en mode proxy).
+Le port 8080 y est pris par Nextcloud → conteneur de test sur d'autres ports :
+`docker build -t guipam:test . && docker run -d --name guipam-test -p 127.0.0.1:8443:8443 -p 127.0.0.1:8081:8080
+-v guipam-test-data:/data --cap-add NET_RAW -e GUIPAM_SECRET_KEY=… -e GUIPAM_ADMIN_PASSWORD=… guipam:test`.
+Healthcheck plus rapide pour un test : `--health-interval=2s`. Le `docker-compose.yml` n'a pas été lancé ici.

@@ -5,6 +5,53 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-11-22
+
+**Changement de déploiement** : GuiPAM sert désormais lui-même du HTTPS, par défaut. Sans rupture de
+données : ni migration de schéma, ni changement de sens dans l'API `/api/v1` (qui gagne `GET /instance`).
+Lisez la section **Migration** ci-dessous avant de mettre à jour un déploiement qui publie le port 8080.
+
+### Added
+- **HTTPS natif** sur `GUIPAM_HTTPS_PORT` (8443). Au premier démarrage, GuiPAM crée un certificat
+  **auto-signé** (ECDSA P-256, 825 jours) dans `<dossier de la base>/tls/`, conservé ensuite : mises à jour et
+  recréations du conteneur gardent la même empreinte. SAN : `localhost`, `127.0.0.1`, `::1`, le nom d'hôte et
+  `GUIPAM_TLS_SANS`.
+- Renouvellement automatique 30 jours avant l'échéance (vérification quotidienne, rechargement à chaud), et
+  réémission si `GUIPAM_TLS_SANS` change, **toujours avec la même clé** : l'épingle SPKI ne change pas.
+- Certificat fourni : `GUIPAM_TLS_CERTFILE` / `GUIPAM_TLS_KEYFILE` (prioritaires, vérifiés au démarrage).
+- Écouteur HTTP (`GUIPAM_HTTP_PORT`, 8080) selon `GUIPAM_HTTP_MODE` : `redirect` (308 vers l'HTTPS, seul
+  `/healthz` y répond), `proxy` (application complète pour un reverse proxy qui termine le TLS) ou `off`.
+  `GUIPAM_PUBLIC_HTTPS_PORT` corrige la cible des redirections si le port publié diffère.
+- `GUIPAM_TRUSTED_PROXIES` : IP/CIDR dont l'écouteur `proxy` accepte `X-Forwarded-For` / `-Proto`. Le journal
+  et l'anti-brute-force voient l'IP réelle du client au lieu de celle du proxy (un verrouillage d'`admin`
+  ne bloque plus tout le monde). L'écouteur HTTPS ignore toujours ces en-têtes.
+- **Empreintes du certificat** (SHA-256 et épingle SPKI SHA-256) : journalisées au démarrage, affichées aux
+  managers dans **Paramètres du réseau → Certificat TLS**, renvoyées par `GET /api/v1/instance` (version et
+  `tls.*`), et lisibles depuis l'hôte : `docker exec guipam python -m app.tls show [--json]`.
+- Avertissements au démarrage pour les configurations déconseillées (TLS off, cookies non `Secure` avec TLS,
+  mode proxy sans proxies déclarés, `GUIPAM_TLS_SANS` vide, `GUIPAM_PORT`).
+
+### Changed
+- Le port 8080 ne sert plus l'application par défaut : il redirige vers l'HTTPS.
+- Image Docker : `EXPOSE 8443 8080`, lancée par `python -m app.server` ; le `HEALTHCHECK` vise l'écouteur
+  présent quel que soit le mode. Le `docker-compose.yml` d'exemple publie `8443` et plus `8080`.
+- `GUIPAM_SECURE_COOKIES` (déjà `true` par défaut) n'a plus lieu d'être mis à `false` hors `GUIPAM_TLS=off` ;
+  `.env.example` ne le met plus à `false`.
+- Nouvelle dépendance : `cryptography`.
+
+### Deprecated
+- `GUIPAM_PORT` : remplacée par `GUIPAM_HTTP_PORT` (encore lue, avec un avertissement).
+
+### Migration
+- **Accès direct** en `http://…:8080` : publiez `8443` et passez à `https://…:8443`. Gardez `8080` publié le
+  temps de la transition : les anciens favoris sont redirigés. Renseignez `GUIPAM_TLS_SANS`.
+- **Reverse proxy** qui vise `:8080` : ajoutez `GUIPAM_HTTP_MODE=proxy` et `GUIPAM_TRUSTED_PROXIES=<IP ou réseau
+  du proxy>`, sinon il recevra des redirections vers `:8443`. Ou faites-lui viser `https://…:8443`.
+- **Clients d'API** en `http://…:8080/api/v1` : passez à `https://…:8443/api/v1` (certificat via `--cacert` ou
+  épingle SPKI), ou restez sur l'écouteur `proxy` dans un réseau interne.
+- Retirez `GUIPAM_SECURE_COOKIES=false` de votre `.env` (valeur de l'ancien exemple).
+- Retour au comportement 0.5 (HTTP seul) : `GUIPAM_TLS=off`, réservé au développement et aux tests.
+
 ## [0.5.0] — 2026-11-22
 
 Sans rupture de données : ni migration de schéma, ni changement de l'API `/api/v1`.

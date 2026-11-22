@@ -15,6 +15,8 @@ ou probablement mortes.
 - **Rôles** : `manager` (lecture/écriture) et `user` (lecture seule), journal d'audit de toute mutation.
 - **API JSON** pour les scripts, Ansible et les agents IA : comptes de service, clés d'accès en lecture seule
   ou lecture-écriture, allocation de la prochaine IP libre, spécification OpenAPI intégrée.
+- **HTTPS natif** : certificat auto-signé persistant créé au premier démarrage (ou le vôtre), empreintes
+  affichées pour l'épinglage, redirection du HTTP ; un écouteur dédié accueille un reverse proxy.
 - **Import / export CSV** tolérant (alias de colonnes Excel) pour migrer puis sauvegarder.
 - **FOSS (MIT), sans télémétrie, sans CDN** : tous les assets sont servis en local, fonctionne hors-ligne.
 
@@ -34,14 +36,18 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Ouvrez <http://localhost:8080> et connectez-vous avec `GUIPAM_ADMIN_USERNAME` / `GUIPAM_ADMIN_PASSWORD`.
+Ouvrez <https://localhost:8443> et connectez-vous avec `GUIPAM_ADMIN_USERNAME` / `GUIPAM_ADMIN_PASSWORD`.
+Le navigateur prévient que le certificat n'est pas reconnu : c'est le certificat **auto-signé** que GuiPAM
+a créé au premier démarrage (comme Proxmox VE ou Cockpit). Avant de l'accepter, comparez son empreinte
+SHA-256 à celle qu'affiche `docker exec guipam python -m app.tls show`. Voir [HTTPS et certificat](#https-et-certificat).
 
-- **Persistance** : tout l'état vit dans le volume `./data` (base SQLite et ses instantanés).
+- **Persistance** : tout l'état vit dans le volume `./data` (base SQLite, ses instantanés, certificat TLS).
   Voir [Mises à jour, sauvegardes et compatibilité](#mises-à-jour-sauvegardes-et-compatibilité).
 - **Ping ICMP** : nécessite `cap_add: [NET_RAW]` (déjà dans le `docker-compose.yml`). Si vous ne
   pouvez pas l'accorder, mettez `GUIPAM_ENABLE_PING=false` : GuiPAM reste pleinement fonctionnel
   avec des checks TCP uniquement.
-- **Healthcheck** : `GET /healthz` vérifie la base et le scheduler ; le conteneur passe `healthy` tout seul.
+- **Healthcheck** : `GET /healthz` vérifie la base et le scheduler ; le conteneur passe `healthy` tout seul,
+  quel que soit le mode de l'écouteur HTTP.
 
 ## Mises à jour, sauvegardes et compatibilité
 
@@ -60,6 +66,23 @@ migrer, prend d'abord un **instantané de la base** dans `data/backups/`
 (`guipam-avant-migration-<date>-<révision>.db`), puis applique les migrations.
 Lisez le [CHANGELOG](CHANGELOG.md) avant une version **majeure** : toute rupture y est annoncée
 avec sa marche à suivre.
+
+### Migrer depuis 0.5
+
+La 0.6 sert **HTTPS sur le port 8443** par défaut, et le port 8080 ne fait plus que **rediriger** vers
+l'HTTPS (308). Selon votre déploiement :
+
+- **Accès direct** (`http://ip:8080`) : publiez `8443` (le `docker-compose.yml` d'exemple le fait) et passez
+  à `https://ip:8443`. Gardez `8080` publié pendant la transition : les anciens favoris sont redirigés.
+  Ajoutez à `GUIPAM_TLS_SANS` les noms et IP par lesquels on joint GuiPAM.
+- **Derrière un reverse proxy** qui vise `:8080` : ajoutez `GUIPAM_HTTP_MODE=proxy` et
+  `GUIPAM_TRUSTED_PROXIES=<IP ou réseau du proxy>` (voir [Derrière un reverse proxy](#derrière-un-reverse-proxy)),
+  ou faites viser `https://…:8443` au proxy en acceptant le certificat auto-signé.
+- **Clients d'API** en `http://…:8080/api/v1` : passez en `https://…:8443/api/v1` (avec `--cacert` ou
+  l'épingle SPKI, voir plus bas), ou restez sur l'écouteur `proxy` dans un réseau interne.
+- **`GUIPAM_SECURE_COOKIES=false`** dans votre `.env` : retirez-la (GuiPAM avertit au démarrage).
+- **`GUIPAM_PORT`** : renommée `GUIPAM_HTTP_PORT` ; l'ancien nom marche encore, avec un avertissement.
+- Pour retrouver exactement le comportement 0.5 (HTTP seul) : `GUIPAM_TLS=off`, réservé au développement.
 
 ### Ce qui protège vos données
 
@@ -125,6 +148,83 @@ Chaque cible est ainsi jugée **à son propre rythme** : une cible vérifiée to
 toutes les 30 secondes suivent la même règle, sans seuil à réajuster. Seul le rouge foncé (« morte depuis
 longtemps, entrée à nettoyer ») est une durée. Une IP affiche la pire couleur de ses cibles actives.
 
+## HTTPS et certificat
+
+GuiPAM chiffre lui-même ses accès. Deux écouteurs tournent dans le même processus :
+
+| Écouteur | Port | Rôle |
+|---|---|---|
+| HTTPS | `GUIPAM_HTTPS_PORT` (8443) | Accès principal, à publier. |
+| HTTP | `GUIPAM_HTTP_PORT` (8080) | Selon `GUIPAM_HTTP_MODE` : `redirect` (défaut, 308 vers l'HTTPS, seul `/healthz` y répond), `proxy` (application complète pour un reverse proxy qui termine le TLS, à ne pas publier) ou `off`. |
+
+Si le port HTTPS publié diffère du port interne (`-p 443:8443`), indiquez-le dans `GUIPAM_PUBLIC_HTTPS_PORT`
+pour que les redirections visent le bon port.
+
+### Le certificat
+
+- **Par défaut**, GuiPAM crée au premier démarrage un certificat **auto-signé** (clé ECDSA P-256) dans
+  `data/tls/` (`guipam.crt`, `guipam.key` en `0600`). Il est valable pour `localhost`, `127.0.0.1`, `::1`, le
+  nom d'hôte et la liste **`GUIPAM_TLS_SANS`** (noms DNS et IP séparés par des virgules, ex.
+  `guipam.lan,192.168.1.10`). Le nom d'hôte d'un conteneur n'est pas parlant : renseignez `GUIPAM_TLS_SANS`.
+- Il vit dans le volume : mises à jour et recréations du conteneur le conservent, **l'empreinte ne change pas**.
+- Il est valable 825 jours et se **renouvelle tout seul** 30 jours avant l'échéance (vérification quotidienne,
+  rechargé sans redémarrage), **avec la même clé**. Modifier `GUIPAM_TLS_SANS` le réémet, avec la même clé aussi.
+- **Votre propre certificat** (CA interne, ACME…) : montez-le dans le conteneur et définissez
+  `GUIPAM_TLS_CERTFILE` (PEM, chaîne intermédiaire comprise) et `GUIPAM_TLS_KEYFILE` (PEM sans mot de passe).
+  Ils priment sur l'auto-signé. Un fichier remplacé sur disque (renouvellement externe) est relu chaque jour,
+  ou au redémarrage.
+
+### Empreintes et épinglage
+
+Deux valeurs identifient le certificat :
+
+- l'**empreinte SHA-256** du certificat : celle qu'affiche le navigateur, pour vérifier à l'œil. Elle change
+  à chaque renouvellement ;
+- l'**épingle SPKI SHA-256** (empreinte de la clé publique, en base64) : celle qu'un client automatisé
+  épingle. Elle reste **stable d'un renouvellement à l'autre**.
+
+Elles sont journalisées au démarrage, affichées aux managers dans **Paramètres du réseau → Certificat TLS**,
+renvoyées par `GET /api/v1/instance`, et lisibles depuis l'hôte avant tout contact réseau :
+
+```bash
+docker exec guipam python -m app.tls show          # ou --json
+# Client épinglé : la connexion échoue si la clé publique n'est pas celle attendue
+curl --pinnedpubkey 'sha256//<épingle SPKI>' -k https://guipam.lan:8443/api/v1/instance -H "Authorization: Bearer $KEY"
+# Ou faire confiance au certificat lui-même (copié depuis data/tls/guipam.crt)
+curl --cacert guipam.crt https://guipam.lan:8443/api/v1/vlans -H "Authorization: Bearer $KEY"
+```
+
+### Derrière un reverse proxy
+
+Le proxy termine le TLS et vise l'écouteur `proxy` sur le réseau interne. Déclarez son IP (ou son réseau)
+dans `GUIPAM_TRUSTED_PROXIES` : GuiPAM lit alors `X-Forwarded-For` et `X-Forwarded-Proto`, mais **seulement**
+venant de ces adresses. Sans cette déclaration, tous les clients ont l'IP du proxy (journal, et verrouillage
+anti-brute-force partagé). Le cookie de session reste `Secure`, puisque le navigateur voit de l'HTTPS.
+
+```yaml
+# docker-compose.yml (extrait) : Traefik dans le même réseau Docker
+services:
+  guipam:
+    environment:
+      GUIPAM_HTTP_MODE: proxy
+      GUIPAM_TRUSTED_PROXIES: 172.16.0.0/12   # réseau Docker du proxy
+    labels:
+      traefik.http.routers.guipam.rule: Host(`guipam.example.lan`)
+      traefik.http.routers.guipam.tls: "true"
+      traefik.http.services.guipam.loadbalancer.server.port: "8080"
+```
+
+```caddyfile
+# Caddyfile
+guipam.example.lan {
+    reverse_proxy guipam:8080
+}
+```
+
+L'accès direct `https://…:8443` reste disponible en parallèle : c'est la voie de secours si le proxy ou le
+DNS tombent. Autre possibilité : faire viser `https://guipam:8443` au proxy (en lui faisant accepter le
+certificat auto-signé, ou en lui fournissant `data/tls/guipam.crt`).
+
 ## Développement local
 
 ```bash
@@ -136,14 +236,14 @@ make i18n       # recompile les catalogues de traduction (.po → .mo)
 
 export GUIPAM_DB_PATH=./data/guipam.db \
        GUIPAM_SECRET_KEY=$(openssl rand -hex 32) \
-       GUIPAM_ADMIN_PASSWORD=changezmoi \
-       GUIPAM_SECURE_COOKIES=false
-python -m app.main   # http://localhost:8080
+       GUIPAM_ADMIN_PASSWORD=changezmoi
+python -m app.server   # https://localhost:8443 (certificat auto-signé dans ./data/tls)
+# ou, en HTTP seul : GUIPAM_TLS=off GUIPAM_SECURE_COOKIES=false python -m app.server   # http://localhost:8080
 
 make test       # pytest
 ```
 
-Sous WSL2, l'app écoute sur `0.0.0.0` : accédez-y depuis Windows via `http://localhost:8080`.
+Sous WSL2, l'app écoute sur `0.0.0.0` : accédez-y depuis Windows via `https://localhost:8443`.
 
 ### Migrations de schéma
 
@@ -185,16 +285,17 @@ supervision est disponible en JSON sous `/api/v1`, avec **exactement les mêmes 
 
 ```bash
 KEY=gpm_xxxxxxxx_…
-curl -H "Authorization: Bearer $KEY" http://guipam.lan:8080/api/v1/vlans
+# Certificat auto-signé : --cacert guipam.crt ou --pinnedpubkey (voir HTTPS et certificat) ; omis ci-dessous.
+curl -H "Authorization: Bearer $KEY" https://guipam.lan:8443/api/v1/vlans
 # « Donne-moi la prochaine IP libre du VLAN 3 et réserve-la »
 curl -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
      -d '{"hostname": "vm-nouvelle", "description": "réservée par Ansible"}' \
-     http://guipam.lan:8080/api/v1/vlans/3/allocate
+     https://guipam.lan:8443/api/v1/vlans/3/allocate
 # Ce qui est en panne
-curl -H "Authorization: Bearer $KEY" http://guipam.lan:8080/api/v1/problems
+curl -H "Authorization: Bearer $KEY" https://guipam.lan:8443/api/v1/problems
 # NAS éteint exprès : pause jusqu'à ce qu'il réponde de nouveau (hors /problems d'ici là)
 curl -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
-     -d '{"reason": "éteint volontairement"}' http://guipam.lan:8080/api/v1/ips/12/pause
+     -d '{"reason": "éteint volontairement"}' https://guipam.lan:8443/api/v1/ips/12/pause
 ```
 
 - **Documentation** : `/api/v1/docs` (interactive, servie en local) et `/api/v1/openapi.json`
@@ -206,14 +307,18 @@ curl -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
 - **Audit** : chaque action faite par API est journalisée avec le compte de service et la clé utilisée.
 - **Erreurs** : toujours `{"error": {"code", "message", "details": [{"field", "message"}]}}`
   (`401 unauthorized`, `403 read_only`, `404 not_found`, `422 validation_error`, `409 subnet_full`).
+- **Identité de l'instance** : `GET /api/v1/instance` renvoie la version et les empreintes du certificat
+  (`tls.sha256`, `tls.spki_sha256`), pour épingler l'instance à la première connexion puis la vérifier ensuite.
 - **Périmètre réseau** : l'API est pensée pour le LAN ou un VPN. Elle n'a pas (encore) de limitation
-  du nombre de requêtes : ne l'exposez pas sur Internet, et servez-la en HTTPS si le réseau n'est pas
-  de confiance (la clé circule dans un en-tête).
+  du nombre de requêtes : ne l'exposez pas sur Internet. Elle est servie en HTTPS, comme l'interface ;
+  vérifiez le certificat côté client (la clé circule dans un en-tête).
 
 ## Sécurité
 
 - Aucun compte ni mot de passe par défaut ; pas d'auto-inscription.
-- Sessions signées (cookie `HttpOnly`, `SameSite=Lax`, `Secure` activable via `GUIPAM_SECURE_COOKIES`).
+- HTTPS par défaut, y compris pour l'accès direct par IP (certificat auto-signé persistant ou fourni) ; le HTTP
+  ne fait que rediriger, sauf l'écouteur `proxy` destiné à un reverse proxy.
+- Sessions signées (cookie `HttpOnly`, `SameSite=Lax`, `Secure` par défaut via `GUIPAM_SECURE_COOKIES`).
   Par défaut, le cookie disparaît à la fermeture du navigateur et la session expire après 12 h d'inactivité
   (`GUIPAM_SESSION_MAX_AGE`) ; la case **« Rester connecté »** le rend persistant 30 jours
   (`GUIPAM_REMEMBER_MAX_AGE`, renouvelés à chaque visite). Changer le mot de passe d'un compte ferme ses

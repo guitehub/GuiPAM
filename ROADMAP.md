@@ -50,7 +50,17 @@
 - [x] Case « Rester connecté » (cookie persistant 30 jours) ; sinon cookie de navigateur, 12 h d'inactivité
 - [x] Changement de mot de passe : fermeture des sessions ouvertes du compte
 
+## v0.6 — HTTPS natif
+
+- [x] Certificat auto-signé persistant (ECDSA P-256, 825 jours) ou fourni ; renouvellement et réémission à clé constante
+- [x] Écouteurs HTTPS + HTTP (`redirect` / `proxy` / `off`) dans un même processus ; proxies de confiance
+- [x] Empreintes SHA-256 et SPKI : journaux, Paramètres du réseau, `GET /api/v1/instance`, `python -m app.tls show`
+
 ## Backlog
+
+- [ ] Identifiant unique d'instance (UUID exposé par `/api/v1/instance`), pour un gestionnaire multi-instances
+- [ ] mTLS gestionnaire → instance (certificat client épinglé côté instance)
+- [ ] ACME intégré (DNS-01) ; téléversement d'un certificat depuis l'interface
 
 - [ ] API : limitation du nombre de requêtes
 - [ ] API : droits plus fins (clé limitée à un VLAN, par exemple)
