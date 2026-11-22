@@ -1,7 +1,7 @@
 """Schémas JSON de l'API v1 (les descriptions alimentent la spécification OpenAPI)."""
 
 from datetime import UTC, datetime
-from typing import Annotated, Any, Generic, TypeVar
+from typing import Annotated, Any, Generic, Literal, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, PlainSerializer
 
@@ -77,6 +77,39 @@ class WhoAmI(BaseModel):
     )
     expires_at: UtcDatetime | None
     version: str = Field(description="GuiPAM version.")
+
+
+class TlsOut(BaseModel):
+    """Certificate served by the instance's HTTPS listener, for a client that wants to pin it."""
+
+    mode: Literal["auto", "off"] = Field(
+        description="`auto`: the instance serves HTTPS itself; `off`: plain HTTP only (development, or a reverse "
+        "proxy in front terminates TLS). With `off` every other field is null or empty."
+    )
+    source: Literal["self-signed", "provided"] | None = Field(
+        description="`self-signed`: certificate generated and persisted by the instance; `provided`: certificate "
+        "given by the administrator (internal CA, ACME…)."
+    )
+    not_after: UtcDatetime | None = Field(
+        description="Expiry. A self-signed certificate is renewed automatically 30 days before, with the same key."
+    )
+    sha256: str | None = Field(
+        description="SHA-256 fingerprint of the certificate (DER), colon-separated uppercase hex, as shown by "
+        "browsers and `openssl x509 -fingerprint -sha256`. Changes at every renewal: use it to check by eye."
+    )
+    spki_sha256: str | None = Field(
+        description="Base64 SHA-256 of the certificate public key (SubjectPublicKeyInfo), the format of "
+        "`curl --pinnedpubkey sha256//<value>`. Stable across renewals of the self-signed certificate: "
+        "this is the value an automated client should pin."
+    )
+    sans: list[str] = Field(description="DNS names and IP addresses the certificate is valid for.")
+
+
+class InstanceOut(BaseModel):
+    """Identity of this GuiPAM instance."""
+
+    version: str = Field(description="GuiPAM version.")
+    tls: TlsOut
 
 
 class NetworkOut(BaseModel):

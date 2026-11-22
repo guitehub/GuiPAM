@@ -367,6 +367,50 @@ class TestAudit:
         assert "ansible-key" in text and ">API<" in text
 
 
+class TestInstance:
+    async def test_cle_requise(self, client):
+        assert (await client.get(f"{API}/instance")).status_code == 401
+
+    async def test_empreintes_du_certificat_servi(self, client):
+        import shutil
+        import subprocess
+
+        from app import __version__, tls
+
+        _csrf, reader, _writer = await setup(client)
+        response = await client.get(f"{API}/instance", headers=reader)
+        assert response.status_code == 200, response.text
+        data = response.json()
+        info = tls.current()
+        assert data["version"] == __version__
+        assert data["tls"] == tls.as_dict(info)  # mêmes champs que `python -m app.tls show --json`
+        assert data["tls"]["mode"] == "auto" and data["tls"]["source"] == "self-signed"
+        assert data["tls"]["not_after"].endswith("Z") and "localhost" in data["tls"]["sans"]
+        if shutil.which("openssl"):
+            out = subprocess.run(
+                ["openssl", "x509", "-in", str(info.certfile), "-noout", "-fingerprint", "-sha256"],
+                capture_output=True, text=True, check=True,
+            ).stdout
+            assert out.strip().split("=", 1)[1] == data["tls"]["sha256"]
+
+    async def test_tls_off(self, test_env, monkeypatch):
+        from httpx import ASGITransport, AsyncClient
+
+        import app.config as config_module
+        from app.main import create_app
+
+        monkeypatch.setenv("GUIPAM_TLS", "off")
+        config_module.get_settings.cache_clear()
+        application = create_app()
+        async with application.router.lifespan_context(application):
+            async with AsyncClient(transport=ASGITransport(app=application), base_url="http://test") as http:
+                _csrf, reader, _writer = await setup(http)
+                data = (await http.get(f"{API}/instance", headers=reader)).json()
+        assert data["tls"] == {
+            "mode": "off", "source": None, "not_after": None, "sha256": None, "spki_sha256": None, "sans": []
+        }
+
+
 class TestSpecification:
     async def test_openapi_public_et_complet(self, client):
         response = await client.get(f"{API}/openapi.json")
@@ -378,9 +422,11 @@ class TestSpecification:
         operations = {
             op["operationId"]: op for path in spec["paths"].values() for op in path.values()
         }
-        for name in ["list_vlans", "allocate_ip", "list_problems", "create_monitor", "whoami", "update_ip"]:
+        for name in ["list_vlans", "allocate_ip", "list_problems", "create_monitor", "whoami", "update_ip", "instance"]:
             assert name in operations, name
             assert operations[name]["summary"] and operations[name]["security"]
+        tls_schema = spec["components"]["schemas"]["TlsOut"]["properties"]
+        assert "pin" in tls_schema["spki_sha256"]["description"]
         # Les routes HTML de l'UI n'apparaissent pas dans la spécification.
         assert "/login" not in spec["paths"] and "/subnets" not in spec["paths"]
         assert (await client.get(f"{API}/docs")).status_code == 200

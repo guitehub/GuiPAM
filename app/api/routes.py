@@ -9,9 +9,10 @@ from sqlalchemy import func
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
 
-from app import __version__
+from app import __version__, tls
 from app.api.auth import ApiError, Reader, Writer
 from app.api.schemas import (
+    InstanceOut,
     AuditOut,
     ErrorResponse,
     IpAllocate,
@@ -29,6 +30,7 @@ from app.api.schemas import (
     PauseOut,
     Problem,
     Summary,
+    TlsOut,
     VlanCreate,
     VlanOut,
     VlanUpdate,
@@ -204,6 +206,29 @@ async def whoami(principal: Reader) -> WhoAmI:
         can_write=principal.can_write,
         expires_at=principal.key.expires_at,
         version=__version__,
+    )
+
+
+@router.get(
+    "/instance",
+    tags=["meta"],
+    summary="Instance identity and TLS certificate fingerprints",
+    description="Version and certificate of the HTTPS listener. To pin the instance (trust on first use), "
+    "record `tls.spki_sha256` after checking it out of band, e.g. with `python -m app.tls show` on the host "
+    "(`docker exec guipam python -m app.tls show`), then verify every connection against it.",
+)
+async def instance(principal: Reader) -> InstanceOut:
+    info = tls.current() or tls.TlsInfo(mode="off")
+    return InstanceOut(
+        version=__version__,
+        tls=TlsOut(
+            mode=info.mode,
+            source=info.source,
+            not_after=info.not_after,
+            sha256=info.sha256,
+            spki_sha256=info.spki_sha256,
+            sans=info.sans,
+        ),
     )
 
 

@@ -117,3 +117,31 @@ class TestNonAuthentifie:
         response = await client.get("/", headers={"HX-Request": "true"})
         assert response.status_code == 401
         assert response.headers["hx-redirect"] == "/login"
+
+
+class TestCertificatTls:
+    async def test_section_visible_des_managers(self, client):
+        from app import tls
+
+        await login(client, "admin", ADMIN_PASSWORD)
+        page = (await client.get("/reseau/edit")).text
+        info = tls.current()
+        assert "data-tls-section" in page and "Certificat TLS" in page
+        assert info.sha256 in page and info.spki_sha256 in page and "Auto-signé" in page
+
+    async def test_section_absente_pour_les_utilisateurs(self, client):
+        from app import tls
+
+        csrf = await login(client, "admin", ADMIN_PASSWORD)
+        await create_user(client, csrf, "bob", "bobpassword", "user")
+        await client.post("/logout", headers={"X-CSRF-Token": csrf})
+
+        await login(client, "bob", "bobpassword")
+        response = await client.get("/reseau/edit")
+        assert response.status_code == 403
+        assert "data-tls-section" not in response.text and tls.current().sha256 not in response.text
+        # Ni ailleurs dans les pages qu'un utilisateur peut voir.
+        for url in ["/", "/dashboard/stats"]:
+            page = await client.get(url)
+            assert page.status_code == 200
+            assert tls.current().sha256 not in page.text and tls.current().spki_sha256 not in page.text

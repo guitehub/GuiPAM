@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Request
 
+from app import tls
 from app.deps import ManagerUser, SessionDep, csrf_protect
 from app.flash import flash
 from app.i18n import gettext as _
@@ -45,6 +46,7 @@ def _form_context(reseau: Reseau) -> dict:
         "dark_value": max(1, round(dark / DURATION_UNITS[unit])),
         "dark_unit": unit,
         "limits": inventory.MONITORING_LIMITS,
+        "tls_info": tls.current(),
     }
 
 
