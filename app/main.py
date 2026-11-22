@@ -15,7 +15,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import select
 
-from app import __version__
+from app import __version__, tls
 from app.api import create_api
 from app.config import Settings, get_settings
 from app.database import dispose_engine, init_engine, session_factory
@@ -107,6 +107,10 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     settings.validate_secret_key()
     Path(settings.db_path).parent.mkdir(parents=True, exist_ok=True)
+    if tls.current() is None:
+        # Lancé hors app.server (tests, `uvicorn app.main:app`) : l'interface et l'API exposent
+        # quand même le certificat que servirait l'instance.
+        await asyncio.to_thread(tls.prepare, settings)
     init_engine(settings.database_url)
     await asyncio.to_thread(run_migrations, settings)
     await bootstrap(settings)
@@ -132,6 +136,12 @@ async def lifespan(app: FastAPI):
             max_instances=1,
             coalesce=True,
         )
+    if settings.tls_enabled:
+        # Renouvellement du certificat auto-signé (ou relecture d'un certificat fourni remplacé), rechargé à chaud.
+        async def tls_refresh() -> None:
+            await asyncio.to_thread(tls.refresh, settings)
+
+        scheduler.add_job(tls_refresh, "interval", hours=24, max_instances=1, coalesce=True)
     scheduler.start()
     app.state.scheduler = scheduler
     logger.info("GuiPAM démarré (tick monitor : %ss).", settings.monitor_tick_seconds)
@@ -238,12 +248,7 @@ def create_app() -> FastAPI:
 app = create_app()
 
 
-def run() -> None:
-    import uvicorn
-
-    settings = get_settings()
-    uvicorn.run("app.main:app", host=settings.host, port=settings.port, log_level="info")
-
-
 if __name__ == "__main__":
-    run()
+    from app.server import run
+
+    raise SystemExit(run())

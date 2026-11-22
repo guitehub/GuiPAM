@@ -25,8 +25,13 @@ def test_env(tmp_path, monkeypatch):
     from app.services.auth import login_rate_limiter
 
     login_rate_limiter._states.clear()
+    # Certificat retenu par le processus : chaque test a son propre dossier de données.
+    from app import tls
+
+    tls.reset()
     yield
     config_module.get_settings.cache_clear()
+    tls.reset()
 
 
 @pytest.fixture
