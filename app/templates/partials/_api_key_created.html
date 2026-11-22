@@ -15,7 +15,12 @@
       </div>
       <div class="grid gap-1">
         <p class="text-xs text-muted-foreground">{{ _("Quick test:") }}</p>
+        {% if pin %}
+        <pre class="text-xs bg-muted rounded p-2 overflow-x-auto">curl -k --pinnedpubkey "sha256//{{ pin }}" -H "Authorization: Bearer {{ raw_key }}" {{ base_url }}/api/v1/whoami</pre>
+        <p class="text-xs text-muted-foreground">{{ _("Self-signed certificate: -k skips the authority check, --pinnedpubkey still requires the key of this instance (see Network settings → TLS certificate).") }}</p>
+        {% else %}
         <pre class="text-xs bg-muted rounded p-2 overflow-x-auto">curl -H "Authorization: Bearer {{ raw_key }}" {{ base_url }}/api/v1/whoami</pre>
+        {% endif %}
       </div>
       <footer class="flex justify-end">
         <button type="button" class="btn-primary" onclick="this.closest('dialog').close()">{{ _("Done, I saved it") }}</button>

@@ -393,6 +393,22 @@ class TestInstance:
             ).stdout
             assert out.strip().split("=", 1)[1] == data["tls"]["sha256"]
 
+    async def test_exemple_curl_de_la_cle_creee(self, client):
+        """Servie en direct par l'auto-signé : exemple épinglé ; ailleurs (proxy, TLS off) : curl simple."""
+        from httpx import AsyncClient
+
+        from app import tls
+
+        csrf = await login(client, "admin", ADMIN_PASSWORD)
+        await make_key(client, csrf, "outil")
+        page = (await client.post("/service-accounts/1/keys", data={"name": "k2"}, headers={"X-CSRF-Token": csrf})).text
+        assert "--pinnedpubkey" not in page and "/api/v1/whoami" in page
+        # Même application jointe sur le port HTTPS (8443) : c'est l'écouteur direct.
+        async with AsyncClient(transport=client._transport, base_url="https://test:8443", cookies=client.cookies) as direct:
+            page = (await direct.post("/service-accounts/1/keys", data={"name": "k3"}, headers={"X-CSRF-Token": csrf})).text
+        assert f'--pinnedpubkey "sha256//{tls.current().spki_sha256}"' in page
+        assert "Certificat auto-signé" in page
+
     async def test_tls_off(self, test_env, monkeypatch):
         from httpx import ASGITransport, AsyncClient
 

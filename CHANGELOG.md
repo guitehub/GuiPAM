@@ -28,6 +28,8 @@ Lisez la section **Migration** ci-dessous avant de mettre à jour un déploiemen
 - **Empreintes du certificat** (SHA-256 et épingle SPKI SHA-256) : journalisées au démarrage, affichées aux
   managers dans **Paramètres du réseau → Certificat TLS**, renvoyées par `GET /api/v1/instance` (version et
   `tls.*`), et lisibles depuis l'hôte : `docker exec guipam python -m app.tls show [--json]`.
+- À la création d'une clé d'API depuis l'accès HTTPS direct, l'exemple `curl` épingle la clé publique de
+  l'instance (`-k --pinnedpubkey sha256//…`). La description OpenAPI explique l'épinglage (section Transport).
 - Avertissements au démarrage pour les configurations déconseillées (TLS off, cookies non `Secure` avec TLS,
   mode proxy sans proxies déclarés, `GUIPAM_TLS_SANS` vide, `GUIPAM_PORT`).
 

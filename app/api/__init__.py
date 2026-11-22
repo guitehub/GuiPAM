@@ -30,6 +30,14 @@ A key is either `read` (default) or `write`; writing also requires the service a
 the `manager` role. Call `GET /whoami` to check what your key can do.
 Mutating endpoints answer `403 read_only` to a read-only key.
 
+## Transport
+
+The API is served over HTTPS, like the web UI. By default the instance uses a persistent self-signed
+certificate: verify it rather than disabling verification. `GET /instance` returns its fingerprints;
+pin `tls.spki_sha256` (stable across renewals) after checking it out of band, e.g.
+`curl --pinnedpubkey 'sha256//<spki_sha256>' -k https://host:8443/api/v1/...`. Behind a reverse proxy, the
+proxy's certificate applies instead.
+
 ## Conventions
 
 - JSON in, JSON out. Timestamps are UTC, ISO 8601 with a `Z` suffix.
@@ -54,7 +62,7 @@ Mutating endpoints answer `403 read_only` to a read-only key.
 """
 
 TAGS = [
-    {"name": "meta", "description": "Identity of the caller and global counters."},
+    {"name": "meta", "description": "Identity of the caller and of the instance (version, TLS fingerprints), global counters."},
     {"name": "network", "description": "The single network managed by this instance."},
     {"name": "vlans", "description": "VLANs / subnets."},
     {"name": "ips", "description": "IP addresses, search and allocation."},

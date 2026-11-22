@@ -7,6 +7,8 @@ from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
 
+from app import tls
+from app.config import get_settings
 from app.deps import ManagerUser, SessionDep, csrf_protect
 from app.flash import flash
 from app.i18n import gettext as _
@@ -228,8 +230,27 @@ async def create_key(
     return render(
         request,
         "partials/_api_key_created.html",
-        {"account": account, "key": key, "raw_key": raw, "base_url": str(request.base_url).rstrip("/")},
+        {
+            "account": account,
+            "key": key,
+            "raw_key": raw,
+            "base_url": str(request.base_url).rstrip("/"),
+            "pin": _self_signed_pin(request),
+        },
     )
+
+
+def _self_signed_pin(request: Request) -> str | None:
+    """Épingle SPKI à mettre dans l'exemple curl si la page est servie en direct par le certificat auto-signé.
+
+    Le port local de la connexion désigne l'écouteur : derrière un reverse proxy (écouteur proxy), c'est le
+    certificat du proxy que voit le client, l'épingle de l'instance n'y servirait à rien.
+    """
+    info = tls.current()
+    server = request.scope.get("server") or (None, None)
+    if info is None or info.source != tls.SELF_SIGNED or server[1] != get_settings().https_port:
+        return None
+    return info.spki_sha256
 
 
 @router.post("/api-keys/{key_id}/revoke")

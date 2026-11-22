@@ -393,6 +393,7 @@ FR = {
     "Valid for": "Valable pour",
     "SHA-256 fingerprint": "Empreinte SHA-256",
     "SPKI SHA-256 pin": "Épingle SPKI SHA-256",
+    "Self-signed certificate: -k skips the authority check, --pinnedpubkey still requires the key of this instance (see Network settings → TLS certificate).": "Certificat auto-signé : -k saute la vérification par autorité, --pinnedpubkey exige toujours la clé de cette instance (voir Paramètres du réseau → Certificat TLS).",
 }
 
 EXTRA_MSGIDS = ["Down for a long time (stale?)"]

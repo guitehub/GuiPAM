@@ -96,6 +96,7 @@ Les instantanés vivent dans le même volume que la base : ils protègent d'une 
 ou d'une fausse manœuvre, **pas de la perte du disque**. Copiez régulièrement `data/` (ou une
 sauvegarde JSON) ailleurs — par exemple avec la sauvegarde de la VM ou une tâche planifiée.
 La sauvegarde JSON contient les empreintes des mots de passe et des clés d'API : gardez-la privée.
+Elle ne contient pas le certificat TLS : copiez `data/` en entier pour le conserver (voir [Le certificat](#le-certificat)).
 
 Pour restaurer un instantané : `docker compose down`, copier le fichier choisi sur `data/guipam.db`
 (supprimer `guipam.db-wal` et `guipam.db-shm` s'ils existent), `docker compose up -d`.
@@ -167,6 +168,9 @@ pour que les redirections visent le bon port.
   nom d'hôte et la liste **`GUIPAM_TLS_SANS`** (noms DNS et IP séparés par des virgules, ex.
   `guipam.lan,192.168.1.10`). Le nom d'hôte d'un conteneur n'est pas parlant : renseignez `GUIPAM_TLS_SANS`.
 - Il vit dans le volume : mises à jour et recréations du conteneur le conservent, **l'empreinte ne change pas**.
+  La **sauvegarde JSON ne le contient pas** : pour garder la même identité en restaurant sur une autre machine,
+  copiez aussi `data/tls/` (la clé `guipam.key` est secrète). Sinon un nouveau certificat est créé, et les
+  clients qui avaient épinglé l'ancien refuseront la connexion.
 - Il est valable 825 jours et se **renouvelle tout seul** 30 jours avant l'échéance (vérification quotidienne,
   rechargé sans redémarrage), **avec la même clé**. Modifier `GUIPAM_TLS_SANS` le réémet, avec la même clé aussi.
 - **Votre propre certificat** (CA interne, ACME…) : montez-le dans le conteneur et définissez

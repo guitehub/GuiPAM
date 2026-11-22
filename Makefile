@@ -36,4 +36,4 @@ test:
 	pytest tests/ -q
 
 run:
-	python -m app.main
+	python -m app.server
