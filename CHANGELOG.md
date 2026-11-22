@@ -5,6 +5,8 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-11-22
+
 Sans rupture de données : ni migration de schéma, ni changement de l'API `/api/v1`.
 
 ### Added

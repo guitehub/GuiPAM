@@ -2,7 +2,8 @@
 
 IPAM auto-hébergé mono-réseau avec suivi dynamique (checks TCP/ICMP, code couleur santé).
 Cahier des charges v2 implémenté en v0.1.0 ; v0.2.0 ajoute l'API JSON `/api/v1` et les comptes de service ; v0.3.0 la pause volontaire des hôtes ;
-v0.4.0 les réglages du suivi dans l'interface et le code couleur relatif à chaque cible.
+v0.4.0 les réglages du suivi dans l'interface et le code couleur relatif à chaque cible ;
+v0.5.0 la case « Rester connecté ».
 Specs clés : voir README.md et ROADMAP.md.
 
 ## Commandes
