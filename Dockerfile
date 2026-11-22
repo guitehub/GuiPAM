@@ -52,18 +52,22 @@ RUN pip install --no-cache-dir . && pip cache purge || true
 # Assets construits au stage 1
 COPY --from=assets /build/app/static/app.css ./app/static/app.css
 COPY --from=assets /build/app/locale ./app/locale
+COPY docker/healthcheck.sh /usr/local/bin/guipam-healthcheck
 
 RUN mkdir -p /data && chown guipam:guipam /data /app
 USER guipam
 
+# Ports : laissés aux défauts de l'application (HTTPS 8443, HTTP 8080) pour que l'alias
+# déprécié GUIPAM_PORT reste pris en compte s'il est défini.
 ENV GUIPAM_DB_PATH=/data/guipam.db \
-    GUIPAM_HOST=0.0.0.0 \
-    GUIPAM_PORT=8080
+    GUIPAM_HOST=0.0.0.0
 
-EXPOSE 8080
+# 8443 : HTTPS, accès principal (certificat auto-signé persistant dans /data/tls, ou fourni).
+# 8080 : HTTP selon GUIPAM_HTTP_MODE (redirect : 308 vers l'HTTPS ; proxy : pour un reverse proxy).
+EXPOSE 8443 8080
 VOLUME ["/data"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-    CMD curl -fsS "http://localhost:${GUIPAM_PORT}/healthz" || exit 1
+    CMD ["guipam-healthcheck"]
 
-CMD ["python", "-m", "app.main"]
+CMD ["python", "-m", "app.server"]

@@ -135,15 +135,42 @@ def normalize_san(raw: str) -> str:
     return name
 
 
-def requested_sans(settings: Settings) -> list[str]:
-    """SAN du certificat auto-signé : boucle locale, nom d'hôte, puis GUIPAM_TLS_SANS (sans doublons)."""
-    candidates = ["localhost", "127.0.0.1", "::1"]
+CN_PREFIX = "GuiPAM "
+
+
+def _hostname_san(hostname: str | None) -> list[str]:
     try:
-        candidates.append(normalize_san(socket.gethostname()))
+        return [normalize_san(hostname)] if hostname else []
     except TlsError:
-        pass  # nom d'hôte exotique : on s'en passe
+        return []  # nom d'hôte exotique : on s'en passe
+
+
+def requested_sans(settings: Settings, hostname: str | None = None) -> list[str]:
+    """SAN du certificat auto-signé : boucle locale, nom d'hôte, puis GUIPAM_TLS_SANS (sans doublons).
+
+    hostname : nom d'hôte à inclure (par défaut celui du moment).
+    """
+    candidates = ["localhost", "127.0.0.1", "::1"]
+    candidates += _hostname_san(socket.gethostname() if hostname is None else hostname)
     candidates += [normalize_san(item) for item in split_list(settings.tls_sans)]
     return list(dict.fromkeys(candidates))
+
+
+def _issued_hostname(cert: x509.Certificate) -> str:
+    """Nom d'hôte au moment de l'émission, consigné dans le CN (« GuiPAM <hôte> »)."""
+    names = cert.subject.get_attributes_for_oid(NameOID.COMMON_NAME)
+    value = str(names[0].value) if names else ""
+    return value.removeprefix(CN_PREFIX) if value.startswith(CN_PREFIX) else ""
+
+
+def _sans_up_to_date(sans: list[str], settings: Settings, cert: x509.Certificate) -> bool:
+    """SAN conformes à la configuration, au nom d'hôte de l'émission près (CN, éventuellement tronqué)."""
+    expected = set(requested_sans(settings, hostname=""))
+    extra = set(sans) - expected
+    if not expected <= set(sans):
+        return False
+    issued = _issued_hostname(cert)
+    return not extra or (len(extra) == 1 and bool(issued) and next(iter(extra)).startswith(issued.lower()))
 
 
 def _san_extension(sans: list[str]) -> x509.SubjectAlternativeName:
@@ -199,7 +226,7 @@ def _same_public_key(cert: x509.Certificate, key) -> bool:
 
 
 def _issue(key: ec.EllipticCurvePrivateKey, sans: list[str], now: datetime) -> x509.Certificate:
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, f"GuiPAM {socket.gethostname()}"[:64])])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, f"{CN_PREFIX}{socket.gethostname()}"[:64])])
     public_key = key.public_key()
     return (
         x509.CertificateBuilder()
@@ -238,7 +265,7 @@ def _issue(key: ec.EllipticCurvePrivateKey, sans: list[str], now: datetime) -> x
 def ensure_self_signed(settings: Settings, now: datetime | None = None) -> tuple[TlsInfo, str | None]:
     """Crée, réémet ou renouvelle si besoin le certificat auto-signé ; renvoie (infos, action).
 
-    action : "created", "reissued" (SAN changés ou certificat étranger à la clé), "renewed"
+    action : "created", "reissued" (GUIPAM_TLS_SANS changée ou certificat étranger à la clé), "renewed"
     (échéance à moins de 30 jours) ou None (rien à faire). La clé existante est toujours conservée.
     """
     now = now or _utcnow()
@@ -262,7 +289,9 @@ def ensure_self_signed(settings: Settings, now: datetime | None = None) -> tuple
     if certfile.exists():
         current = _load_cert(certfile)
         info = describe(current, SELF_SIGNED, certfile, keyfile)
-        if not _same_public_key(current, key) or set(info.sans) != set(sans):
+        # Le nom d'hôte attendu est celui de l'émission : un conteneur recréé change de nom d'hôte,
+        # et ce seul changement ne doit pas modifier l'empreinte. Seul GUIPAM_TLS_SANS déclenche la réémission.
+        if not _same_public_key(current, key) or not _sans_up_to_date(info.sans, settings, current):
             action = "reissued"
         elif info.expires_within(RENEW_BEFORE, now):
             action = "renewed"

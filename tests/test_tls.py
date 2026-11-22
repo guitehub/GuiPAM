@@ -113,6 +113,29 @@ class TestSAN:
         _info, action = tls.resolve(settings.model_copy(update={"tls_sans": "*.LAB.example, fd00:0::1,guipam.example.net"}))
         assert action is None
 
+    def test_nouveau_nom_d_hote_seul_ne_reemet_pas(self, settings, monkeypatch):
+        """Conteneur recréé : nom d'hôte différent, même volume → même certificat, même empreinte."""
+        monkeypatch.setattr(tls.socket, "gethostname", lambda: "4fac8fab297d")
+        first = tls.prepare(settings)
+        assert "4fac8fab297d" in first.sans
+        monkeypatch.setattr(tls.socket, "gethostname", lambda: "0b1c2d3e4f5a")
+        info, action = tls.resolve(settings)
+        assert action is None and info.sha256 == first.sha256
+        # À la prochaine réémission (SAN modifiés), c'est le nom d'hôte du moment qui est pris.
+        info, action = tls.resolve(settings.model_copy(update={"tls_sans": "autre.example.net"}))
+        assert action == "reissued" and "0b1c2d3e4f5a" in info.sans and "4fac8fab297d" not in info.sans
+
+    def test_nom_d_hote_long_tronque_dans_le_cn(self, settings, monkeypatch):
+        monkeypatch.setattr(tls.socket, "gethostname", lambda: "h" * 63)
+        first = tls.prepare(settings)
+        assert "h" * 63 in first.sans
+        assert tls.resolve(settings)[1] is None
+
+    def test_san_retire_reemet(self, settings):
+        first = tls.prepare(settings)
+        info, action = tls.resolve(settings.model_copy(update={"tls_sans": "guipam.example.net"}))
+        assert action == "reissued" and "10.0.0.5" not in info.sans and info.spki_sha256 == first.spki_sha256
+
     @pytest.mark.parametrize("bad", ["exa mple.com", "-bad.example", "a..b", "http://x"])
     def test_san_invalide_refuse(self, settings, bad):
         with pytest.raises(tls.TlsError, match="GUIPAM_TLS_SANS"):

@@ -4,9 +4,14 @@ services:
     container_name: guipam
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      # HTTPS, accès principal. Le certificat auto-signé est créé au premier démarrage dans
+      # ./data/tls et conservé ensuite (empreinte : docker exec guipam python -m app.tls show).
+      - "8443:8443"
+      # Écouteur HTTP non publié : en mode redirect (défaut), il ne fait que renvoyer vers l'HTTPS.
+      # Décommentez pour que d'anciens favoris http://…:8080 restent valides.
+      # - "8080:8080"
     volumes:
-      # Tout l'état de GuiPAM vit ici : sauvegardez ce dossier comme vous voulez.
+      # Tout l'état de GuiPAM vit ici (base, instantanés, certificat) : sauvegardez ce dossier.
       - ./data:/data
     env_file:
       - path: .env
@@ -14,6 +19,8 @@ services:
     environment:
       GUIPAM_DB_PATH: /data/guipam.db
       # GUIPAM_SECRET_KEY et GUIPAM_ADMIN_PASSWORD sont requis : voir .env.example
+      # Noms et IP par lesquels on joint GuiPAM (SAN du certificat auto-signé), ex. :
+      # GUIPAM_TLS_SANS: guipam.example.lan,192.168.1.10
     cap_add:
       # Requis pour le ping ICMP. Supprimez cette section et mettez
       # GUIPAM_ENABLE_PING=false pour un fonctionnement TCP-only.
