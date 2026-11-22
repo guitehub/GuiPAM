@@ -97,7 +97,8 @@ def _proxy_options(settings: Settings) -> dict:
 
 def build_listeners(settings: Settings, app: ASGIApp, info: tls.TlsInfo) -> list[Listener]:
     """Écouteurs à lancer, le principal (lifespan) en tête."""
-    common = {"host": settings.host, "log_config": None, "server_header": False}
+    # ws="none" : GuiPAM ne sert pas de websocket.
+    common = {"host": settings.host, "log_config": None, "server_header": False, "ws": "none"}
     if not info.enabled:
         config = uvicorn.Config(app, port=settings.http_port, lifespan="on", **common, **_proxy_options(settings))
         return [Listener("http", config)]
@@ -142,8 +143,10 @@ async def _serve(server: _Server) -> bool:
     return server.started
 
 
-async def serve_listeners(listeners: list[Listener], install_signal_handlers: bool = True) -> int:
-    """Lance les écouteurs jusqu'à l'arrêt (signal, ou fin de l'un d'eux). Renvoie un code de sortie."""
+async def serve_listeners(
+    listeners: list[Listener], install_signal_handlers: bool = True, shutdown: asyncio.Event | None = None
+) -> int:
+    """Lance les écouteurs jusqu'à l'arrêt (signal, `shutdown`, ou fin de l'un d'eux). Renvoie un code de sortie."""
     servers = [_Server(listener.config) for listener in listeners]
 
     def stop() -> None:
@@ -164,25 +167,29 @@ async def serve_listeners(listeners: list[Listener], install_signal_handlers: bo
     if install_signal_handlers:
         loop.add_signal_handler(signal.SIGTERM, on_signal)
         loop.add_signal_handler(signal.SIGINT, on_signal)
+    try:
+        primary = asyncio.create_task(_serve(servers[0]))
+        while not servers[0].started and not primary.done():
+            await asyncio.sleep(0.05)
+        if not servers[0].started:
+            await primary
+            return 3  # code de uvicorn pour un échec de démarrage
+        for listener in listeners:
+            context = getattr(listener.config, "ssl", None)  # créé par config.load() au démarrage
+            if context is not None:
+                tls.register_context(context)
 
-    primary = asyncio.create_task(_serve(servers[0]))
-    while not servers[0].started and not primary.done():
-        await asyncio.sleep(0.05)
-    if not servers[0].started:
-        await primary
-        return 3  # code de uvicorn pour un échec de démarrage
-    for listener, server in zip(listeners, servers):
-        context = getattr(listener.config, "ssl", None)  # créé par config.load() au démarrage
-        if context is not None:
-            tls.register_context(context)
-
-    tasks = [primary] + [asyncio.create_task(_serve(server)) for server in servers[1:]]
-    await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-    stop()
-    results = await asyncio.gather(*tasks)
-    if install_signal_handlers:
-        loop.remove_signal_handler(signal.SIGTERM)
-        loop.remove_signal_handler(signal.SIGINT)
+        tasks = [primary] + [asyncio.create_task(_serve(server)) for server in servers[1:]]
+        waiter = asyncio.create_task(shutdown.wait()) if shutdown is not None else None
+        await asyncio.wait(tasks + ([waiter] if waiter else []), return_when=asyncio.FIRST_COMPLETED)
+        stop()
+        if waiter is not None:
+            waiter.cancel()
+        results = await asyncio.gather(*tasks)
+    finally:
+        if install_signal_handlers:
+            loop.remove_signal_handler(signal.SIGTERM)
+            loop.remove_signal_handler(signal.SIGINT)
     return 0 if all(results) else 1
 
 
