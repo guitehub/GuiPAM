@@ -14,7 +14,6 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import select
-from starlette.middleware.sessions import SessionMiddleware
 
 from app import __version__
 from app.api import create_api
@@ -37,8 +36,15 @@ from app.routers import (
     users as users_router,
 )
 from app.services import backup, ipam, monitor
-from app.services.auth import CSRF_SESSION_KEY, generate_csrf_token, hash_password
+from app.services.auth import (
+    CSRF_SESSION_KEY,
+    end_login,
+    generate_csrf_token,
+    hash_password,
+    session_matches_password,
+)
 from app.services.monitor import scheduler_tick
+from app.session import SessionMiddleware
 
 logger = logging.getLogger("guipam")
 
@@ -168,8 +174,12 @@ def create_app() -> FastAPI:
                 user_id = request.session.get("user_id")
                 if user_id is not None:
                     user = await session.get(User, user_id)
-                    if user is not None and not user.is_active:
+                    if user is not None and (
+                        not user.is_active
+                        or not session_matches_password(request.session, user.hashed_password)
+                    ):
                         user = None
+                        end_login(request.session)  # garde le jeton CSRF déjà posé
                 reseau = await session.get(Reseau, RESEAU_SINGLETON_ID)
                 # Menu « Réseaux » : seulement pour les pages complètes (les partials
                 # HTMX n'étendent pas base.html).
@@ -199,6 +209,7 @@ def create_app() -> FastAPI:
         SessionMiddleware,
         secret_key=settings.secret_key or "guipam-debug-only",
         max_age=settings.session_max_age,
+        remember_max_age=settings.remember_max_age,
         same_site="lax",
         https_only=settings.secure_cookies,
     )

@@ -11,7 +11,7 @@ from app.flash import flash
 from app.i18n import LOCALE_COOKIE, available_locales, gettext as _
 from app.models import User, utcnow
 from app.services import audit
-from app.services.auth import login_rate_limiter, verify_password
+from app.services.auth import login_rate_limiter, start_login, verify_password
 from app.templating import render
 
 router = APIRouter(dependencies=[Depends(csrf_protect)])
@@ -35,6 +35,7 @@ async def login(
     session: SessionDep,
     username: Annotated[str, Form()] = "",
     password: Annotated[str, Form()] = "",
+    remember: Annotated[bool, Form()] = False,
 ):
     username = username.strip()
     ip = _client_ip(request)
@@ -42,17 +43,21 @@ async def login(
     retry_after = login_rate_limiter.retry_after(ip, username)
     if retry_after > 0:
         error = _("Too many attempts. Try again in %d seconds.") % int(retry_after + 1)
-        return render(request, "login.html", {"error": error, "username": username}, status_code=429)
+        return render(
+            request, "login.html", {"error": error, "username": username, "remember": remember}, status_code=429
+        )
 
     result = await session.exec(select(User).where(User.username == username))
     user = result.first()
     if user is None or not user.is_active or not verify_password(password, user.hashed_password):
         login_rate_limiter.record_failure(ip, username)
         error = _("Invalid username or password.")
-        return render(request, "login.html", {"error": error, "username": username}, status_code=422)
+        return render(
+            request, "login.html", {"error": error, "username": username, "remember": remember}, status_code=422
+        )
 
     login_rate_limiter.record_success(ip, username)
-    request.session["user_id"] = user.id
+    start_login(request.session, user.id, user.hashed_password, remember)
     user.last_login_at = utcnow()
     session.add(user)
     await audit.record(session, user, "login", "user", user.id)

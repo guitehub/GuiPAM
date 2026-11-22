@@ -24,6 +24,13 @@
           <label for="password">{{ _("Password") }}</label>
           <input id="password" name="password" type="password" autocomplete="current-password" required>
         </div>
+        <div class="grid gap-1">
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" class="checkbox" name="remember" value="true" {{ "checked" if remember }}>
+            {{ _("Stay signed in") }}
+          </label>
+          <p class="text-xs text-muted-foreground">{{ _("Keeps you signed in for %(days)d days, even after closing the browser. Avoid on a shared computer.", days=(settings.remember_max_age // 86400) or 1) }}</p>
+        </div>
         <button type="submit" class="btn-primary w-full">{{ _("Sign in") }}</button>
       </form>
     </section>

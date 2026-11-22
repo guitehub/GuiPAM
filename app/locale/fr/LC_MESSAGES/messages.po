@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GuiPAM VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-16 00:02+0100\n"
+"POT-Creation-Date: 2026-11-22 01:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -637,11 +637,11 @@ msgstr "CIDR invalide : « %s » n'est pas un réseau IPv4 valide."
 msgid "Invalid expiry date."
 msgstr "Date d'expiration invalide."
 
-#: app/deps.py:67
+#: app/deps.py:77
 msgid "Invalid or missing CSRF token."
 msgstr "Jeton CSRF invalide ou manquant."
 
-#: app/routers/auth.py:51
+#: app/routers/auth.py:54
 msgid "Invalid username or password."
 msgstr "Identifiant ou mot de passe invalide."
 
@@ -653,6 +653,11 @@ msgstr "Garder la fin prévue (%(when)s)"
 #: app/templates/import_export.html:65
 msgid "Keep this file private: it contains password and API key fingerprints."
 msgstr "Gardez ce fichier privé : il contient les empreintes des mots de passe et des clés d'API."
+
+#: app/templates/login.html:32
+#, python-format
+msgid "Keeps you signed in for %(days)d days, even after closing the browser. Avoid on a shared computer."
+msgstr "Vous reste connecté %(days)d jours, même après fermeture du navigateur. À éviter sur un ordinateur partagé."
 
 #: app/templates/partials/_api_key_created.html:10
 #: app/templates/service_accounts.html:49
@@ -1031,7 +1036,7 @@ msgstr "Test rapide :"
 msgid "Read-only"
 msgstr "Lecture seule"
 
-#: app/deps.py:44
+#: app/deps.py:54
 msgid "Read-only account: action not allowed."
 msgstr "Compte en lecture seule : action non autorisée."
 
@@ -1175,7 +1180,7 @@ msgid "Show free IPs"
 msgstr "Afficher les IP libres"
 
 #: app/templates/login.html:2 app/templates/login.html:7
-#: app/templates/login.html:27
+#: app/templates/login.html:34
 msgid "Sign in"
 msgstr "Se connecter"
 
@@ -1193,6 +1198,10 @@ msgstr "État"
 #: app/templates/subnet.html:100 app/templates/subnet_plan.html:37
 msgid "Status"
 msgstr "Statut"
+
+#: app/templates/login.html:30
+msgid "Stay signed in"
+msgstr "Rester connecté"
 
 #: app/services/ipam.py:150
 #, python-format
@@ -1275,7 +1284,7 @@ msgstr "Basculer le thème clair/sombre"
 msgid "Tolerant import for migrating from an Excel export: common column aliases are recognized (ip, adresse, hostname, nom, mac, statut…), duplicates are skipped, missing VLANs are created from the CIDR column (or a /24 by default)."
 msgstr "Import tolérant pour migrer depuis un export Excel : les alias de colonnes courants sont reconnus (ip, adresse, hostname, nom, mac, statut…), les doublons sont ignorés, les VLAN manquants sont créés depuis la colonne CIDR (ou un /24 par défaut)."
 
-#: app/routers/auth.py:44
+#: app/routers/auth.py:45
 #, python-format
 msgid "Too many attempts. Try again in %d seconds."
 msgstr "Trop de tentatives. Réessayez dans %d secondes."

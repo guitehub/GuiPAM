@@ -214,6 +214,10 @@ curl -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
 
 - Aucun compte ni mot de passe par défaut ; pas d'auto-inscription.
 - Sessions signées (cookie `HttpOnly`, `SameSite=Lax`, `Secure` activable via `GUIPAM_SECURE_COOKIES`).
+  Par défaut, le cookie disparaît à la fermeture du navigateur et la session expire après 12 h d'inactivité
+  (`GUIPAM_SESSION_MAX_AGE`) ; la case **« Rester connecté »** le rend persistant 30 jours
+  (`GUIPAM_REMEMBER_MAX_AGE`, renouvelés à chaque visite). Changer le mot de passe d'un compte ferme ses
+  sessions ouvertes.
 - Jeton anti-CSRF vérifié sur toute requête mutante ; limitation des tentatives de connexion avec backoff.
 - Rôle `user` en lecture seule : contrôles masqués dans l'UI **et** mutations refusées (403) côté API.
 - Clés d'API : 256 bits d'aléa, stockées hachées (SHA-256), révocables, expirables, jamais journalisées ;

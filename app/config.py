@@ -31,7 +31,10 @@ class Settings(BaseSettings):
     port: int = 8080
 
     secure_cookies: bool = True
-    session_max_age: int = 1209600  # 14 jours
+    # Session ordinaire : cookie effacé à la fermeture du navigateur, refusé après cette
+    # durée d'inactivité. « Rester connecté » : cookie persistant de remember_max_age.
+    session_max_age: int = 43200  # 12 heures
+    remember_max_age: int = 2592000  # 30 jours
 
     monitor_tick_seconds: int = 15
     default_check_interval: int = 60  # valeur initiale, redéfinissable dans les Paramètres du réseau

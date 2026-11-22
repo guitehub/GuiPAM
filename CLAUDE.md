@@ -8,7 +8,7 @@ Specs clés : voir README.md et ROADMAP.md.
 ## Commandes
 
 ```bash
-.venv/bin/pytest tests/ -q                 # 140 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause, réglages du suivi)
+.venv/bin/pytest tests/ -q                 # 148 tests (conflits, santé, TCP réel, CSV, i18n, autz, API, sauvegarde, menu, pause, réglages du suivi, sessions)
 make css                                   # recompile app/static/app.css (binaire Tailwind standalone)
 PATH="$PWD/.venv/bin:$PATH" make i18n      # extraction + régénération du .po fr + compilation .mo (le Makefile appelle `python`, absent hors venv)
 .venv/bin/python -m app.main               # serveur dev (env GUIPAM_* requis, voir .env.example)
@@ -51,6 +51,10 @@ Env minimal pour lancer : `GUIPAM_DB_PATH`, `GUIPAM_SECRET_KEY` (≥16 car.), `G
 - **CSRF** : dépendance `csrf_protect` sur chaque router mutateur ; jeton dans header HTMX
   (`hx-headers` sur `<body>`) ou champ `csrf_token` des formulaires classiques.
 - **bcrypt en direct** (pas passlib), mot de passe tronqué à 72 octets.
+- **Session** : middleware maison `app/session.py` (format de cookie Starlette conservé). Durée selon la clé
+  `remember` de la session : cookie de navigateur + `GUIPAM_SESSION_MAX_AGE` d'inactivité, ou persistant
+  `GUIPAM_REMEMBER_MAX_AGE`. Ouvrir/fermer une session : `services.auth.start_login` / `end_login` ; l'empreinte
+  du mot de passe en session (`pwd`) invalide les sessions quand il change.
 
 ## i18n — règles impératives
 

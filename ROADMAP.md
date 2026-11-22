@@ -45,6 +45,11 @@
 - [x] Instantanés automatiques (avant migration, quotidiens)
 - [x] Politique de compatibilité + tests garde-fous de migration
 
+## v0.5 — Sessions
+
+- [x] Case « Rester connecté » (cookie persistant 30 jours) ; sinon cookie de navigateur, 12 h d'inactivité
+- [x] Changement de mot de passe : fermeture des sessions ouvertes du compte
+
 ## Backlog
 
 - [ ] API : limitation du nombre de requêtes

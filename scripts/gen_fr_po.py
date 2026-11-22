@@ -159,6 +159,8 @@ FR = {
     "Access to GuiPAM requires an account. No self-registration.": "L'accès à GuiPAM nécessite un compte. Pas d'auto-inscription.",
     "Username": "Identifiant",
     "Password": "Mot de passe",
+    "Stay signed in": "Rester connecté",
+    "Keeps you signed in for %(days)d days, even after closing the browser. Avoid on a shared computer.": "Vous reste connecté %(days)d jours, même après fermeture du navigateur. À éviter sur un ordinateur partagé.",
     # --- dashboard ---
     "Edit": "Modifier",
     "Root prefixes:": "Préfixes racine :",

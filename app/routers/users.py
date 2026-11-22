@@ -10,7 +10,7 @@ from app.flash import flash
 from app.i18n import gettext as _
 from app.models import Role, User
 from app.services import audit
-from app.services.auth import hash_password
+from app.services.auth import SESSION_PASSWORD_KEY, hash_password, password_fingerprint
 from app.templating import hx_refresh, render
 
 router = APIRouter(dependencies=[Depends(csrf_protect)])
@@ -144,6 +144,10 @@ async def reset_password(
         )
     target.hashed_password = hash_password(password)
     session.add(target)
+    # Les sessions ouvertes du compte tombent (empreinte du mot de passe), sauf la
+    # session courante quand un manager change son propre mot de passe.
+    if target.id == user.id:
+        request.session[SESSION_PASSWORD_KEY] = password_fingerprint(target.hashed_password)
     await audit.record(
         session, user, "update", "user", target.id, {"password": {"before": "***", "after": "***"}}
     )

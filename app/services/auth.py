@@ -1,5 +1,6 @@
 """Authentification : bcrypt direct (pas passlib), anti-brute-force, CSRF."""
 
+import hashlib
 import hmac
 import secrets
 import time
@@ -7,12 +8,20 @@ from dataclasses import dataclass, field
 
 import bcrypt
 
+from app.session import REMEMBER_KEY
+
 # bcrypt ignore tout au-delà de 72 octets : on tronque explicitement.
 BCRYPT_MAX_BYTES = 72
 
 CSRF_SESSION_KEY = "csrf_token"
 CSRF_FORM_FIELD = "csrf_token"
 CSRF_HEADER = "x-csrf-token"
+
+USER_SESSION_KEY = "user_id"
+
+# Empreinte du mot de passe gardée en session : changer le mot de passe d'un compte
+# invalide ses sessions ouvertes (y compris « Rester connecté »).
+SESSION_PASSWORD_KEY = "pwd"
 
 MAX_ATTEMPTS = 5
 BASE_LOCKOUT_SECONDS = 30
@@ -30,6 +39,37 @@ def verify_password(password: str, hashed: str) -> bool:
         return bcrypt.checkpw(raw, hashed.encode("ascii"))
     except ValueError:
         return False
+
+
+def start_login(session: dict, user_id: int, hashed_password: str, remember: bool) -> None:
+    """Ouvre la session de l'utilisateur ; ``remember`` = « Rester connecté »."""
+    session[USER_SESSION_KEY] = user_id
+    session[SESSION_PASSWORD_KEY] = password_fingerprint(hashed_password)
+    if remember:
+        session[REMEMBER_KEY] = True
+    else:
+        session.pop(REMEMBER_KEY, None)
+
+
+def end_login(session: dict) -> None:
+    """Retire l'utilisateur de la session (le reste, dont le jeton CSRF, est conservé)."""
+    for key in (USER_SESSION_KEY, SESSION_PASSWORD_KEY, REMEMBER_KEY):
+        session.pop(key, None)
+
+
+def password_fingerprint(hashed_password: str) -> str:
+    return hashlib.sha256(hashed_password.encode("utf-8")).hexdigest()[:16]
+
+
+def session_matches_password(session: dict, hashed_password: str) -> bool:
+    """Faux si le mot de passe a changé depuis l'ouverture de la session.
+
+    Une session sans empreinte (ouverte avant son introduction) est acceptée.
+    """
+    stored = session.get(SESSION_PASSWORD_KEY)
+    if stored is None:
+        return True
+    return hmac.compare_digest(str(stored), password_fingerprint(hashed_password))
 
 
 def generate_csrf_token() -> str:

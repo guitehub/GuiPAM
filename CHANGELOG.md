@@ -5,6 +5,25 @@ adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+Sans rupture de données : ni migration de schéma, ni changement de l'API `/api/v1`.
+
+### Added
+- Connexion : case **« Rester connecté »**. Cochée, la session survit à la fermeture du navigateur et dure
+  30 jours, renouvelés à chaque visite (`GUIPAM_REMEMBER_MAX_AGE`).
+- Changer le mot de passe d'un compte ferme ses sessions ouvertes (autres navigateurs, sessions « Rester
+  connecté ») ; le manager qui change son propre mot de passe reste connecté.
+
+### Changed
+- Sans la case, le cookie de session disparaît à la fermeture du navigateur (il était auparavant persistant
+  14 jours pour tout le monde) et la session expire après **12 heures** d'inactivité (`GUIPAM_SESSION_MAX_AGE`,
+  dont le défaut passe de 14 jours à 12 heures).
+
+### Migration
+- Les sessions ouvertes avant la mise à jour restent valides mais deviennent des sessions ordinaires :
+  reconnectez-vous en cochant « Rester connecté » pour une session persistante.
+- Si votre `.env` fixe `GUIPAM_SESSION_MAX_AGE=1209600` (valeur de l'ancien exemple), elle s'applique
+  désormais à l'inactivité des sessions ordinaires : retirez-la pour adopter le nouveau défaut de 12 heures.
+
 ## [0.4.1] — 2026-11-16
 
 Retouche d'interface sans rupture : ni migration de schéma, ni changement de l'API `/api/v1`.

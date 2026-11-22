@@ -8,7 +8,13 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.database import get_session
 from app.i18n import gettext as _
 from app.models import Role, User
-from app.services.auth import CSRF_FORM_FIELD, CSRF_HEADER, CSRF_SESSION_KEY, csrf_tokens_match
+from app.services.auth import (
+    CSRF_FORM_FIELD,
+    CSRF_HEADER,
+    CSRF_SESSION_KEY,
+    csrf_tokens_match,
+    session_matches_password,
+)
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
@@ -26,7 +32,11 @@ async def get_current_user(request: Request, session: SessionDep) -> User | None
     if user_id is None:
         return None
     user = await session.get(User, user_id)
-    if user is None or not user.is_active:
+    if (
+        user is None
+        or not user.is_active
+        or not session_matches_password(request.session, user.hashed_password)
+    ):
         request.session.clear()
         return None
     request.state.user = user
